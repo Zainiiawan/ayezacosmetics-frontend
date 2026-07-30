@@ -21,10 +21,13 @@ export default function CartPage() {
   const [couponLoading, setCouponLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.total, 0);
-  const shipping = subtotal > 5000 ? 0 : subtotal > 0 ? 300 : 0;
-  const discount = useSelector((state: RootState) => state.cart.discount);
-  const total = subtotal + shipping - discount;
+  const originalSubtotal = cartItems.reduce((sum, item) => sum + (item.product.basePrice || item.price) * item.quantity, 0);
+  const effectiveSubtotal = cartItems.reduce((sum, item) => sum + item.total, 0);
+  const productDiscount = originalSubtotal - effectiveSubtotal;
+  const shipping = effectiveSubtotal > 5000 ? 0 : effectiveSubtotal > 0 ? 300 : 0;
+  const couponDiscountAmount = useSelector((state: RootState) => state.cart.discount);
+  const totalDiscount = productDiscount + couponDiscountAmount;
+  const total = effectiveSubtotal + shipping - couponDiscountAmount;
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -98,7 +101,7 @@ export default function CartPage() {
         dispatch(setDiscount(cart.couponDiscount ?? 0));
         dispatch(setCartCouponCode(cart.couponCode ?? couponCode.trim().toUpperCase()));
       } else {
-        const result = await couponApi.validate(couponCode.trim(), subtotal);
+        const result = await couponApi.validate(couponCode.trim(), effectiveSubtotal);
         if (result.isValid) {
           dispatch(setDiscount(result.discount));
           dispatch(setCartCouponCode(couponCode.trim().toUpperCase()));
@@ -224,16 +227,16 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal ({cartItems.reduce((s, i) => s + i.quantity, 0)} items)</span>
-                  <span>{formatPrice(subtotal)}</span>
+                  <span>{formatPrice(originalSubtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
                   <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
                 </div>
-                {discount > 0 && (
+                {totalDiscount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount</span>
-                    <span>-{formatPrice(discount)}</span>
+                    <span>-{formatPrice(totalDiscount)}</span>
                   </div>
                 )}
                 <div className="border-t border-gray-200 pt-4 flex justify-between font-bold text-black text-lg">
@@ -270,10 +273,10 @@ export default function CartPage() {
                 </Link>
               </div>
 
-              {shipping > 0 && subtotal > 0 && (
+              {shipping > 0 && effectiveSubtotal > 0 && (
                 <div className="mt-6 p-4 bg-rose-gold/10 rounded-lg">
                   <p className="text-sm text-rose-gold">
-                    Add {formatPrice(5000 - subtotal)} more for free shipping!
+                    Add {formatPrice(5000 - effectiveSubtotal)} more for free shipping!
                   </p>
                 </div>
               )}

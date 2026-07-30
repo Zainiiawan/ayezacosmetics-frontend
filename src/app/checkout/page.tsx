@@ -127,15 +127,16 @@ function CheckoutContent() {
     return cartItems;
   }, [isBuyNow, buyNowProduct, buyNowQuantity, cartItems]);
 
-  const subtotal = checkoutItems.reduce((sum, item) => sum + item.total, 0);
+  const originalSubtotal = checkoutItems.reduce((sum, item) => sum + (item.product.basePrice || item.price) * item.quantity, 0);
+  const effectiveSubtotal = checkoutItems.reduce((sum, item) => sum + item.total, 0);
+  const productDiscount = originalSubtotal - effectiveSubtotal;
   
-  // Calculate dynamic shipping cost
   const calculatedShipping = useMemo(() => {
-    if (subtotal === 0) return 0;
+    if (effectiveSubtotal === 0) return 0;
     
     // Check free shipping threshold
     const freeThreshold = storeSettings?.freeShippingThreshold ?? 5000;
-    if (subtotal > freeThreshold) return 0;
+    if (effectiveSubtotal > freeThreshold) return 0;
 
     // Check custom city rate
     if (selectedCity && shippingRates) {
@@ -147,10 +148,11 @@ function CheckoutContent() {
 
     // Default fallback
     return storeSettings?.defaultShippingCost ?? 200;
-  }, [subtotal, selectedCity, shippingRates, storeSettings]);
+  }, [effectiveSubtotal, selectedCity, shippingRates, storeSettings]);
 
-  const discountAmount = isBuyNow ? 0 : (cartDiscount || 0); // Cart discount doesn't apply to buy now unless we extend it
-  const total = Math.max(0, subtotal + calculatedShipping - discountAmount);
+  const couponDiscountAmount = isBuyNow ? 0 : (cartDiscount || 0);
+  const totalDiscount = productDiscount + couponDiscountAmount;
+  const total = Math.max(0, effectiveSubtotal + calculatedShipping - couponDiscountAmount);
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (checkoutItems.length === 0) {
@@ -381,13 +383,13 @@ function CheckoutContent() {
               </div>
               
               <div className="border-t pt-4 space-y-3 text-sm">
-                <div className="flex justify-between text-gray-600"><span>Subtotal</span><span className="font-medium text-gray-900">{formatPrice(subtotal)}</span></div>
+                <div className="flex justify-between text-gray-600"><span>Subtotal</span><span className="font-medium text-gray-900">{formatPrice(originalSubtotal)}</span></div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
                   <span className="font-medium text-gray-900">{calculatedShipping === 0 ? <span className="text-green-600">Free</span> : formatPrice(calculatedShipping)}</span>
                 </div>
-                {discountAmount > 0 && (
-                  <div className="flex justify-between text-rose-gold font-medium"><span>Discount</span><span>-{formatPrice(discountAmount)}</span></div>
+                {totalDiscount > 0 && (
+                  <div className="flex justify-between text-rose-gold font-medium"><span>Discount</span><span>-{formatPrice(totalDiscount)}</span></div>
                 )}
                 <div className="flex justify-between text-xl font-bold pt-4 border-t mt-4 text-black">
                   <span>Total</span>

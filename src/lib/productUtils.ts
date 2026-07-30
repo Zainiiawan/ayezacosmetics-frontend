@@ -1,11 +1,20 @@
 import { Product } from '@/lib/api/productApi';
 
+function isDiscountActive(discount?: Product['discount']): boolean {
+  if (!discount || !discount.type || discount.value == null) return false;
+  const now = new Date();
+  if (discount.startDate && new Date(discount.startDate) > now) return false;
+  if (discount.endDate && new Date(discount.endDate) < now) return false;
+  return true;
+}
+
 export function getEffectivePrice(product: Pick<Product, 'basePrice' | 'discount'>): number {
-  if (!product.discount) return product.basePrice;
-  if (product.discount.type === 'percentage') {
-    return product.basePrice * (1 - product.discount.value / 100);
+  if (!isDiscountActive(product.discount)) return product.basePrice;
+  const discount = product.discount!;
+  if (discount.type === 'percentage') {
+    return product.basePrice * (1 - discount.value / 100);
   }
-  return Math.max(0, product.basePrice - product.discount.value);
+  return Math.max(0, product.basePrice - discount.value);
 }
 
 export function getDiscountPercentage(
@@ -15,6 +24,8 @@ export function getDiscountPercentage(
   if (product.compareAtPrice && product.compareAtPrice > effectivePrice) {
     return Math.round(((product.compareAtPrice - effectivePrice) / product.compareAtPrice) * 100);
   }
-  if (product.discount?.type === 'percentage') return product.discount.value;
+  if (isDiscountActive(product.discount) && product.discount?.type === 'percentage') {
+    return product.discount.value;
+  }
   return 0;
 }
