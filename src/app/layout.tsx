@@ -21,10 +21,23 @@ export const metadata: Metadata = {
   description: "Discover premium luxury cosmetics curated for the modern woman. Shop skincare, makeup, fragrances, and more.",
   keywords: ["cosmetics", "beauty", "skincare", "makeup", "luxury", "Pakistan"],
   authors: [{ name: "AYEZA COSMETICS" }],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/logo.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    other: [
+      { rel: "icon", url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
   openGraph: {
     title: "AYEZA COSMETICS - Luxury Beauty Products",
     description: "Discover premium luxury cosmetics curated for the modern woman.",
     type: "website",
+    images: [{ url: "/logo.png", width: 512, height: 512, alt: "AYEZA COSMETICS" }],
   },
 };
 
