@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
+    "@tailwindcss/postcss": "^4",
     "@tanstack/react-query": "^5.101.4",
     "@tanstack/react-query-devtools": "^5.101.4",
     "axios": "^1.18.1",
@@ -24,8 +25,8 @@
     "react-hook-form": "^7.83.0",
     "react-redux": "^9.3.0",
     "tailwind-merge": "^3.6.0",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
