@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Star, Share2, Truck, Shield, RefreshCw, Check } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Share2, Truck, Shield, RefreshCw, Check, Zap } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
 import { getDiscountPercentage, getEffectivePrice } from '@/lib/productUtils';
 import Button from '@/components/ui/Button';
@@ -23,6 +23,7 @@ const PLACEHOLDER =
 
 export default function ProductPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = params?.slug as string;
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -220,44 +221,64 @@ export default function ProductPage() {
               <span className="text-sm text-gray-500">{product.stock} in stock</span>
             </div>
 
-            <div className="flex gap-4">
-              <Button
-                onClick={handleAddToCart}
-                disabled={product.stock <= 0}
-                className={cn(
-                  'flex-1 py-4 text-lg font-medium flex items-center justify-center gap-2',
-                  isAddedToCart ? 'bg-green-600 hover:bg-green-700' : ''
-                )}
-              >
-                {isAddedToCart ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Added to Cart
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-5 h-5" />
-                    Add to Cart
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={handleWishlist}
-                variant="outline"
-                className={cn(
-                  'px-6 py-4 border-2',
-                  isWishlisted
-                    ? 'border-rose-gold bg-rose-gold text-white hover:bg-rose-gold-dark'
-                    : 'border-gray-300 bg-white text-gray-800 hover:border-rose-gold hover:text-rose-gold'
-                )}
-                aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-                aria-pressed={isWishlisted}
-              >
-                <Heart className={cn('w-5 h-5', isWishlisted && 'fill-current')} />
-              </Button>
-              <Button variant="outline" className="px-6 py-4 border-2 border-gray-300 bg-white text-gray-800 hover:border-rose-gold hover:text-rose-gold">
-                <Share2 className="w-5 h-5" />
-              </Button>
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-4">
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push(`/checkout?buyNow=true&productId=${product._id}&quantity=${quantity}`);
+                  }}
+                  disabled={product.stock <= 0}
+                  className="flex-[2] bg-rose-gold hover:bg-rose-gold-dark text-white py-4 text-lg font-medium flex items-center justify-center gap-2"
+                >
+                  <Zap className="w-5 h-5" />
+                  Buy Now
+                </Button>
+                
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={product.stock <= 0}
+                  variant="outline"
+                  className={cn(
+                    'flex-1 py-4 text-lg font-medium flex items-center justify-center gap-2 border-2',
+                    isAddedToCart ? 'border-green-600 text-green-600 hover:bg-green-50' : 'border-gray-800 text-gray-800 hover:bg-gray-50'
+                  )}
+                >
+                  {isAddedToCart ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      Added
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5" />
+                      Cart
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex gap-4">
+                <Button
+                  onClick={handleWishlist}
+                  variant="outline"
+                  className={cn(
+                    'flex-1 py-4 border-2',
+                    isWishlisted
+                      ? 'border-rose-gold bg-rose-gold text-white hover:bg-rose-gold-dark'
+                      : 'border-gray-300 bg-white text-gray-800 hover:border-rose-gold hover:text-rose-gold'
+                  )}
+                  aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+                  aria-pressed={isWishlisted}
+                >
+                  <Heart className={cn('w-5 h-5 mr-2 inline-block', isWishlisted && 'fill-current')} />
+                  Wishlist
+                </Button>
+                <Button variant="outline" className="flex-1 py-4 border-2 border-gray-300 bg-white text-gray-800 hover:border-rose-gold hover:text-rose-gold">
+                  <Share2 className="w-5 h-5 mr-2 inline-block" />
+                  Share
+                </Button>
+              </div>
             </div>
 
             <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">

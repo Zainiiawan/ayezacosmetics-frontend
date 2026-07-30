@@ -131,6 +131,17 @@ export const productApi = {
     return response.data.data;
   },
 
+  getById: async (id: string): Promise<Product> => {
+    // The backend uses /products/:slug, but slug can also be an ID if mongoose.isValidObjectId matches,
+    // or we can just create a specific endpoint /api/products/id/:id on backend.
+    // The backend `GET /api/products/:slug` does:
+    // `const isMongoId = mongoose.isValidObjectId(slug);`
+    // `const query = isMongoId ? { _id: slug } : { slug };`
+    // So we can just use getBySlug for ID as well!
+    const response = await api.get(`/products/${id}`);
+    return response.data.data;
+  },
+
   create: async (data: CreateProductData): Promise<Product> => {
     if (!data.images || data.images.length === 0) {
       throw new Error('At least one product image is required');

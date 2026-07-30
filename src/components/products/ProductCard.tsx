@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Eye, Star } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
@@ -29,6 +30,7 @@ const PLACEHOLDER =
 const ProductCard = ({ product, className }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const isWishlisted = useSelector((state: RootState) =>
@@ -162,14 +164,24 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           />
         </Link>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/55 via-black/25 to-transparent pt-10">
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent pt-12 flex gap-2">
           <button
             type="button"
             onClick={handleAddToCart}
-            className="w-full bg-[#0a0a0a] hover:bg-rose-gold active:bg-rose-gold-dark text-white border border-white/20 shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            title="Add to Cart"
           >
-            <ShoppingCart className="w-4 h-4 shrink-0 text-white" />
-            <span className="text-white">Add to Cart</span>
+            <ShoppingCart className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              router.push(`/checkout?buyNow=true&productId=${product._id}`);
+            }}
+            className="flex-[2] bg-rose-gold hover:bg-rose-gold-dark text-white shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            Buy Now
           </button>
         </div>
       </div>

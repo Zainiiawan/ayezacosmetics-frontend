@@ -115,10 +115,10 @@ function VerifyOtpForm() {
 
   // Auto-submit when all digits filled
   useEffect(() => {
-    if (otp.every((d) => d) && otp.join('').length === OTP_LENGTH && !isVerifying) {
+    if (otp.every((d) => d) && otp.join('').length === OTP_LENGTH && !isVerifying && !success) {
       handleVerify();
     }
-  }, [otp, isVerifying, handleVerify]);
+  }, [otp, isVerifying, success, handleVerify]);
 
   const handleResend = async () => {
     if (cooldown > 0 || isResending) return;
