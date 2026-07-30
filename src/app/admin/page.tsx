@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Package, Users, ShoppingCart,
   Settings, TrendingUp, DollarSign, ArrowUpRight,
-  Menu, X, LogOut, Bell, Search, Star, Tag, MessageSquare, Layers
+  Menu, X, LogOut, Bell, Search, Star, Tag, MessageSquare, Layers, Truck
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
@@ -26,6 +26,7 @@ const sidebarItems = [
   { name: 'Customers', href: '/admin/customers', icon: Users },
   { name: 'Reviews', href: '/admin/reviews', icon: MessageSquare },
   { name: 'Coupons', href: '/admin/coupons', icon: Tag },
+  { name: 'Shipping', href: '/admin/shipping', icon: Truck },
   { name: 'Analytics', href: '/admin/analytics', icon: TrendingUp },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
