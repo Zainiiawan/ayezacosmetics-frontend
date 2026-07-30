@@ -118,6 +118,7 @@ function CheckoutContent() {
           _id: buyNowProduct._id,
           name: buyNowProduct.name,
           images: buyNowProduct.images,
+          basePrice: buyNowProduct.basePrice,
         },
         quantity: buyNowQuantity,
         price,
