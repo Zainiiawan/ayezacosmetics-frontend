@@ -8,11 +8,12 @@ export function mapApiCartToReduxItems(cart: ApiCart): CartItem[] {
       name: item.name,
       slug: item.slug ?? '',
       images: item.image ? [{ url: item.image, alt: item.name }] : [],
-      basePrice: item.price,
+      // compareAtPrice is the original price before discount; fallback to price if not set
+      basePrice: item.compareAtPrice ?? item.price,
     },
     variant: item.variant,
     quantity: item.quantity,
-    price: item.price,
-    total: item.total,
+    price: item.price,      // discounted/effective price
+    total: item.total,      // price * quantity
   }));
 }
