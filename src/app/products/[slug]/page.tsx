@@ -19,12 +19,13 @@ async function getProductBySlug(slug: string) {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
 
   if (!product) {
-    const fallbackName = params.slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const fallbackName = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     return {
       title: `${fallbackName} | AYEZA COSMETICS`,
       description: `Shop ${fallbackName} at AYEZA COSMETICS. Premium luxury cosmetics curated for the modern woman.`,
@@ -68,8 +69,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPageServer({ params }: { params: { slug: string } }) {
-  const product = await getProductBySlug(params.slug);
+export default async function ProductPageServer({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
 
   let jsonLdArray: any[] = [];
   if (product) {

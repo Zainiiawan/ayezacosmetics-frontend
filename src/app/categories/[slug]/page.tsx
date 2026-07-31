@@ -19,13 +19,14 @@ async function getCategoryBySlug(slug: string) {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const data = await getCategoryBySlug(params.slug);
+  const { slug } = await params;
+  const data = await getCategoryBySlug(slug);
   const category = data?.category;
 
   if (!category) {
-    const fallbackName = params.slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const fallbackName = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     return {
       title: `${fallbackName} | AYEZA COSMETICS`,
       description: `Browse our premium collection of ${fallbackName} at AYEZA COSMETICS.`,
@@ -58,8 +59,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function CategoryPageServer({ params }: { params: { slug: string } }) {
-  const data = await getCategoryBySlug(params.slug);
+export default async function CategoryPageServer({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const data = await getCategoryBySlug(slug);
   const category = data?.category;
 
   let jsonLdArray: any[] = [];
