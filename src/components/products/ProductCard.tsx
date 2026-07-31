@@ -41,7 +41,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
   const effectivePrice = getEffectivePrice(product);
   const discountPercentage = getDiscountPercentage(product);
   const imageSrc = mainImage?.url ? optimizeCloudinaryUrl(mainImage.url, 600, true) : PLACEHOLDER;
-  const imageSrcSet = mainImage?.url ? getCloudinarySrcSet(mainImage.url, [300, 600, 900], true) : '';
+  const imageSrcSet = mainImage?.url ? getCloudinarySrcSet(mainImage.url, undefined, true) : '';
 
   const handleAddToCart = async () => {
     dispatch(
