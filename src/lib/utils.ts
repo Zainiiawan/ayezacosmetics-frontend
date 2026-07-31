@@ -51,3 +51,8 @@ export function optimizeCloudinaryUrl(url: string, width = 800): string {
   }
   return url;
 }
+
+export function getCloudinarySrcSet(url: string, widths = [400, 800, 1200]): string {
+  if (!url || !url.includes('res.cloudinary.com')) return '';
+  return widths.map((w) => `${optimizeCloudinaryUrl(url, w)} ${w}w`).join(', ');
+}

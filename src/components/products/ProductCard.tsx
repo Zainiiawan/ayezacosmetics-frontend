@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Eye, Star } from 'lucide-react';
-import { cn, formatPrice, optimizeCloudinaryUrl } from '@/lib/utils';
+import { cn, formatPrice, optimizeCloudinaryUrl, getCloudinarySrcSet } from '@/lib/utils';
 import { getDiscountPercentage, getEffectivePrice } from '@/lib/productUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem as addToCart } from '@/store/slices/cartSlice';
@@ -41,6 +41,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
   const effectivePrice = getEffectivePrice(product);
   const discountPercentage = getDiscountPercentage(product);
   const imageSrc = mainImage?.url ? optimizeCloudinaryUrl(mainImage.url, 600) : PLACEHOLDER;
+  const imageSrcSet = mainImage?.url ? getCloudinarySrcSet(mainImage.url, [300, 600, 900]) : '';
 
   const handleAddToCart = async () => {
     dispatch(
@@ -157,6 +158,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         <Link href={`/products/${product.slug}`} className="block aspect-square overflow-hidden bg-gray-100">
           <img
             src={imageSrc}
+            {...(imageSrcSet ? { srcSet: imageSrcSet, sizes: "(max-width: 768px) 50vw, 33vw" } : {})}
             alt={mainImage?.alt || product.name}
             className={cn(
               'w-full h-full object-cover transition-transform duration-500',
