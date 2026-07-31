@@ -18,7 +18,7 @@ export default function AdminCatalogPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [image, setImage] = useState<{ url: string; publicId: string; alt?: string } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -44,7 +44,7 @@ export default function AdminCatalogPage() {
     setEditingId(null);
     setName('');
     setDescription('');
-    setImageUrl('');
+    setImage(null);
     setError('');
     setModalOpen(true);
   };
@@ -54,9 +54,9 @@ export default function AdminCatalogPage() {
     setName(item.name);
     setDescription(item.description || '');
     if ('image' in item && item.image) {
-      setImageUrl(item.image.url || '');
+      setImage(item.image as { url: string; publicId: string; alt?: string });
     } else {
-      setImageUrl('');
+      setImage(null);
     }
     setError('');
     setModalOpen(true);
@@ -71,8 +71,8 @@ export default function AdminCatalogPage() {
       setSaving(true);
       setError('');
       const payload: any = { name: name.trim(), description: description.trim() || undefined };
-      if (tab === 'categories' && imageUrl) {
-        payload.image = { url: imageUrl };
+      if (tab === 'categories' && image) {
+        payload.image = image;
       }
       if (tab === 'categories') {
         if (editingId) await categoryApi.update(editingId, payload);
@@ -101,7 +101,7 @@ export default function AdminCatalogPage() {
       setError('');
       const uploaded = await mediaApi.upload([file]);
       if (uploaded.length > 0) {
-        setImageUrl(uploaded[0].url);
+        setImage(uploaded[0]);
       }
     } catch (err) {
       setError('Image upload failed. Please try again.');
@@ -264,8 +264,8 @@ export default function AdminCatalogPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Image (optional)</label>
                   <div className="flex items-center gap-4">
-                    {imageUrl && (
-                      <img src={imageUrl} alt="Preview" className="w-16 h-16 rounded-lg object-cover" />
+                    {image?.url && (
+                      <img src={image.url} alt="Preview" className="w-16 h-16 rounded-lg object-cover" />
                     )}
                     <div className="flex-1">
                       <input
