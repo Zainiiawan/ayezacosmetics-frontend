@@ -1,13 +1,21 @@
-import { categoryApi } from '@/lib/api/categoryApi';
+import { Category } from '@/lib/api/categoryApi';
+import { config } from '@/lib/config';
 import HomeClient from './HomeClient';
 
-// Ensure this page is dynamically rendered or revalidated as needed
-export const revalidate = 3600; // revalidate every hour, or adjust as needed
+// Ensure this page is cached and revalidated hourly
+export const revalidate = 3600;
 
 export default async function Home() {
-  let categories = [];
+  let categories: Category[] = [];
   try {
-    categories = await categoryApi.getAll();
+    const res = await fetch(`${config.apiUrl}/categories`, {
+      next: { revalidate: 3600 },
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      categories = data.data || [];
+    }
   } catch (error) {
     console.error('Failed to fetch categories on server:', error);
   }
