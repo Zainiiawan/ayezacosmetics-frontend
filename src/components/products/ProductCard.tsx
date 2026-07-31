@@ -131,7 +131,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             type="button"
             onClick={handleWishlistToggle}
             className={cn(
-              'p-2.5 rounded-full shadow-lg border transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold',
+              'p-3 flex items-center justify-center rounded-full shadow-lg border transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold',
               isWishlisted
                 ? 'bg-rose-gold-dark border-rose-gold-dark text-white hover:bg-black'
                 : 'bg-white border-gray-200 text-gray-800 hover:border-rose-gold-dark hover:text-rose-gold-dark'

@@ -80,7 +80,7 @@ const Footer = ({ className }: { className?: string }) => {
                 <a
                   key={social.name}
                   href={social.href}
-                  className="text-gray-400 hover:text-rose-gold transition-colors"
+                  className="text-gray-400 hover:text-rose-gold transition-colors w-12 h-12 flex items-center justify-center"
                   aria-label={social.name}
                 >
                   <social.icon className="w-5 h-5" />
@@ -97,7 +97,7 @@ const Footer = ({ className }: { className?: string }) => {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-rose-gold transition-colors"
+                    className="text-gray-400 hover:text-rose-gold transition-colors block py-2"
                     prefetch={false}
                   >
                     {link.name}
@@ -115,7 +115,7 @@ const Footer = ({ className }: { className?: string }) => {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-rose-gold transition-colors"
+                    className="text-gray-400 hover:text-rose-gold transition-colors block py-2"
                     prefetch={false}
                   >
                     {link.name}
@@ -133,7 +133,7 @@ const Footer = ({ className }: { className?: string }) => {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-rose-gold transition-colors"
+                    className="text-gray-400 hover:text-rose-gold transition-colors block py-2"
                     prefetch={false}
                   >
                     {link.name}
@@ -147,17 +147,17 @@ const Footer = ({ className }: { className?: string }) => {
           <div>
             <h5 className="font-semibold mb-4">Contact Us</h5>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-gray-400">
+              <li className="flex items-start gap-3 text-gray-400 py-1">
                 <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" />
                 <span>Sahiwal, Punjab, Pakistan</span>
               </li>
-              <li className="flex items-center gap-3 text-gray-400">
+              <li className="flex items-center gap-3 text-gray-400 py-1">
                 <Phone className="w-5 h-5 flex-shrink-0" />
-                <a href="tel:+923060466911" className="hover:text-rose-gold">+92 306 0466911</a>
+                <a href="tel:+923060466911" className="hover:text-rose-gold py-2 block">+92 306 0466911</a>
               </li>
-              <li className="flex items-center gap-3 text-gray-400">
+              <li className="flex items-center gap-3 text-gray-400 py-1">
                 <Mail className="w-5 h-5 flex-shrink-0" />
-                <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-rose-gold">ayezacosmtics@gmail.com</a>
+                <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-rose-gold py-2 block">ayezacosmtics@gmail.com</a>
               </li>
             </ul>
           </div>
@@ -172,13 +172,13 @@ const Footer = ({ className }: { className?: string }) => {
               © {currentYear} AYEZA COSMETICS. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-rose-gold transition-colors" prefetch={false}>
+              <Link href="/privacy" className="text-gray-400 hover:text-rose-gold transition-colors p-2" prefetch={false}>
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-rose-gold transition-colors" prefetch={false}>
+              <Link href="/terms" className="text-gray-400 hover:text-rose-gold transition-colors p-2" prefetch={false}>
                 Terms of Service
               </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-rose-gold transition-colors" prefetch={false}>
+              <Link href="/cookies" className="text-gray-400 hover:text-rose-gold transition-colors p-2" prefetch={false}>
                 Cookie Policy
               </Link>
             </div>

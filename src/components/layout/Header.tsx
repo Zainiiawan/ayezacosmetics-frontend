@@ -75,13 +75,13 @@ const Header = () => {
           <div className="flex items-center gap-2 sm:gap-4">
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-2 text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors"
+              className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
 
-            <Link href="/wishlist" className="p-2 text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative" aria-label="Wishlist">
+            <Link href="/wishlist" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative" aria-label="Wishlist">
               <Heart className="w-5 h-5" />
               {wishlistItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
@@ -90,7 +90,7 @@ const Header = () => {
               )}
             </Link>
 
-            <Link href="/cart" className="p-2 text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative" aria-label="Cart">
+            <Link href="/cart" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative" aria-label="Cart">
               <ShoppingCart className="w-5 h-5" />
               {cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
@@ -115,7 +115,7 @@ const Header = () => {
                 {user.role === 'admin' && (
                   <Link
                     href="/admin"
-                    className="p-2 text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors"
+                    className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors"
                     aria-label="Admin Panel"
                     title="Admin Panel"
                   >
@@ -132,14 +132,14 @@ const Header = () => {
                 </button>
               </div>
             ) : (
-              <Link href="/login" className="p-2 text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors" aria-label="Account">
+              <Link href="/login" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors" aria-label="Account">
                 <User className="w-5 h-5" />
               </Link>
             )}
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-800 hover:bg-gray-100 rounded-full transition-colors"
+              className="lg:hidden w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
