@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { Search, ShoppingCart, Heart, User, Menu, X, LogOut, Shield } from 'lucide-react';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useSelector, useDispatch } from 'react-redux';

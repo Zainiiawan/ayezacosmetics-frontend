@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import Link from 'next/link';
 import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
 import { RootState } from '@/store';

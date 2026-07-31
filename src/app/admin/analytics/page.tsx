@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, DollarSign, ShoppingCart, Package, AlertTriangle } from 'lucide-react';
 import { analyticsApi } from '@/lib/api/analyticsApi';
 import { formatPrice } from '@/lib/utils';

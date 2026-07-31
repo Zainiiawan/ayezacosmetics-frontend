@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect, Suspense } from 'react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { Smartphone, Truck, Lock, Check, ShoppingBag, ArrowLeft, Mail, User, MapPin } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { Star, ThumbsUp, BadgeCheck, MessageSquare } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 import Button from '@/components/ui/Button';

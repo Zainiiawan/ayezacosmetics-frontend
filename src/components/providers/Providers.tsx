@@ -12,6 +12,7 @@ import { setCartItems, setCouponCode, setDiscount } from '@/store/slices/cartSli
 import { setWishlistItems } from '@/store/slices/wishlistSlice';
 import { mapApiCartToReduxItems } from '@/lib/cartUtils';
 import { Product } from '@/lib/api/productApi';
+import { LazyMotion, domAnimation } from 'framer-motion';
 
 function AuthHydrator({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch<AppDispatch>();
@@ -68,7 +69,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <Provider store={store}>
       <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" enableSystem={false}>
         <QueryProvider>
-          <AuthHydrator>{children}</AuthHydrator>
+          <AuthHydrator>
+            <LazyMotion features={domAnimation}>
+              {children}
+            </LazyMotion>
+          </AuthHydrator>
         </QueryProvider>
       </ThemeProvider>
     </Provider>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { Plus, Search, Filter, Edit, Trash2, MoreVertical, X, Image as ImageIcon, Package, DollarSign, Box } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { formatPrice } from '@/lib/utils';

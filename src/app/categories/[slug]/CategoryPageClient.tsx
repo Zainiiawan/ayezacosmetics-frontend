@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { SlidersHorizontal, Search, X } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import Button from '@/components/ui/Button';

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { ShoppingCart, Heart, Star, Share2, Truck, Shield, RefreshCw, Check, Zap, Play } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
 import { getDiscountPercentage, getEffectivePrice } from '@/lib/productUtils';
