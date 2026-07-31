@@ -98,6 +98,7 @@ const Footer = ({ className }: { className?: string }) => {
                   <Link
                     href={link.href}
                     className="text-gray-400 hover:text-rose-gold transition-colors"
+                    prefetch={false}
                   >
                     {link.name}
                   </Link>
@@ -115,6 +116,7 @@ const Footer = ({ className }: { className?: string }) => {
                   <Link
                     href={link.href}
                     className="text-gray-400 hover:text-rose-gold transition-colors"
+                    prefetch={false}
                   >
                     {link.name}
                   </Link>
@@ -132,6 +134,7 @@ const Footer = ({ className }: { className?: string }) => {
                   <Link
                     href={link.href}
                     className="text-gray-400 hover:text-rose-gold transition-colors"
+                    prefetch={false}
                   >
                     {link.name}
                   </Link>
@@ -169,13 +172,13 @@ const Footer = ({ className }: { className?: string }) => {
               © {currentYear} AYEZA COSMETICS. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-rose-gold transition-colors">
+              <Link href="/privacy" className="text-gray-400 hover:text-rose-gold transition-colors" prefetch={false}>
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-rose-gold transition-colors">
+              <Link href="/terms" className="text-gray-400 hover:text-rose-gold transition-colors" prefetch={false}>
                 Terms of Service
               </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-rose-gold transition-colors">
+              <Link href="/cookies" className="text-gray-400 hover:text-rose-gold transition-colors" prefetch={false}>
                 Cookie Policy
               </Link>
             </div>
