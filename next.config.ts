@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     ],
     unoptimized: true,
   },
+  experimental: {
+    optimizeCss: true,
+  },
   async headers() {
     return [
       {

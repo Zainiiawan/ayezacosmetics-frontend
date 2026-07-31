@@ -40,8 +40,8 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
   const mainImage = product.images?.find((img) => img.isMain) || product.images?.[0];
   const effectivePrice = getEffectivePrice(product);
   const discountPercentage = getDiscountPercentage(product);
-  const imageSrc = mainImage?.url ? optimizeCloudinaryUrl(mainImage.url, 600) : PLACEHOLDER;
-  const imageSrcSet = mainImage?.url ? getCloudinarySrcSet(mainImage.url, [300, 600, 900]) : '';
+  const imageSrc = mainImage?.url ? optimizeCloudinaryUrl(mainImage.url, 600, true) : PLACEHOLDER;
+  const imageSrcSet = mainImage?.url ? getCloudinarySrcSet(mainImage.url, [300, 600, 900], true) : '';
 
   const handleAddToCart = async () => {
     dispatch(

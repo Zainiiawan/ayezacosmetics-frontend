@@ -87,8 +87,8 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
                     <div className="relative h-64 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                       {category.image?.url ? (
                         <img
-                          src={optimizeCloudinaryUrl(category.image.url, 800)}
-                          srcSet={getCloudinarySrcSet(category.image.url)}
+                          src={optimizeCloudinaryUrl(category.image.url, 800, true)}
+                          srcSet={getCloudinarySrcSet(category.image.url, [400, 800, 1200], true)}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           alt={category.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

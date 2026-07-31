@@ -36,7 +36,7 @@ export function generateSlug(text: string): string {
     .trim();
 }
 
-export function optimizeCloudinaryUrl(url: string, width = 800): string {
+export function optimizeCloudinaryUrl(url: string, width = 800, square = false): string {
   if (!url || !url.includes('res.cloudinary.com')) return url;
   
   // Cloudinary URLs look like:
@@ -47,12 +47,14 @@ export function optimizeCloudinaryUrl(url: string, width = 800): string {
     // f_auto: automatic format (WebP/AVIF)
     // q_auto: automatic quality
     // w_<width>: limit width to save bandwidth
-    return `${parts[0]}/upload/f_auto,q_auto,w_${width}/${parts[1]}`;
+    // c_fill,g_auto,ar_1:1: crop to a perfect square centered on the most interesting part
+    const crop = square ? ',c_fill,g_auto,ar_1:1' : '';
+    return `${parts[0]}/upload/f_auto,q_auto,w_${width}${crop}/${parts[1]}`;
   }
   return url;
 }
 
-export function getCloudinarySrcSet(url: string, widths = [400, 800, 1200]): string {
+export function getCloudinarySrcSet(url: string, widths = [400, 800, 1200], square = false): string {
   if (!url || !url.includes('res.cloudinary.com')) return '';
-  return widths.map((w) => `${optimizeCloudinaryUrl(url, w)} ${w}w`).join(', ');
+  return widths.map((w) => `${optimizeCloudinaryUrl(url, w, square)} ${w}w`).join(', ');
 }
