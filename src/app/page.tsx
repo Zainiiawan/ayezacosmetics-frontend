@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Sparkles, Truck, Shield, Star } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { categoryApi } from '@/lib/api/categoryApi';
+import { optimizeCloudinaryUrl } from '@/lib/utils';
 
 const whyChooseUs = [
   { title: 'Premium Quality', description: 'Only the finest ingredients for your skin', icon: Star },
@@ -85,9 +86,10 @@ export default function Home() {
                     <div className="relative h-64 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                       {category.image?.url ? (
                         <img
-                          src={category.image.url}
+                          src={optimizeCloudinaryUrl(category.image.url, 800)}
                           alt={category.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          fetchPriority={index < 3 ? "high" : "auto"}
                         />
                       ) : (
                         <div className="text-6xl">✨</div>

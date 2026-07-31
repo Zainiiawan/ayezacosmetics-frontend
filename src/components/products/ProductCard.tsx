@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Eye, Star } from 'lucide-react';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn, formatPrice, optimizeCloudinaryUrl } from '@/lib/utils';
 import { getDiscountPercentage, getEffectivePrice } from '@/lib/productUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem as addToCart } from '@/store/slices/cartSlice';
@@ -40,7 +40,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
   const mainImage = product.images?.find((img) => img.isMain) || product.images?.[0];
   const effectivePrice = getEffectivePrice(product);
   const discountPercentage = getDiscountPercentage(product);
-  const imageSrc = mainImage?.url || PLACEHOLDER;
+  const imageSrc = mainImage?.url ? optimizeCloudinaryUrl(mainImage.url, 600) : PLACEHOLDER;
 
   const handleAddToCart = async () => {
     dispatch(

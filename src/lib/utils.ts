@@ -35,3 +35,19 @@ export function generateSlug(text: string): string {
     .replace(/--+/g, '-')
     .trim();
 }
+
+export function optimizeCloudinaryUrl(url: string, width = 800): string {
+  if (!url || !url.includes('res.cloudinary.com')) return url;
+  
+  // Cloudinary URLs look like:
+  // https://res.cloudinary.com/<cloud_name>/image/upload/v1234567890/folder/image.png
+  // We want to insert transformations after 'upload/'
+  const parts = url.split('/upload/');
+  if (parts.length === 2) {
+    // f_auto: automatic format (WebP/AVIF)
+    // q_auto: automatic quality
+    // w_<width>: limit width to save bandwidth
+    return `${parts[0]}/upload/f_auto,q_auto,w_${width}/${parts[1]}`;
+  }
+  return url;
+}
