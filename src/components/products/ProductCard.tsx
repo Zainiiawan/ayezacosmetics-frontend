@@ -114,7 +114,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             Coming Soon
           </div>
         ) : discountPercentage > 0 ? (
-          <div className="absolute top-3 left-3 bg-rose-gold text-white text-xs font-bold px-2 py-1 rounded-md z-10">
+          <div className="absolute top-3 left-3 bg-rose-gold-dark text-white text-xs font-bold px-2 py-1 rounded-md z-10">
             -{discountPercentage}%
           </div>
         ) : null}
@@ -132,8 +132,8 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             className={cn(
               'p-2.5 rounded-full shadow-lg border transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold',
               isWishlisted
-                ? 'bg-rose-gold border-rose-gold text-white hover:bg-rose-gold-dark'
-                : 'bg-white border-gray-200 text-gray-800 hover:border-rose-gold hover:text-rose-gold'
+                ? 'bg-rose-gold-dark border-rose-gold-dark text-white hover:bg-black'
+                : 'bg-white border-gray-200 text-gray-800 hover:border-rose-gold-dark hover:text-rose-gold-dark'
             )}
             aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
             aria-pressed={isWishlisted}
@@ -193,7 +193,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
                   e.preventDefault();
                   router.push(`/checkout?buyNow=true&productId=${product._id}`);
                 }}
-                className="flex-[2] bg-rose-gold hover:bg-rose-gold-dark text-white shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="flex-[2] bg-rose-gold-dark hover:bg-black text-white shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Buy Now
               </button>

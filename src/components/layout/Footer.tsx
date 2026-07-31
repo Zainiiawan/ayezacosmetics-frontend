@@ -42,7 +42,7 @@ const Footer = ({ className }: { className?: string }) => {
   return (
     <footer className={`bg-black text-white ${className || ''}`}>
       {/* Newsletter */}
-      <div className="bg-rose-gold py-12">
+      <div className="bg-rose-gold-dark py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
             <h3 className="text-2xl font-serif font-bold mb-2">Subscribe to Our Newsletter</h3>
