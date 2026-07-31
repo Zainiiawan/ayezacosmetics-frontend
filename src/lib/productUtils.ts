@@ -21,8 +21,8 @@ export function getDiscountPercentage(
   product: Pick<Product, 'basePrice' | 'compareAtPrice' | 'discount'>
 ): number {
   const effectivePrice = getEffectivePrice(product);
-  if (product.compareAtPrice && product.compareAtPrice > effectivePrice) {
-    return Math.round(((product.compareAtPrice - effectivePrice) / product.compareAtPrice) * 100);
+  if (product.basePrice && product.basePrice > effectivePrice) {
+    return Math.round(((product.basePrice - effectivePrice) / product.basePrice) * 100);
   }
   if (isDiscountActive(product.discount) && product.discount?.type === 'percentage') {
     return product.discount.value;

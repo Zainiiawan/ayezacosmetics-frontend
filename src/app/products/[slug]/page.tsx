@@ -192,8 +192,8 @@ export default function ProductPage() {
 
             <div className="flex items-center gap-4">
               <span className="text-3xl font-bold text-gray-900">{formatPrice(effectivePrice)}</span>
-              {product.compareAtPrice && product.compareAtPrice > effectivePrice && (
-                <span className="text-xl text-gray-500 line-through">{formatPrice(product.compareAtPrice)}</span>
+              {product.basePrice > effectivePrice && (
+                <span className="text-xl text-gray-500 line-through">{formatPrice(product.basePrice)}</span>
               )}
             </div>
 

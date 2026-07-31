@@ -210,9 +210,9 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
 
         <div className="flex items-center gap-2 mt-2">
           <span className="text-lg font-bold text-gray-900">{formatPrice(effectivePrice)}</span>
-          {product.compareAtPrice && product.compareAtPrice > effectivePrice && (
+          {product.basePrice > effectivePrice && (
             <span className="text-sm text-gray-500 line-through">
-              {formatPrice(product.compareAtPrice)}
+              {formatPrice(product.basePrice)}
             </span>
           )}
         </div>
