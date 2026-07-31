@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     images: ["/logo.png"],
   },
   verification: {
-    google: "YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE", // Placeholder
+    google: "hJhcaTPMOXI5_KbIDYvh6rf99bjD9SSs-CrFGEcwtAo",
     other: {
       "msvalidate.01": "YOUR_BING_VERIFICATION_CODE", // Placeholder
       "p:domain_verify": "YOUR_PINTEREST_VERIFICATION_CODE", // Placeholder
