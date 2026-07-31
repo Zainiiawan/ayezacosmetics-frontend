@@ -17,8 +17,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/contact',
     '/help',
     '/track-order',
-    '/login',
-    '/register',
   ];
 
   const sitemapEntries: MetadataRoute.Sitemap = staticPages.map((path) => ({
@@ -29,20 +27,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   try {
-    // Fetch products
-    const productsRes = await fetch(`${config.apiUrl}/products?limit=1000`, { next: { revalidate: 3600 } });
-    if (productsRes.ok) {
-      const { data: { products } } = await productsRes.json();
-      if (Array.isArray(products)) {
-        products.forEach((product: any) => {
-          sitemapEntries.push({
-            url: `${base}/products/${product.slug}`,
-            lastModified: new Date(product.updatedAt || now),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-            // Include image in sitemap if possible (Next.js supports images in sitemap in some versions/extensions, but standard doesn't strictly have it in this type unless extended)
+    // Fetch products (Paginated to respect 100 limit)
+    let page = 1;
+    let hasNext = true;
+    while (hasNext) {
+      const productsRes = await fetch(`${config.apiUrl}/products?limit=100&page=${page}`, { next: { revalidate: 3600 } });
+      if (productsRes.ok) {
+        const { data: { products, pagination } } = await productsRes.json();
+        if (Array.isArray(products)) {
+          products.forEach((product: any) => {
+            sitemapEntries.push({
+              url: `${base}/products/${product.slug}`,
+              lastModified: new Date(product.updatedAt || now),
+              changeFrequency: 'weekly',
+              priority: 0.9,
+            });
           });
-        });
+        }
+        hasNext = pagination?.hasNext || false;
+        page++;
+      } else {
+        hasNext = false;
       }
     }
 
