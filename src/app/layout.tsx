@@ -35,15 +35,7 @@ export const metadata: Metadata = {
   keywords: ["cosmetics", "beauty", "skincare", "makeup", "luxury", "Pakistan"],
   authors: [{ name: "AYEZA COSMETICS" }],
   manifest: "/manifest.webmanifest",
-  icons: {
-    icon: [
-      { url: "/favicon.ico?v=2", sizes: "any" },
-      { url: "/icon.jpg?v=2", type: "image/jpeg" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png?v=2", sizes: "192x192", type: "image/jpeg" },
-    ],
-  },
+
   openGraph: {
     title: "AYEZA COSMETICS | Luxury Beauty Products",
     description: "Discover premium luxury cosmetics curated for the modern woman.",

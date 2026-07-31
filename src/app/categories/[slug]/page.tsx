@@ -26,7 +26,7 @@ export async function generateMetadata({
   const category = data?.category;
 
   if (!category) {
-    const fallbackName = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const fallbackName = slug ? slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Category';
     return {
       title: `${fallbackName} | AYEZA COSMETICS`,
       description: `Browse our premium collection of ${fallbackName} at AYEZA COSMETICS.`,
