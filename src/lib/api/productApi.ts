@@ -82,7 +82,7 @@ export interface CreateProductData {
   status: 'Active' | 'Inactive';
   description?: string;
   images?: ProductImage[];
-  discount?: ProductDiscount;
+  discount?: ProductDiscount | null;
 }
 
 export type UpdateProductData = Partial<CreateProductData>;
@@ -104,7 +104,9 @@ const toApiPayload = (data: CreateProductData | UpdateProductData): Record<strin
         ? data.description
         : `${data.description} — Premium AYEZA COSMETICS product.`;
   }
-  if (data.discount !== undefined) payload.discount = data.discount;
+  if (data.discount !== undefined) {
+    payload.discount = data.discount;
+  }
 
   if (data.images && data.images.length > 0) {
     payload.images = data.images.map((img, i) => ({

@@ -195,7 +195,7 @@ export default function AdminProductsPage() {
               type: formData.discountType,
               value: parseFloat(formData.discountValue),
             }
-          : undefined,
+          : null,
       };
 
       if (editingProduct) {
