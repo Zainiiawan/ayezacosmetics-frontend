@@ -3,7 +3,9 @@ import { api } from './axios';
 export interface Review {
   _id: string;
   product: string | { _id?: string; name: string; slug?: string };
-  user: { _id: string; firstName: string; lastName: string; avatar?: string };
+  user?: { _id: string; firstName: string; lastName: string; avatar?: string };
+  guestName?: string;
+  guestEmail?: string;
   rating: number;
   title: string;
   body: string;
@@ -38,6 +40,8 @@ export const reviewApi = {
     rating: number;
     title: string;
     body: string;
+    guestName?: string;
+    guestEmail?: string;
     images?: Array<{ url: string; alt?: string }>;
   }): Promise<Review> => {
     const response = await api.post('/reviews', data);

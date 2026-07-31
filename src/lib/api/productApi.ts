@@ -37,6 +37,8 @@ export interface Product {
   reviewCount: number;
   discount?: ProductDiscount;
   isFeatured: boolean;
+  isComingSoon?: boolean;
+  launchDate?: string;
   stock: number;
   description?: string;
   shortDescription?: string;
@@ -80,6 +82,8 @@ export interface CreateProductData {
   price: number;
   stock: number;
   status: 'Active' | 'Inactive';
+  isComingSoon?: boolean;
+  launchDate?: string;
   description?: string;
   images?: ProductImage[];
   discount?: ProductDiscount | null;
@@ -98,6 +102,8 @@ const toApiPayload = (data: CreateProductData | UpdateProductData): Record<strin
   if (data.price !== undefined) payload.basePrice = data.price;
   if (data.stock !== undefined) payload.stock = data.stock;
   if (data.status !== undefined) payload.isActive = data.status === 'Active';
+  if (data.isComingSoon !== undefined) payload.isComingSoon = data.isComingSoon;
+  if (data.launchDate !== undefined) payload.launchDate = data.launchDate;
   if (data.description !== undefined) {
     payload.description =
       data.description.length >= 10

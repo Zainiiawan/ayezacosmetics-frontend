@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
+import { config } from '@/lib/config';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store';
   const now = new Date();
 
   const staticPages = [
@@ -17,10 +18,49 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/register',
   ];
 
-  return staticPages.map((path) => ({
+  const sitemapEntries: MetadataRoute.Sitemap = staticPages.map((path) => ({
     url: `${base}${path}`,
     lastModified: now,
     changeFrequency: path === '' ? 'daily' : 'weekly',
     priority: path === '' ? 1 : 0.8,
   }));
+
+  try {
+    // Fetch products
+    const productsRes = await fetch(`${config.apiUrl}/products?limit=1000`, { next: { revalidate: 3600 } });
+    if (productsRes.ok) {
+      const { data: { products } } = await productsRes.json();
+      if (Array.isArray(products)) {
+        products.forEach((product: any) => {
+          sitemapEntries.push({
+            url: `${base}/products/${product.slug}`,
+            lastModified: new Date(product.updatedAt || now),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+            // Include image in sitemap if possible (Next.js supports images in sitemap in some versions/extensions, but standard doesn't strictly have it in this type unless extended)
+          });
+        });
+      }
+    }
+
+    // Fetch categories
+    const categoriesRes = await fetch(`${config.apiUrl}/categories`, { next: { revalidate: 3600 } });
+    if (categoriesRes.ok) {
+      const { data } = await categoriesRes.json();
+      if (Array.isArray(data)) {
+        data.forEach((category: any) => {
+          sitemapEntries.push({
+            url: `${base}/categories/${category.slug}`,
+            lastModified: new Date(category.updatedAt || now),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+          });
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching dynamic sitemap entries:', error);
+  }
+
+  return sitemapEntries;
 }

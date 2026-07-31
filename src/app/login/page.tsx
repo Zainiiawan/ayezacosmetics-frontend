@@ -71,13 +71,13 @@ function LoginForm() {
               label="Email Address"
               type="email"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder="Enter your email address"
               icon={<Mail className="w-5 h-5 text-gray-500" />}
               {...register('email', {
-                required: 'Email is required',
+                required: 'Please enter your email address.',
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address',
+                  message: 'Please enter a valid email address.',
                 },
               })}
               error={errors.email?.message}
@@ -88,10 +88,10 @@ function LoginForm() {
                 label="Password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 icon={<Lock className="w-5 h-5 text-gray-500" />}
                 {...register('password', {
-                  required: 'Password is required',
+                  required: 'Please enter your password.',
                 })}
                 error={errors.password?.message}
               />

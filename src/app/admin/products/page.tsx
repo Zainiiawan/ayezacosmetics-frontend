@@ -83,6 +83,8 @@ export default function AdminProductsPage() {
     brand: '',
     discountType: 'percentage' as 'percentage' | 'fixed',
     discountValue: '',
+    isComingSoon: false,
+    launchDate: '',
   });
 
   const filteredProducts = products.filter((product) => {
@@ -109,6 +111,8 @@ export default function AdminProductsPage() {
         brand: getBrandId(product) || defaultBrandId(),
         discountType: product.discount?.type || 'percentage',
         discountValue: product.discount?.value?.toString() || '',
+        isComingSoon: product.isComingSoon || false,
+        launchDate: product.launchDate ? new Date(product.launchDate).toISOString().split('T')[0] : '',
       });
     } else {
       setEditingProduct(null);
@@ -124,6 +128,8 @@ export default function AdminProductsPage() {
         brand: defaultBrandId(),
         discountType: 'percentage',
         discountValue: '',
+        isComingSoon: false,
+        launchDate: '',
       });
     }
     setSaveError('');
@@ -146,6 +152,8 @@ export default function AdminProductsPage() {
       brand: defaultBrandId(),
       discountType: 'percentage',
       discountValue: '',
+      isComingSoon: false,
+      launchDate: '',
     });
   };
 
@@ -196,6 +204,8 @@ export default function AdminProductsPage() {
               value: parseFloat(formData.discountValue),
             }
           : null,
+        isComingSoon: formData.isComingSoon,
+        launchDate: formData.launchDate || undefined,
       };
 
       if (editingProduct) {
@@ -370,7 +380,7 @@ export default function AdminProductsPage() {
                     <td className="px-6 py-4 text-gray-600">{getCategoryName(product)}</td>
                     <td className="px-6 py-4 font-medium text-black">{formatPrice(product.basePrice)}</td>
                     <td className="px-6 py-4 text-gray-600">{product.stock}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 flex flex-col items-start gap-1">
                       <button
                         onClick={() => handleToggleStatus(product._id)}
                         className={`px-2 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
@@ -381,6 +391,11 @@ export default function AdminProductsPage() {
                       >
                         {getProductStatus(product)}
                       </button>
+                      {product.isComingSoon && (
+                        <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                          Coming Soon
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
@@ -541,6 +556,31 @@ export default function AdminProductsPage() {
                       <option value="Inactive">Inactive</option>
                     </select>
                   </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  <div className="flex items-center h-full">
+                    <input
+                      type="checkbox"
+                      id="isComingSoon"
+                      checked={formData.isComingSoon}
+                      onChange={(e) => setFormData({ ...formData, isComingSoon: e.target.checked })}
+                      className="w-4 h-4 text-rose-gold border-gray-300 rounded focus:ring-rose-gold"
+                    />
+                    <label htmlFor="isComingSoon" className="ml-2 block text-sm font-medium text-gray-700">
+                      Mark as Coming Soon
+                    </label>
+                  </div>
+                  {formData.isComingSoon && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Launch Date (Optional)</label>
+                      <input
+                        type="date"
+                        value={formData.launchDate}
+                        onChange={(e) => setFormData({ ...formData, launchDate: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-rose-gold focus:ring-2 focus:ring-rose-gold focus:ring-opacity-20 bg-white text-gray-900"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 

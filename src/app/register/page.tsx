@@ -22,8 +22,7 @@ interface RegisterFormData {
   terms: boolean;
 }
 
-const passwordHint =
-  'Min 8 characters with uppercase, lowercase, number, and special character (!@#$…)';
+
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -85,23 +84,21 @@ export default function RegisterPage() {
           <div className="grid grid-cols-2 gap-4">
             <Input
               label="First Name"
-              placeholder="Sara"
+              placeholder="Enter your first name"
               autoComplete="given-name"
               icon={<User className="w-5 h-5 text-gray-500" />}
               {...register('firstName', {
-                required: 'First name is required',
-                minLength: { value: 2, message: 'At least 2 characters' },
+                required: 'Please enter your first name.',
               })}
               error={errors.firstName?.message}
             />
             <Input
               label="Last Name"
-              placeholder="Khan"
+              placeholder="Enter your last name"
               autoComplete="family-name"
               icon={<User className="w-5 h-5 text-gray-500" />}
               {...register('lastName', {
-                required: 'Last name is required',
-                minLength: { value: 2, message: 'At least 2 characters' },
+                required: 'Please enter your last name.',
               })}
               error={errors.lastName?.message}
             />
@@ -111,13 +108,13 @@ export default function RegisterPage() {
             label="Email Address"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email address"
             icon={<Mail className="w-5 h-5 text-gray-500" />}
             {...register('email', {
-              required: 'Email is required',
+              required: 'Please enter your email address.',
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Invalid email address',
+                message: 'Please enter a valid email address.',
               },
             })}
             error={errors.email?.message}
@@ -143,21 +140,14 @@ export default function RegisterPage() {
               label="Password"
               type={showPassword ? 'text' : 'password'}
               autoComplete="new-password"
-              placeholder="••••••••"
+              placeholder="Enter your password"
               icon={<Lock className="w-5 h-5 text-gray-500" />}
               {...register('password', {
-                required: 'Password is required',
-                minLength: { value: 8, message: 'At least 8 characters' },
-                validate: {
-                  upper: (v) => /[A-Z]/.test(v) || 'Add an uppercase letter',
-                  lower: (v) => /[a-z]/.test(v) || 'Add a lowercase letter',
-                  number: (v) => /[0-9]/.test(v) || 'Add a number',
-                  special: (v) => /[^A-Za-z0-9]/.test(v) || 'Add a special character (!@#$)',
-                },
+                required: 'Please enter your password.',
+                minLength: { value: 8, message: 'Password must contain at least 8 characters.' },
               })}
               error={errors.password?.message}
             />
-            <p className="mt-1 text-xs text-gray-500">{passwordHint}</p>
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -173,11 +163,11 @@ export default function RegisterPage() {
               label="Confirm Password"
               type={showConfirmPassword ? 'text' : 'password'}
               autoComplete="new-password"
-              placeholder="••••••••"
+              placeholder="Confirm your password"
               icon={<Lock className="w-5 h-5 text-gray-500" />}
               {...register('confirmPassword', {
-                required: 'Please confirm your password',
-                validate: (value) => value === password || 'Passwords do not match',
+                required: 'Please confirm your password.',
+                validate: (value) => value === password || 'Passwords do not match.',
               })}
               error={errors.confirmPassword?.message}
             />

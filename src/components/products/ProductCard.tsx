@@ -20,7 +20,7 @@ interface ProductCardProps {
     Product,
     '_id' | 'name' | 'slug' | 'images' | 'basePrice' | 'rating' | 'reviewCount'
   > &
-    Partial<Pick<Product, 'compareAtPrice' | 'isFeatured' | 'discount'>>;
+    Partial<Pick<Product, 'compareAtPrice' | 'isFeatured' | 'discount' | 'isComingSoon' | 'launchDate'>>;
   className?: string;
 }
 
@@ -109,11 +109,15 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
       onHoverEnd={() => setIsHovered(false)}
     >
       <div className="relative bg-white rounded-xl overflow-hidden luxury-border">
-        {discountPercentage > 0 && (
+        {product.isComingSoon ? (
+          <div className="absolute top-3 left-3 bg-orange-500/90 backdrop-blur text-white text-[10px] font-bold px-3 py-1.5 rounded-md z-10 shadow-lg border border-orange-400/50 uppercase tracking-wider">
+            Coming Soon
+          </div>
+        ) : discountPercentage > 0 ? (
           <div className="absolute top-3 left-3 bg-rose-gold text-white text-xs font-bold px-2 py-1 rounded-md z-10">
             -{discountPercentage}%
           </div>
-        )}
+        ) : null}
 
         {product.isFeatured && (
           <div className="absolute top-3 right-3 bg-black text-white text-xs font-bold px-2 py-1 rounded-md z-10">
@@ -165,24 +169,36 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
         </Link>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent pt-12 flex gap-2">
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            title="Add to Cart"
-          >
-            <ShoppingCart className="w-5 h-5" />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              router.push(`/checkout?buyNow=true&productId=${product._id}`);
-            }}
-            className="flex-[2] bg-rose-gold hover:bg-rose-gold-dark text-white shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            Buy Now
-          </button>
+          {product.isComingSoon ? (
+            <button
+              type="button"
+              disabled
+              className="w-full bg-white/50 backdrop-blur-md text-white border border-white/20 shadow-lg py-3 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-not-allowed uppercase tracking-wider text-sm"
+            >
+              Coming Soon
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                title="Add to Cart"
+              >
+                <ShoppingCart className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(`/checkout?buyNow=true&productId=${product._id}`);
+                }}
+                className="flex-[2] bg-rose-gold hover:bg-rose-gold-dark text-white shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                Buy Now
+              </button>
+            </>
+          )}
         </div>
       </div>
 

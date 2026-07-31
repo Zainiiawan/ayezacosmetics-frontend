@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
@@ -16,28 +16,57 @@ const inter = Inter({
   display: "swap",
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://ayezacosmetics.store";
+
+export const viewport: Viewport = {
+  themeColor: "#f9f0f3",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
-  title: "AYEZA COSMETICS - Luxury Beauty Products",
+  metadataBase: new URL(APP_URL),
+  title: {
+    default: "AYEZA COSMETICS | Luxury Beauty Products",
+    template: "%s | AYEZA COSMETICS",
+  },
   description: "Discover premium luxury cosmetics curated for the modern woman. Shop skincare, makeup, fragrances, and more.",
   keywords: ["cosmetics", "beauty", "skincare", "makeup", "luxury", "Pakistan"],
   authors: [{ name: "AYEZA COSMETICS" }],
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/logo.png", type: "image/png" },
+      { url: "/icon.png", type: "image/png" },
     ],
     apple: [
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
     other: [
-      { rel: "icon", url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { rel: "mask-icon", url: "/mask-icon.svg", color: "#c29375" },
     ],
   },
   openGraph: {
-    title: "AYEZA COSMETICS - Luxury Beauty Products",
+    title: "AYEZA COSMETICS | Luxury Beauty Products",
     description: "Discover premium luxury cosmetics curated for the modern woman.",
     type: "website",
+    url: APP_URL,
+    siteName: "AYEZA COSMETICS",
     images: [{ url: "/logo.png", width: 512, height: 512, alt: "AYEZA COSMETICS" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AYEZA COSMETICS | Luxury Beauty Products",
+    description: "Discover premium luxury cosmetics curated for the modern woman.",
+    images: ["/logo.png"],
+  },
+  verification: {
+    google: "YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE", // Placeholder
+    other: {
+      "msvalidate.01": "YOUR_BING_VERIFICATION_CODE", // Placeholder
+      "p:domain_verify": "YOUR_PINTEREST_VERIFICATION_CODE", // Placeholder
+    },
   },
 };
 
@@ -46,8 +75,53 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "AYEZA COSMETICS",
+    url: APP_URL,
+    logo: `${APP_URL}/logo.png`,
+    sameAs: [
+      "https://www.facebook.com/ayezacosmetics",
+      "https://www.instagram.com/ayezacosmetics",
+      "https://twitter.com/ayezacosmetics",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+92-300-0000000",
+      contactType: "customer service",
+      areaServed: "PK",
+      availableLanguage: ["English", "Urdu"],
+    },
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AYEZA COSMETICS",
+    url: APP_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${APP_URL}/shop?search={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <Providers>
           <ConditionalSiteChrome>{children}</ConditionalSiteChrome>

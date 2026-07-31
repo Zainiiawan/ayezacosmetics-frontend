@@ -14,8 +14,18 @@ export interface RegisterData {
   phone?: string;
 }
 
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: 'customer' | 'admin';
+  isEmailVerified: boolean;
+  [key: string]: unknown;
+}
+
 export interface AuthResponse {
-  user: any;
+  user: User;
   tokens?: {
     accessToken: string;
     refreshToken: string;
@@ -49,7 +59,7 @@ export const authApi = {
     return response.data.data;
   },
 
-  getCurrentUser: async (): Promise<any> => {
+  getCurrentUser: async (): Promise<User> => {
     const response = await api.get('/auth/me');
     return response.data.data;
   },
@@ -72,12 +82,12 @@ export const authApi = {
     return response.data;
   },
 
-  verifyEmail: async (token: string): Promise<any> => {
+  verifyEmail: async (token: string): Promise<User> => {
     const response = await api.get(`/auth/verify-email?token=${token}`);
     return response.data.data;
   },
 
-  updateProfile: async (data: Partial<RegisterData>): Promise<any> => {
+  updateProfile: async (data: Partial<RegisterData>): Promise<User> => {
     const response = await api.put('/auth/profile', data);
     return response.data.data;
   },

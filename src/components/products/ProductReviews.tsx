@@ -20,6 +20,8 @@ interface ReviewFormData {
   rating: number;
   title: string;
   body: string;
+  guestName?: string;
+  guestEmail?: string;
 }
 
 export default function ProductReviews({ productId }: ProductReviewsProps) {
@@ -58,7 +60,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       setShowForm(false);
       alert('Review submitted for moderation. Thank you!');
     },
-    onError: (err: any) => {
+    onError: (err: Error & { response?: { data?: { message?: string } } }) => {
       alert(err?.response?.data?.message ?? 'Failed to submit review');
     },
   });
@@ -132,71 +134,91 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         </div>
       )}
 
-      {isAuthenticated ? (
-        <div className="mb-8">
-          {!showForm ? (
-            <Button onClick={() => setShowForm(true)} variant="outline">
-              Write a Review
-            </Button>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-gray-50 rounded-xl p-6">
-              <h3 className="font-medium text-black">Share your experience</h3>
+      <div className="mb-8">
+        {!showForm ? (
+          <Button onClick={() => setShowForm(true)} variant="outline">
+            Write a Review
+          </Button>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-gray-50 rounded-xl p-6">
+            <h3 className="font-medium text-black">Share your experience</h3>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setValue('rating', star)}
-                      className="p-1"
-                    >
-                      <Star
-                        className={cn(
-                          'w-6 h-6',
-                          star <= selectedRating ? 'fill-rose-gold text-rose-gold' : 'text-gray-300'
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
-                <input type="hidden" {...register('rating', { required: true, min: 1, max: 5 })} />
-              </div>
-
-              <Input
-                label="Title"
-                {...register('title', { required: 'Title is required', minLength: 3 })}
-                error={errors.title?.message}
-              />
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Review</label>
-                <textarea
-                  {...register('body', { required: 'Review body is required', minLength: 10 })}
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-500 focus:border-rose-gold focus:ring-2 focus:ring-rose-gold/30 focus:outline-none"
-                  placeholder="Tell us about your experience with this product..."
+            {!isAuthenticated && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Your Name"
+                  {...register('guestName', { required: 'Please enter your name' })}
+                  error={errors.guestName?.message}
                 />
-                {errors.body && <p className="mt-1 text-sm font-medium text-red-600">{errors.body.message}</p>}
+                <Input
+                  label="Your Email Address"
+                  type="email"
+                  {...register('guestEmail', { 
+                    required: 'Please enter your email address',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Please enter a valid email address',
+                    },
+                  })}
+                  error={errors.guestEmail?.message}
+                />
               </div>
+            )}
 
-              <div className="flex gap-3">
-                <Button type="submit" loading={createReview.isPending}>
-                  Submit Review
-                </Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-                  Cancel
-                </Button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setValue('rating', star)}
+                    className="p-1"
+                  >
+                    <Star
+                      className={cn(
+                        'w-6 h-6',
+                        star <= selectedRating ? 'fill-rose-gold text-rose-gold' : 'text-gray-300'
+                      )}
+                    />
+                  </button>
+                ))}
               </div>
-            </form>
-          )}
-        </div>
-      ) : (
-        <p className="text-gray-500 mb-8">
-          <a href="/login" className="text-rose-gold hover:underline">Sign in</a> to write a review.
-        </p>
-      )}
+              <input type="hidden" {...register('rating', { required: true, min: 1, max: 5 })} />
+            </div>
+
+            <Input
+              label="Title"
+              {...register('title', { required: 'Title is required', minLength: 3 })}
+              error={errors.title?.message}
+            />
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Review</label>
+              <textarea
+                {...register('body', { 
+                  required: 'Review is required', 
+                  minLength: { value: 10, message: 'Review must be at least 10 characters.' },
+                  maxLength: { value: 500, message: 'Review cannot exceed 500 characters.' }
+                })}
+                rows={4}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-500 focus:border-rose-gold focus:ring-2 focus:ring-rose-gold/30 focus:outline-none"
+                placeholder="Share your experience with this product..."
+              />
+              {errors.body && <p className="mt-1 text-sm font-medium text-red-600">{errors.body.message}</p>}
+            </div>
+
+            <div className="flex gap-3">
+              <Button type="submit" loading={createReview.isPending}>
+                Submit Review
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
 
       {reviewsLoading ? (
         <div className="space-y-4">
@@ -214,7 +236,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-medium text-black">
-                      {review.user?.firstName} {review.user?.lastName?.[0]}.
+                      {review.user ? `${review.user.firstName} ${review.user.lastName?.[0] ?? ''}.` : review.guestName}
                     </span>
                     {review.isVerifiedPurchase && (
                       <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
