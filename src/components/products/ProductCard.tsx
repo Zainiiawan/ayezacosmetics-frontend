@@ -131,7 +131,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             type="button"
             onClick={handleWishlistToggle}
             className={cn(
-              'p-3 flex items-center justify-center rounded-full shadow-lg border transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold',
+              'w-12 h-12 flex items-center justify-center rounded-full shadow-lg border transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold',
               isWishlisted
                 ? 'bg-rose-gold-dark border-rose-gold-dark text-white hover:bg-black'
                 : 'bg-white border-gray-200 text-gray-800 hover:border-rose-gold-dark hover:text-rose-gold-dark'
@@ -141,17 +141,17 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           >
             <Heart
               className={cn(
-                'w-4 h-4 transition-transform duration-200',
+                'w-5 h-5 transition-transform duration-200',
                 isWishlisted ? 'fill-current scale-110' : 'fill-none'
               )}
             />
           </button>
           <Link
             href={`/products/${product.slug}`}
-            className="p-2.5 bg-white border border-gray-200 text-gray-800 rounded-full shadow-lg hover:border-rose-gold hover:text-rose-gold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold"
+            className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-800 rounded-full shadow-lg hover:border-rose-gold hover:text-rose-gold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold"
             aria-label="View product details"
           >
-            <Eye className="w-4 h-4" />
+            <Eye className="w-5 h-5" />
           </Link>
         </div>
 
