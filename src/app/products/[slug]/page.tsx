@@ -24,9 +24,10 @@ export async function generateMetadata({
   const product = await getProductBySlug(params.slug);
 
   if (!product) {
+    const fallbackName = params.slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     return {
-      title: 'Product Not Found | AYEZA COSMETICS',
-      description: 'The requested product could not be found.',
+      title: `${fallbackName} | AYEZA COSMETICS`,
+      description: `Shop ${fallbackName} at AYEZA COSMETICS. Premium luxury cosmetics curated for the modern woman.`,
     };
   }
 

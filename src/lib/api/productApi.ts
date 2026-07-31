@@ -45,6 +45,10 @@ export interface Product {
   variants?: ProductVariant[];
   category?: string | { _id: string; name: string; slug: string };
   brand?: string | { _id: string; name: string; slug: string };
+  video?: {
+    url: string;
+    publicId?: string;
+  };
   isActive?: boolean;
   soldCount?: number;
   tags?: string[];

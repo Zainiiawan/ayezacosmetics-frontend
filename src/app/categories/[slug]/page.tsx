@@ -25,9 +25,10 @@ export async function generateMetadata({
   const category = data?.category;
 
   if (!category) {
+    const fallbackName = params.slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     return {
-      title: 'Category Not Found | AYEZA COSMETICS',
-      description: 'The requested category could not be found.',
+      title: `${fallbackName} | AYEZA COSMETICS`,
+      description: `Browse our premium collection of ${fallbackName} at AYEZA COSMETICS.`,
     };
   }
 

@@ -139,7 +139,6 @@ function CheckoutContent() {
     const freeThreshold = storeSettings?.freeShippingThreshold ?? 5000;
     if (effectiveSubtotal > freeThreshold) return 0;
 
-    // Check custom city rate
     if (selectedCity && shippingRates) {
       const cityRate = shippingRates.find(
         r => r.city.toLowerCase().trim() === selectedCity.toLowerCase().trim() && r.isActive
@@ -147,13 +146,15 @@ function CheckoutContent() {
       if (cityRate) return cityRate.cost;
     }
 
+    if (!selectedCity) return null;
+
     // Default fallback
     return storeSettings?.defaultShippingCost ?? 200;
   }, [effectiveSubtotal, selectedCity, shippingRates, storeSettings]);
 
   const couponDiscountAmount = isBuyNow ? 0 : (cartDiscount || 0);
   const totalDiscount = productDiscount + couponDiscountAmount;
-  const total = Math.max(0, effectiveSubtotal + calculatedShipping - couponDiscountAmount);
+  const total = Math.max(0, effectiveSubtotal + (calculatedShipping ?? 0) - couponDiscountAmount);
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (checkoutItems.length === 0) {
@@ -387,7 +388,7 @@ function CheckoutContent() {
                 <div className="flex justify-between text-gray-600"><span>Subtotal</span><span className="font-medium text-gray-900">{formatPrice(originalSubtotal)}</span></div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
-                  <span className="font-medium text-gray-900">{calculatedShipping === 0 ? <span className="text-green-600">Free</span> : formatPrice(calculatedShipping)}</span>
+                  <span className="font-medium text-gray-900">{calculatedShipping === null ? '—' : calculatedShipping === 0 ? <span className="text-green-600">Free</span> : formatPrice(calculatedShipping)}</span>
                 </div>
                 {totalDiscount > 0 && (
                   <div className="flex justify-between text-rose-gold font-medium"><span>Discount</span><span>-{formatPrice(totalDiscount)}</span></div>

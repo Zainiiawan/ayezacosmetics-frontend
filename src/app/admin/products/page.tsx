@@ -40,6 +40,8 @@ export default function AdminProductsPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<ProductImage[]>([]);
+  const [productVideo, setProductVideo] = useState<{ url: string; publicId?: string } | null>(null);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   useEffect(() => {
     void Promise.all([fetchProducts(), fetchCatalog()]);
@@ -100,6 +102,7 @@ export default function AdminProductsPage() {
     if (product) {
       setEditingProduct(product);
       setProductImages(product.images ?? []);
+      setProductVideo(product.video || null);
       setFormData({
         name: product.name,
         sku: product.sku ?? '',
@@ -117,6 +120,7 @@ export default function AdminProductsPage() {
     } else {
       setEditingProduct(null);
       setProductImages([]);
+      setProductVideo(null);
       setFormData({
         name: '',
         sku: '',
@@ -140,6 +144,7 @@ export default function AdminProductsPage() {
     setIsModalOpen(false);
     setEditingProduct(null);
     setProductImages([]);
+    setProductVideo(null);
     setSaveError('');
     setFormData({
       name: '',
@@ -179,6 +184,25 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleVideoUpload = async (files: FileList | null) => {
+    if (!files?.length) return;
+    try {
+      setUploadingVideo(true);
+      const uploaded = await mediaApi.upload(Array.from(files));
+      if (uploaded.length > 0) {
+        setProductVideo({
+          url: uploaded[0].url,
+          publicId: uploaded[0].publicId,
+        });
+      }
+    } catch (error) {
+      console.error('Video upload failed:', error);
+      setSaveError('Failed to upload video. Please try again.');
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
   const handleSaveProduct = async () => {
     if (!formData.name || !formData.sku || !formData.category || !formData.price || !formData.stock) {
       setSaveError('Please fill in all required fields.');
@@ -198,6 +222,7 @@ export default function AdminProductsPage() {
         description: formData.description,
         brand: formData.brand || undefined,
         images: productImages.length > 0 ? productImages : undefined,
+        video: productVideo || undefined,
         discount: formData.discountValue
           ? {
               type: formData.discountType,
@@ -632,6 +657,49 @@ export default function AdminProductsPage() {
                     <p className="col-span-4 text-sm text-gray-500 text-center py-4">No images uploaded yet</p>
                   )}
                 </div>
+              </div>
+
+              {/* Video */}
+              <div className="space-y-4">
+                <h3 className="font-medium text-black flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-rose-gold" />
+                  Product Video (Optional)
+                </h3>
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-rose-gold transition-colors">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    id="video-upload"
+                    onChange={(e) => void handleVideoUpload(e.target.files)}
+                    disabled={uploadingVideo}
+                  />
+                  <label
+                    htmlFor="video-upload"
+                    className={`cursor-pointer flex flex-col items-center justify-center ${uploadingVideo ? 'opacity-50' : ''}`}
+                  >
+                    <div className="w-16 h-16 bg-rose-gold/10 rounded-full flex items-center justify-center mb-4">
+                      <ImageIcon className="w-8 h-8 text-rose-gold" />
+                    </div>
+                    <p className="text-gray-700 font-medium mb-2">
+                      {uploadingVideo ? 'Uploading Video…' : 'Click to upload video'}
+                    </p>
+                    <p className="text-sm text-gray-500">MP4, WebM up to 50MB</p>
+                  </label>
+                </div>
+                {productVideo && (
+                  <div className="relative aspect-video rounded-lg overflow-hidden border border-gray-200">
+                    <video src={productVideo.url} className="w-full h-full object-cover" controls muted />
+                    <button
+                      type="button"
+                      onClick={() => setProductVideo(null)}
+                      className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-2 hover:bg-black/80"
+                      aria-label="Remove video"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Discount */}

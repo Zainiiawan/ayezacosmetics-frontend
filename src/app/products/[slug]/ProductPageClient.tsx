@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Star, Share2, Truck, Shield, RefreshCw, Check, Zap } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Share2, Truck, Shield, RefreshCw, Check, Zap, Play } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
 import { getDiscountPercentage, getEffectivePrice } from '@/lib/productUtils';
 import Button from '@/components/ui/Button';
@@ -124,6 +124,26 @@ export default function ProductPageClient() {
     }
   };
 
+  const handleShare = async () => {
+    if (typeof window === 'undefined') return;
+    const url = window.location.href;
+    const shareData = {
+      title: `${product?.name} | AYEZA COSMETICS`,
+      text: product?.shortDescription || 'Check out this product from AYEZA COSMETICS!',
+      url,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -138,14 +158,24 @@ export default function ProductPageClient() {
         <div className="grid lg:grid-cols-2 gap-12">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
             <div className="relative aspect-square bg-white rounded-2xl overflow-hidden luxury-border">
-              <img
-                src={images[selectedImage]?.url || PLACEHOLDER}
-                alt={images[selectedImage]?.alt || product.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = PLACEHOLDER;
-                }}
-              />
+              {product.video && selectedImage === -1 ? (
+                <video
+                  src={product.video.url}
+                  className="w-full h-full object-cover"
+                  controls
+                  autoPlay
+                  muted
+                />
+              ) : (
+                <img
+                  src={images[selectedImage]?.url || PLACEHOLDER}
+                  alt={images[selectedImage]?.alt || product.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = PLACEHOLDER;
+                  }}
+                />
+              )}
               {product.isComingSoon ? (
                 <div className="absolute top-4 left-4 bg-orange-500/90 backdrop-blur text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg border border-orange-400/50 uppercase tracking-wider">
                   Coming Soon
@@ -156,14 +186,25 @@ export default function ProductPageClient() {
                 </div>
               ) : null}
             </div>
-            {images.length > 1 && (
-              <div className="flex gap-4">
+            {(images.length > 1 || (images.length === 1 && product.video)) && (
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {product.video && (
+                  <button
+                    onClick={() => setSelectedImage(-1)}
+                    className={cn(
+                      'relative min-w-20 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all bg-gray-100 flex items-center justify-center',
+                      selectedImage === -1 ? 'border-rose-gold' : 'border-gray-200'
+                    )}
+                  >
+                    <Play className="w-8 h-8 text-rose-gold fill-rose-gold opacity-80" />
+                  </button>
+                )}
                 {images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     className={cn(
-                      'relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all',
+                      'relative min-w-20 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all',
                       selectedImage === index ? 'border-rose-gold' : 'border-gray-200'
                     )}
                   >
@@ -301,7 +342,7 @@ export default function ProductPageClient() {
                 <Heart className={cn('w-5 h-5 mr-2 inline-block', isWishlisted && 'fill-current')} />
                 Wishlist
               </Button>
-              <Button variant="outline" className="flex-1 py-4 border-2 border-gray-300 bg-white text-gray-800 hover:border-rose-gold hover:text-rose-gold">
+              <Button onClick={handleShare} variant="outline" className="flex-1 py-4 border-2 border-gray-300 bg-white text-gray-800 hover:border-rose-gold hover:text-rose-gold">
                 <Share2 className="w-5 h-5 mr-2 inline-block" />
                 Share
               </Button>
