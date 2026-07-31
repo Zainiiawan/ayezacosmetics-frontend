@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Plus, Edit, Trash2, X, Tag, Layers } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { categoryApi, brandApi, Category, Brand } from '@/lib/api/categoryApi';
+import { mediaApi } from '@/lib/api/mediaApi';
 
 type Tab = 'categories' | 'brands';
 
@@ -17,6 +18,8 @@ export default function AdminCatalogPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,6 +44,7 @@ export default function AdminCatalogPage() {
     setEditingId(null);
     setName('');
     setDescription('');
+    setImageUrl('');
     setError('');
     setModalOpen(true);
   };
@@ -49,6 +53,11 @@ export default function AdminCatalogPage() {
     setEditingId(item._id);
     setName(item.name);
     setDescription(item.description || '');
+    if ('image' in item && item.image) {
+      setImageUrl(item.image.url || '');
+    } else {
+      setImageUrl('');
+    }
     setError('');
     setModalOpen(true);
   };
@@ -61,7 +70,10 @@ export default function AdminCatalogPage() {
     try {
       setSaving(true);
       setError('');
-      const payload = { name: name.trim(), description: description.trim() || undefined };
+      const payload: any = { name: name.trim(), description: description.trim() || undefined };
+      if (tab === 'categories' && imageUrl) {
+        payload.image = { url: imageUrl };
+      }
       if (tab === 'categories') {
         if (editingId) await categoryApi.update(editingId, payload);
         else await categoryApi.create(payload);
@@ -78,6 +90,23 @@ export default function AdminCatalogPage() {
       setError(msg);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploading(true);
+      setError('');
+      const uploaded = await mediaApi.upload([file]);
+      if (uploaded.length > 0) {
+        setImageUrl(uploaded[0].url);
+      }
+    } catch (err) {
+      setError('Image upload failed. Please try again.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -164,7 +193,10 @@ export default function AdminCatalogPage() {
                   <tr key={item._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 font-medium text-black">{item.name}</td>
                     <td className="px-6 py-4 text-gray-500 text-sm">{item.slug}</td>
-                    <td className="px-6 py-4 text-gray-600 text-sm max-w-xs truncate">
+                    <td className="px-6 py-4 text-gray-600 text-sm max-w-xs truncate flex items-center gap-2">
+                      {tab === 'categories' && 'image' in item && item.image?.url && (
+                        <img src={item.image.url} alt={item.name} className="w-8 h-8 rounded-full object-cover" />
+                      )}
                       {item.description || '—'}
                     </td>
                     {tab === 'categories' && (
@@ -228,6 +260,26 @@ export default function AdminCatalogPage() {
                   placeholder="Short description"
                 />
               </div>
+              {tab === 'categories' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Image (optional)</label>
+                  <div className="flex items-center gap-4">
+                    {imageUrl && (
+                      <img src={imageUrl} alt="Preview" className="w-16 h-16 rounded-lg object-cover" />
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                        className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-rose-gold/10 file:text-rose-gold hover:file:bg-rose-gold/20"
+                      />
+                      {uploading && <p className="text-xs text-rose-gold mt-1">Uploading...</p>}
+                    </div>
+                  </div>
+                </div>
+              )}
               {error && <p className="text-sm text-red-600">{error}</p>}
             </div>
             <div className="flex justify-end gap-3 mt-6">

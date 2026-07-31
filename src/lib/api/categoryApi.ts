@@ -41,14 +41,14 @@ export const categoryApi = {
     return response.data.data;
   },
 
-  create: async (data: { name: string; description?: string; isActive?: boolean }): Promise<Category> => {
+  create: async (data: { name: string; description?: string; isActive?: boolean; image?: { url: string; alt?: string } }): Promise<Category> => {
     const response = await api.post('/categories', data);
     return response.data.data;
   },
 
   update: async (
     id: string,
-    data: { name?: string; description?: string; isActive?: boolean }
+    data: { name?: string; description?: string; isActive?: boolean; image?: { url: string; alt?: string } }
   ): Promise<Category> => {
     const response = await api.put(`/categories/${id}`, data);
     return response.data.data;

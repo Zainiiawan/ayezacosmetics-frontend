@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 
 const playfair = Playfair_Display({
   variable: "--font-serif",
@@ -111,7 +112,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col overflow-x-hidden">
+        <ScrollToTop />
         <Providers>
           <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
         </Providers>

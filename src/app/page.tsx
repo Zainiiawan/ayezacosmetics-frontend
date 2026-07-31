@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Sparkles, Truck, Shield, Star } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import ProductCard from '@/components/products/ProductCard';
-import { productApi } from '@/lib/api/productApi';
 import { categoryApi } from '@/lib/api/categoryApi';
 
 const whyChooseUs = [
@@ -16,24 +14,18 @@ const whyChooseUs = [
 ];
 
 export default function Home() {
-  const { data: featuredData, isLoading: featuredLoading } = useQuery({
-    queryKey: ['featured-products'],
-    queryFn: () => productApi.getAll({ isFeatured: true, limit: 4 }),
-  });
-
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: categoryApi.getAll,
   });
 
-  const featuredProducts = featuredData?.products ?? [];
-  const featuredCategories = categories.slice(0, 3);
+  const featuredCategories = categories;
 
   return (
     <div className="flex flex-col">
-      <section className="relative bg-gradient-to-br from-gray-50 to-white py-16 md:py-24">
+      <section className="relative bg-gradient-to-br from-gray-50 to-white pt-20 md:pt-24 pb-12 md:snap-start md:min-h-[calc(100vh-73px)] flex flex-col justify-start">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center mb-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -43,10 +35,10 @@ export default function Home() {
                 <Sparkles className="w-4 h-4" />
                 New Collection Available
               </span>
-              <h1 className="text-5xl md:text-7xl font-serif font-bold text-black mb-6 leading-tight">
+              <h1 className="text-5xl md:text-7xl font-serif font-bold text-black mb-4 leading-tight">
                 Discover Your <span className="text-rose-gold">True Beauty</span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
                 Luxury cosmetics curated for the modern woman. Experience the difference with premium skincare, makeup, and fragrances.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -64,16 +56,12 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
-        </div>
-      </section>
 
-      <section className="py-14 bg-white">
-        <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-10"
+            className="text-center mb-10 mt-12"
           >
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-black mb-3">
               Shop by Category
@@ -83,7 +71,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {featuredCategories.map((category, index) => (
               <motion.div
                 key={category._id}
@@ -124,56 +112,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-14 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10"
-          >
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-black mb-3">
-              Featured Products
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Discover our most loved products, trusted by thousands of customers
-            </p>
-          </motion.div>
 
-          {featuredLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl aspect-square animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product, index) => (
-                <motion.div
-                  key={product._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
-            </div>
-          )}
 
-          <div className="text-center mt-10">
-            <Link href="/shop">
-              <Button variant="outline" size="lg">
-                View All Products
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-14 bg-white">
+      <section className="py-14 bg-white md:snap-start md:min-h-[calc(100vh-73px)] flex flex-col justify-center">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -207,39 +148,6 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="py-14 bg-black">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">
-              Get <span className="text-rose-gold">20% Off</span> Your First Order
-            </h2>
-            <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-              Subscribe to our newsletter and receive an exclusive discount on your first purchase.
-            </p>
-            <form
-              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-rose-gold"
-              />
-              <button
-                type="submit"
-                className="bg-rose-gold text-white px-6 py-3 rounded-lg font-medium hover:bg-rose-gold-dark transition-colors whitespace-nowrap"
-              >
-                Get Discount
-              </button>
-            </form>
-          </motion.div>
         </div>
       </section>
     </div>

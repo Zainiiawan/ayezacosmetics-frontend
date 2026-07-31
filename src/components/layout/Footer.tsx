@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Share2, Mail, Phone, MapPin } from 'lucide-react';
 
-const Footer = () => {
+const Footer = ({ className }: { className?: string }) => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
@@ -40,14 +40,14 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-black text-white">
+    <footer className={`bg-black text-white ${className || ''}`}>
       {/* Newsletter */}
       <div className="bg-rose-gold py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
             <h3 className="text-2xl font-serif font-bold mb-2">Subscribe to Our Newsletter</h3>
             <p className="text-white/90 mb-6">Get exclusive offers, beauty tips, and new arrivals.</p>
-            <form className="flex gap-4">
+            <form className="flex flex-col sm:flex-row gap-4">
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -65,7 +65,7 @@ const Footer = () => {
       </div>
 
       {/* Main Footer */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="w-full px-6 md:px-12 lg:px-20 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-1">
@@ -163,7 +163,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
-        <div className="container mx-auto px-4 py-6">
+        <div className="w-full px-6 md:px-12 lg:px-20 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
               © {currentYear} AYEZA COSMETICS. All rights reserved.
