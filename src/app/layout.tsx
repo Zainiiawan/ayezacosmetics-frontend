@@ -41,10 +41,7 @@ export const metadata: Metadata = {
       { url: "/icon.png", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-    other: [
-      { rel: "mask-icon", url: "/mask-icon.svg", color: "#c29375" },
+      { url: "/apple-touch-icon.png", sizes: "192x192", type: "image/png" },
     ],
   },
   openGraph: {
