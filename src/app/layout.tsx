@@ -37,11 +37,11 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.jpg", type: "image/jpeg" },
+      { url: "/favicon.ico?v=2", sizes: "any" },
+      { url: "/icon.jpg?v=2", type: "image/jpeg" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "192x192", type: "image/jpeg" },
+      { url: "/apple-touch-icon.png?v=2", sizes: "192x192", type: "image/jpeg" },
     ],
   },
   openGraph: {
