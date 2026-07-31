@@ -80,26 +80,29 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Link href={`/categories/${category.slug}`} className="block group">
-                  <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 hover:shadow-luxury transition-all duration-300 overflow-hidden">
-                    <div className="absolute inset-0 bg-rose-gold/0 group-hover:bg-rose-gold/5 transition-colors" />
-                    <div className="relative">
+                <Link href={`/categories/${category.slug}`} className="block group h-full">
+                  <div className="relative bg-white rounded-2xl hover:shadow-luxury transition-all duration-300 overflow-hidden border border-gray-100 h-full flex flex-col">
+                    <div className="relative h-64 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                       {category.image?.url ? (
                         <img
                           src={category.image.url}
                           alt={category.name}
-                          className="w-16 h-16 rounded-full object-cover mb-4"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="text-4xl mb-4">✨</div>
+                        <div className="text-6xl">✨</div>
                       )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                    </div>
+                    
+                    <div className="p-6 flex flex-col flex-grow">
                       <h3 className="text-2xl font-serif font-bold text-black mb-2 group-hover:text-rose-gold transition-colors">
                         {category.name}
                       </h3>
-                      <p className="text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-gray-600 mb-4 line-clamp-2 flex-grow">
                         {category.description ?? 'Explore our collection'}
                       </p>
-                      <span className="inline-flex items-center gap-1 text-rose-gold font-medium group-hover:gap-2 transition-all">
+                      <span className="inline-flex items-center gap-1 text-rose-gold font-medium group-hover:gap-2 transition-all mt-auto">
                         Shop Now
                         <ArrowRight className="w-4 h-4" />
                       </span>
