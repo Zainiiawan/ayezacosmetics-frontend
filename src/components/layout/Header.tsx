@@ -45,6 +45,7 @@ const Header = () => {
     { name: 'Shop', href: '/shop' },
     { name: 'Categories', href: '/categories' },
     { name: 'Offers', href: '/offers' },
+    { name: 'Blog', href: '/blog' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
     { name: 'Track Order', href: '/track-order' },

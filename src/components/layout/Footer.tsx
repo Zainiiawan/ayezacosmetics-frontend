@@ -46,6 +46,7 @@ const Footer = ({ className }: { className?: string }) => {
     ],
     information: [
       { name: 'About Us', href: '/about' },
+      { name: 'Blog', href: '/blog' },
       { name: 'Contact', href: '/contact' },
       { name: 'Careers', href: '/careers' },
       { name: 'Press', href: '/press' },
