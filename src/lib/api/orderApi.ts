@@ -39,6 +39,10 @@ export interface Order {
   _id: string;
   orderNumber: string;
   user: string | { _id: string; firstName: string; lastName: string; email: string; phone?: string };
+  customerType?: 'registered' | 'guest';
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
   items: OrderItem[];
   shippingAddress: ShippingAddress;
   billingAddress?: ShippingAddress;

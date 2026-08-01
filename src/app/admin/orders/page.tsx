@@ -153,8 +153,26 @@ export default function AdminOrdersPage() {
               animate={{ opacity: 1, x: 0 }}
               className="bg-white rounded-xl shadow-sm p-6"
             >
-              <h3 className="font-serif font-bold text-lg mb-4">Update Order</h3>
-              <p className="text-sm text-gray-600 mb-4">{selectedOrder.orderNumber}</p>
+              <h3 className="font-serif font-bold text-lg mb-4">Order Details</h3>
+              <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm">
+                <div className="flex justify-between items-start mb-2">
+                  <span className="font-semibold text-gray-900">{selectedOrder.orderNumber}</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    selectedOrder.customerType === 'guest' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'
+                  }`}>
+                    {selectedOrder.customerType === 'guest' ? 'Guest' : 'Registered'}
+                  </span>
+                </div>
+                <div className="space-y-1 text-gray-600">
+                  <p><span className="font-medium text-gray-700">Name:</span> {selectedOrder.customerName || `${selectedOrder.shippingAddress.firstName} ${selectedOrder.shippingAddress.lastName}`}</p>
+                  <p><span className="font-medium text-gray-700">Email:</span> {selectedOrder.customerEmail || (typeof selectedOrder.user === 'object' && selectedOrder.user?.email) || 'N/A'}</p>
+                  <p><span className="font-medium text-gray-700">Phone:</span> {selectedOrder.customerPhone || selectedOrder.shippingAddress.phone || 'N/A'}</p>
+                  <p><span className="font-medium text-gray-700">City:</span> {selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.country}</p>
+                  <p><span className="font-medium text-gray-700">Address:</span> {selectedOrder.shippingAddress.street}</p>
+                </div>
+              </div>
+
+              <h3 className="font-serif font-bold text-lg mb-4">Update Status</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Status</label>
