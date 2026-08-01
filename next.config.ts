@@ -8,10 +8,11 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
-    unoptimized: true,
+    formats: ['image/avif', 'image/webp'],
   },
   experimental: {
     optimizeCss: true,
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
   async headers() {
     return [

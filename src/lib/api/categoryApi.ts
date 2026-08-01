@@ -5,6 +5,7 @@ export interface Category {
   name: string;
   slug: string;
   description?: string;
+  seoContent?: string;
   image?: { url: string; publicId: string; alt?: string };
   productCount?: number;
   isActive?: boolean;

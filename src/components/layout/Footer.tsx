@@ -121,10 +121,10 @@ const Footer = ({ className }: { className?: string }) => {
                 Luxury beauty products curated for the modern woman. Experience the difference with premium cosmetics.
               </p>
               <div className="flex gap-4 mt-1">
-                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><InstagramIcon className="w-5 h-5" /></a>
-                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><FacebookIcon className="w-5 h-5" /></a>
-                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><TikTokIcon className="w-5 h-5" /></a>
-                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><WhatsAppIcon className="w-5 h-5" /></a>
+                <a href="#" aria-label="Instagram" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><InstagramIcon className="w-5 h-5" /></a>
+                <a href="#" aria-label="Facebook" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><FacebookIcon className="w-5 h-5" /></a>
+                <a href="#" aria-label="TikTok" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><TikTokIcon className="w-5 h-5" /></a>
+                <a href="#" aria-label="WhatsApp" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><WhatsAppIcon className="w-5 h-5" /></a>
               </div>
             </div>
 

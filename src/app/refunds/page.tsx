@@ -5,11 +5,32 @@ import { RefreshCcw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 export const metadata: Metadata = {
   title: 'Refund & Returns | AYEZA COSMETICS',
   description: 'Our hassle-free 14-day refund and return policy.',
+  alternates: {
+    canonical: '/refunds',
+  },
+  openGraph: {
+    title: 'Refund & Returns | AYEZA COSMETICS',
+    description: 'Our hassle-free 14-day refund and return policy.',
+    url: '/refunds',
+    type: 'website',
+  },
 };
 
 export default function RefundsPage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Refund & Returns - AYEZA COSMETICS',
+    description: 'Our hassle-free 14-day refund and return policy.',
+    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/refunds`,
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-black mb-4">Refund & Returns</h1>

@@ -3,11 +3,33 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | AYEZA COSMETICS',
+  description: 'Read the Terms of Service for AYEZA COSMETICS. Understand our policies on orders, payments, accounts, and liability.',
+  alternates: {
+    canonical: '/terms',
+  },
+  openGraph: {
+    title: 'Terms of Service | AYEZA COSMETICS',
+    description: 'Read the Terms of Service for AYEZA COSMETICS.',
+    url: '/terms',
+    type: 'website',
+  },
 };
 
 export default function TermsPage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Terms of Service - AYEZA COSMETICS',
+    description: 'Read the Terms of Service for AYEZA COSMETICS.',
+    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/terms`,
+  };
+
   return (
     <div className="container mx-auto px-4 py-16 max-w-3xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <h1 className="text-3xl font-serif font-bold mb-8">Terms of Service</h1>
       <div className="prose prose-gray space-y-4 text-gray-600">
         <p>By using AYEZA COSMETICS website and services, you agree to these terms.</p>

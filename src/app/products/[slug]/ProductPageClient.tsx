@@ -365,6 +365,13 @@ export default function ProductPageClient() {
           </motion.div>
         </div>
 
+        {product.seoContent && (
+          <article 
+            className="mt-16 mb-12 max-w-4xl mx-auto text-gray-700 bg-white p-8 rounded-2xl shadow-sm luxury-border [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-gray-800 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-4 [&>li]:mb-2 [&>strong]:text-gray-900"
+            dangerouslySetInnerHTML={{ __html: product.seoContent }}
+          />
+        )}
+
         <ProductReviews productId={product._id} />
       </div>
     </div>

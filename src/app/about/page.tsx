@@ -6,6 +6,15 @@ import Button from '@/components/ui/Button';
 export const metadata: Metadata = {
   title: 'About Us | AYEZA COSMETICS',
   description: 'Discover the story behind AYEZA COSMETICS — luxury beauty crafted for the modern woman in Pakistan.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About Us | AYEZA COSMETICS',
+    description: 'Discover the story behind AYEZA COSMETICS — luxury beauty crafted for the modern woman in Pakistan.',
+    url: '/about',
+    type: 'website',
+  },
 };
 
 const values = [
@@ -16,8 +25,20 @@ const values = [
 ];
 
 export default function AboutPage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About AYEZA COSMETICS',
+    description: 'Discover the story behind AYEZA COSMETICS — luxury beauty crafted for the modern woman in Pakistan.',
+    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/about`,
+  };
+
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="bg-black text-white py-20">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <p className="text-rose-gold uppercase tracking-widest text-sm mb-4">Our Story</p>

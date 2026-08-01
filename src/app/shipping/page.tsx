@@ -5,11 +5,32 @@ import { Truck, Clock, ShieldCheck, MapPin } from 'lucide-react';
 export const metadata: Metadata = {
   title: 'Shipping Policy | AYEZA COSMETICS',
   description: 'Learn about our shipping and delivery processes across Pakistan.',
+  alternates: {
+    canonical: '/shipping',
+  },
+  openGraph: {
+    title: 'Shipping Policy | AYEZA COSMETICS',
+    description: 'Learn about our shipping and delivery processes across Pakistan.',
+    url: '/shipping',
+    type: 'website',
+  },
 };
 
 export default function ShippingPage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Shipping Policy - AYEZA COSMETICS',
+    description: 'Learn about our shipping and delivery processes across Pakistan.',
+    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/shipping`,
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-black mb-4">Shipping Policy</h1>

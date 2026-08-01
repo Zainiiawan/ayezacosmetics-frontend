@@ -40,6 +40,7 @@ export interface IProduct {
   name: string;
   slug: string;
   description: string;
+  seoContent?: string;
   shortDescription?: string;
   sku: string;
   category: ICategory;
@@ -69,6 +70,7 @@ export interface ICategory {
   name: string;
   slug: string;
   description?: string;
+  seoContent?: string;
   image?: IProductImage;
   isActive: boolean;
   productCount?: number;

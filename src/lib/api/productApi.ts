@@ -41,6 +41,7 @@ export interface Product {
   launchDate?: string;
   stock: number;
   description?: string;
+  seoContent?: string;
   shortDescription?: string;
   variants?: ProductVariant[];
   category?: string | { _id: string; name: string; slug: string };
