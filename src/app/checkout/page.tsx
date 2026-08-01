@@ -191,7 +191,7 @@ function CheckoutContent() {
 
       if (isBuyNow) {
         payload.items = checkoutItems.map(item => ({
-          product: item.product._id,
+          productId: item.product._id,
           quantity: item.quantity,
           price: item.price
         }));
@@ -201,7 +201,7 @@ function CheckoutContent() {
         // But for guest checkout using the cart, we need to pass items.
         if (!isAuthenticated) {
           payload.items = checkoutItems.map(item => ({
-            product: item.product._id,
+            productId: item.product._id,
             quantity: item.quantity,
             price: item.price
           }));
