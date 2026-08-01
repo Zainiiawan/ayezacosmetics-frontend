@@ -141,7 +141,7 @@ const Header = () => {
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors shrink-0"
+              className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors shrink-0"
               aria-label="Menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -180,7 +180,7 @@ const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden border-t border-gray-100 bg-white"
+            className="border-t border-gray-100 bg-white"
           >
             <nav className="container mx-auto px-4 py-4">
               <div className="flex flex-col gap-4">
