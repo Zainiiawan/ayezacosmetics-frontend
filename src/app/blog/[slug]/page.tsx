@@ -206,13 +206,13 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Featured Image */}
       <div className="container mx-auto px-4 py-8 mb-8">
-        <div className="max-w-4xl mx-auto relative w-full h-[300px] sm:h-[450px] md:h-[550px] rounded-2xl overflow-hidden shadow-sm">
+        <div className="max-w-4xl mx-auto relative w-full aspect-square md:aspect-video bg-gray-50 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
           <Image
             src={post.featuredImage.url}
             alt={post.featuredImage.alt}
             fill
             priority
-            className="object-contain object-center"
+            className="object-contain object-center p-4"
             sizes="(max-width: 1024px) 100vw, 1024px"
           />
         </div>
