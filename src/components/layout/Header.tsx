@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { m as motion, AnimatePresence } from 'framer-motion';
@@ -17,6 +17,17 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
 
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const cartItemCount = useSelector((state: RootState) =>
@@ -180,7 +191,7 @@ const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="border-t border-gray-100 bg-white overflow-hidden lg:absolute lg:top-full lg:right-0 lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b"
+            className="border-t border-gray-100 bg-white overflow-hidden overflow-y-auto max-h-[calc(100vh-73px)] lg:max-h-[calc(100vh-100px)] lg:absolute lg:top-full lg:right-0 lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b"
           >
             <nav className="container mx-auto px-4 py-4">
               <div className="flex flex-col gap-4">
