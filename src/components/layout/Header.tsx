@@ -191,7 +191,7 @@ const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="border-t border-gray-100 bg-white overflow-hidden overflow-y-auto max-h-[calc(100vh-73px)] lg:max-h-[calc(100vh-100px)] lg:absolute lg:top-full lg:right-0 lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b"
+            className="absolute top-full left-0 w-full bg-white overflow-hidden overflow-y-auto h-[calc(100dvh-81px)] lg:h-auto lg:max-h-[calc(100vh-100px)] lg:right-0 lg:left-auto lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b z-50"
           >
             <nav className="container mx-auto px-4 py-4">
               <div className="flex flex-col gap-4">
