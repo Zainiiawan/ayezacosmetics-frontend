@@ -21,11 +21,14 @@ const Header = () => {
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
 
@@ -191,7 +194,7 @@ const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="absolute top-full left-0 w-full bg-white overflow-hidden overflow-y-auto h-[calc(100dvh-81px)] lg:h-auto lg:max-h-[calc(100vh-100px)] lg:right-0 lg:left-auto lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b z-50"
+            className="absolute top-full left-0 w-full bg-white overflow-hidden overflow-y-auto overscroll-none h-[calc(100dvh-81px)] lg:h-auto lg:max-h-[calc(100vh-100px)] lg:right-0 lg:left-auto lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b z-50"
           >
             <nav className="container mx-auto px-4 py-4">
               <div className="flex flex-col gap-4">
