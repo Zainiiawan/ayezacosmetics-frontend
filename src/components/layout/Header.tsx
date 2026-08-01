@@ -72,16 +72,16 @@ const Header = () => {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors"
+              className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors shrink-0"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
 
-            <Link href="/wishlist" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative" aria-label="Wishlist">
+            <Link href="/wishlist" className="hidden lg:flex w-12 h-12 items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative shrink-0" aria-label="Wishlist">
               <Heart className="w-5 h-5" />
               {wishlistItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
@@ -90,7 +90,7 @@ const Header = () => {
               )}
             </Link>
 
-            <Link href="/cart" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative" aria-label="Cart">
+            <Link href="/cart" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative shrink-0" aria-label="Cart">
               <ShoppingCart className="w-5 h-5" />
               {cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
@@ -99,10 +99,12 @@ const Header = () => {
               )}
             </Link>
 
-            <NotificationBell />
+            <div className="hidden lg:flex shrink-0 items-center">
+              <NotificationBell />
+            </div>
 
             {isAuthenticated && user ? (
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden lg:flex items-center gap-2">
                 <Link
                   href="/account"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 hover:bg-rose-gold/10 transition-colors"
@@ -115,7 +117,7 @@ const Header = () => {
                 {user.role === 'admin' && (
                   <Link
                     href="/admin"
-                    className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors"
+                    className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors shrink-0"
                     aria-label="Admin Panel"
                     title="Admin Panel"
                   >
@@ -125,21 +127,21 @@ const Header = () => {
                 <button
                   onClick={() => void handleLogout()}
                   disabled={isLoggingOut}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 shrink-0"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span className="hidden lg:inline">{isLoggingOut ? 'Logging out…' : 'Logout'}</span>
+                  <span className="hidden xl:inline">{isLoggingOut ? 'Logging out…' : 'Logout'}</span>
                 </button>
               </div>
             ) : (
-              <Link href="/login" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors" aria-label="Account">
+              <Link href="/login" className="hidden lg:flex w-12 h-12 items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors shrink-0" aria-label="Account">
                 <User className="w-5 h-5" />
               </Link>
             )}
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors"
+              className="lg:hidden w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors shrink-0"
               aria-label="Menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -192,6 +194,19 @@ const Header = () => {
                     {item.name}
                   </Link>
                 ))}
+                
+                <Link
+                  href="/wishlist"
+                  className="text-gray-700 hover:text-rose-gold transition-colors font-medium py-2 flex items-center gap-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Wishlist
+                  {wishlistItemCount > 0 && (
+                    <span className="bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                      {wishlistItemCount > 99 ? '99+' : wishlistItemCount}
+                    </span>
+                  )}
+                </Link>
                 {isAuthenticated && user ? (
                   <>
                     <Link href="/account" className="text-gray-700 hover:text-rose-gold font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
