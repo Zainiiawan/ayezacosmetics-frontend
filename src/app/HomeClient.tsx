@@ -25,33 +25,29 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
 
   return (
     <div className="flex flex-col">
-      <section className="relative bg-gradient-to-br from-gray-50 to-white pt-20 md:pt-24 pb-12 md:snap-start md:min-h-[calc(100vh-73px)] flex flex-col justify-start">
+      <section className="relative bg-gradient-to-br from-gray-50 to-white pt-8 md:pt-10 pb-6 flex flex-col justify-start">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-10">
+          <div className="max-w-4xl mx-auto text-center mb-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="inline-flex items-center gap-2 bg-rose-gold/10 text-rose-gold px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
-                New Collection Available
-              </span>
-              <h1 className="text-5xl md:text-7xl font-serif font-bold text-black mb-4 leading-tight">
+              <h1 className="text-4xl md:text-6xl font-serif font-bold text-black mb-3 leading-tight">
                 Discover Your <span className="text-rose-gold">True Beauty</span>
               </h1>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
-                Luxury cosmetics curated for the modern woman. Experience the difference with premium skincare, makeup, and fragrances.
+              <p className="text-base text-gray-600 mb-6 max-w-md mx-auto">
+                Experience the difference with premium skincare and makeup.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/shop">
-                  <Button size="lg" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto px-8">
                     Shop Now
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
                 <Link href="/categories">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto px-8">
                     Explore Categories
                   </Button>
                 </Link>
@@ -63,7 +59,7 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-10 mt-12"
+            className="text-center mb-8 mt-4"
           >
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-black mb-3">
               Shop by Category
@@ -83,7 +79,7 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
                 transition={{ delay: index * 0.1 }}
               >
                 <Link href={`/categories/${category.slug}`} className="block group h-full">
-                  <div className="relative bg-white rounded-2xl hover:shadow-luxury transition-all duration-300 overflow-hidden border border-gray-100 h-full flex flex-col">
+                  <div className="relative bg-white rounded-xl hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 h-full flex flex-col group-hover:-translate-y-1">
                     <div className="relative h-64 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                       {category.image?.url ? (
                         <img
@@ -100,14 +96,14 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
                     </div>
                     
-                    <div className="p-6 flex flex-col flex-grow">
-                      <h3 className="text-2xl font-serif font-bold text-black mb-2 group-hover:text-rose-gold transition-colors">
+                    <div className="p-5 flex flex-col flex-grow">
+                      <h3 className="text-xl font-serif font-bold text-black mb-1 group-hover:text-rose-gold transition-colors">
                         {category.name}
                       </h3>
-                      <p className="text-gray-600 mb-4 line-clamp-2 flex-grow">
+                      <p className="text-sm text-gray-500 mb-4 line-clamp-2 flex-grow">
                         {category.description ?? 'Explore our collection'}
                       </p>
-                      <span className="inline-flex items-center gap-1 text-rose-gold-dark font-medium group-hover:gap-2 transition-all mt-auto">
+                      <span className="inline-flex items-center gap-1 text-sm text-rose-gold-dark font-medium group-hover:gap-2 transition-all mt-auto">
                         Shop Now
                         <ArrowRight className="w-4 h-4" />
                       </span>
@@ -122,13 +118,13 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
 
 
 
-      <section className="py-14 bg-white md:snap-start md:min-h-[calc(100vh-73px)] flex flex-col justify-center">
+      <section className="py-12 bg-white flex flex-col justify-center">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-10"
+            className="text-center mb-8"
           >
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-black mb-3">
               Why Choose AYEZA COSMETICS

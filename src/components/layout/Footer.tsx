@@ -1,8 +1,35 @@
 import Link from 'next/link';
-import { Share2, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 
 const Footer = ({ className }: { className?: string }) => {
   const currentYear = new Date().getFullYear();
+
+  // Custom SVGs for social icons to avoid version conflicts in lucide-react
+  const FacebookIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+
+  const InstagramIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+
+  const TikTokIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+  );
+
+  const WhatsAppIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
 
   const footerLinks = {
     shop: [
@@ -17,47 +44,60 @@ const Footer = ({ className }: { className?: string }) => {
       { name: 'Fragrances', href: '/categories/fragrances' },
       { name: 'Hair Care', href: '/categories/hair-care' },
     ],
-    company: [
+    information: [
       { name: 'About Us', href: '/about' },
       { name: 'Contact', href: '/contact' },
       { name: 'Careers', href: '/careers' },
       { name: 'Press', href: '/press' },
     ],
-    support: [
-      { name: 'Help Center', href: '/help' },
-      { name: 'FAQ', href: '/help#faq' },
-      { name: 'Shipping & Returns', href: '/help#shipping' },
-      { name: 'Track Order', href: '/track-order' },
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-    ],
   };
 
-  const socialLinks = [
-    { name: 'Facebook', href: 'https://facebook.com', icon: Share2 },
-    { name: 'Instagram', href: 'https://instagram.com', icon: Share2 },
-    { name: 'Twitter', href: 'https://twitter.com', icon: Share2 },
-  ];
-
   return (
-    <footer className={`bg-black text-white ${className || ''}`}>
-      {/* Newsletter */}
-      <div className="bg-rose-gold-dark py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-2xl font-serif font-bold mb-2">Subscribe to Our Newsletter</h3>
-            <p className="text-white/90 mb-6">Get exclusive offers, beauty tips, and new arrivals.</p>
-            <form className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
-              />
+    <footer className={`bg-[#0a0a0a] text-white ${className || ''}`}>
+      {/* Newsletter Section */}
+      <div className="relative bg-[#8b4d5b] py-5 overflow-hidden">
+        {/* Subtle Decorative Rose Graphics */}
+        <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/4 opacity-10 pointer-events-none">
+          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
+            <path d="M50 50 Q 50 10, 90 10 T 50 50 Z" />
+            <path d="M50 50 Q 90 50, 90 90 T 50 50 Z" />
+            <path d="M50 50 Q 50 90, 10 90 T 50 50 Z" />
+            <path d="M50 50 Q 10 50, 10 10 T 50 50 Z" />
+            <circle cx="50" cy="50" r="15" />
+            <circle cx="50" cy="50" r="5" />
+          </svg>
+        </div>
+        <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 opacity-10 pointer-events-none">
+          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
+            <path d="M50 50 Q 50 10, 90 10 T 50 50 Z" />
+            <path d="M50 50 Q 90 50, 90 90 T 50 50 Z" />
+            <path d="M50 50 Q 50 90, 10 90 T 50 50 Z" />
+            <path d="M50 50 Q 10 50, 10 10 T 50 50 Z" />
+            <circle cx="50" cy="50" r="15" />
+            <circle cx="50" cy="50" r="5" />
+          </svg>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-xl mx-auto text-center">
+            <Mail className="w-5 h-5 mx-auto mb-1 text-[#1A1A1A]/80" strokeWidth={1.5} />
+            <h3 className="text-xl md:text-2xl font-serif font-bold mb-1" style={{ color: '#1A1A1A' }}>Subscribe to Our Newsletter</h3>
+            <p className="text-white/70 mb-4 text-xs md:text-sm">Get exclusive offers, beauty tips, and new arrivals.</p>
+            <form className="flex flex-col sm:flex-row gap-2 justify-center">
+              <div className="relative flex-1 max-w-sm mx-auto sm:mx-0 w-full">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full pl-9 pr-3 py-2 rounded-md bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/50 transition-colors text-sm"
+                />
+              </div>
               <button
                 type="submit"
-                className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                className="bg-[#111] text-white px-5 py-2 rounded-md font-medium hover:bg-black transition-colors flex items-center justify-center gap-2 text-sm border border-[#111] mx-auto sm:mx-0"
               >
                 Subscribe
+                <ArrowRight className="w-4 h-4" />
               </button>
             </form>
           </div>
@@ -65,122 +105,123 @@ const Footer = ({ className }: { className?: string }) => {
       </div>
 
       {/* Main Footer */}
-      <div className="w-full px-6 md:px-12 lg:px-20 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <h4 className="text-xl font-serif font-bold mb-4">
-              AYEZA <span className="text-rose-gold">COSMETICS</span>
-            </h4>
-            <p className="text-gray-400 mb-4">
-              Luxury beauty products curated for the modern woman. Experience the difference with premium cosmetics.
-            </p>
-            <div className="flex gap-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  className="text-gray-400 hover:text-rose-gold transition-colors w-12 h-12 flex items-center justify-center"
-                  aria-label={social.name}
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              ))}
+      <div className="w-full bg-[#0a0a0a]">
+        <div className="max-w-[1600px] mx-auto w-full px-6 md:px-10 py-10">
+          <div className="flex flex-col lg:flex-row justify-center items-start w-full gap-10 lg:gap-14 xl:gap-[80px]">
+            
+            {/* Brand & About */}
+            <div className="flex flex-col w-full lg:w-auto max-w-[320px]">
+              <div>
+                <h4 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">
+                  AYEZA COSMETICS
+                </h4>
+                <div style={{ backgroundColor: '#B56A82' }} className="w-12 h-[2px] mb-3"></div>
+              </div>
+              <p className="text-gray-300 mb-4 text-base leading-snug">
+                Luxury beauty products curated for the modern woman. Experience the difference with premium cosmetics.
+              </p>
+              <div className="flex gap-4 mt-1">
+                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><InstagramIcon className="w-5 h-5" /></a>
+                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><FacebookIcon className="w-5 h-5" /></a>
+                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><TikTokIcon className="w-5 h-5" /></a>
+                <a href="#" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><WhatsAppIcon className="w-5 h-5" /></a>
+              </div>
             </div>
-          </div>
 
-          {/* Shop Links */}
-          <div>
-            <h5 className="font-semibold mb-4">Shop</h5>
-            <ul className="space-y-2">
-              {footerLinks.shop.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-rose-gold transition-colors block py-2"
-                    prefetch={false}
-                  >
-                    {link.name}
-                  </Link>
+            {/* Shop */}
+            <div className="flex flex-col w-full lg:w-auto">
+              <div>
+                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Shop</h5>
+                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
+              </div>
+              <ul className="space-y-1.5">
+                {footerLinks.shop.map(link => (
+                  <li key={link.name}>
+                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-base block">
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Categories */}
+            <div className="flex flex-col w-full lg:w-auto">
+              <div>
+                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Categories</h5>
+                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
+              </div>
+              <ul className="space-y-1.5">
+                {footerLinks.categories.map(link => (
+                  <li key={link.name}>
+                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-base block">
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Information */}
+            <div className="flex flex-col w-full lg:w-auto">
+              <div>
+                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Information</h5>
+                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
+              </div>
+              <ul className="space-y-1.5">
+                {footerLinks.information.map(link => (
+                  <li key={link.name}>
+                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-base block">
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div className="flex flex-col w-full lg:w-auto">
+              <div>
+                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Contact Us</h5>
+                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
+              </div>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-3 text-gray-300 text-base whitespace-nowrap">
+                  <MapPin style={{ color: '#B56A82' }} className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                  <span>Sahiwal, Punjab, Pakistan</span>
                 </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Categories Links */}
-          <div>
-            <h5 className="font-semibold mb-4">Categories</h5>
-            <ul className="space-y-2">
-              {footerLinks.categories.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-rose-gold transition-colors block py-2"
-                    prefetch={false}
-                  >
-                    {link.name}
-                  </Link>
+                <li className="flex items-center gap-3 text-gray-300 text-base whitespace-nowrap">
+                  <Phone style={{ color: '#B56A82' }} className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                  <a href="tel:+923060466911" className="hover:text-white transition-colors">+92 306 0466911</a>
                 </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h5 className="font-semibold mb-4">Company</h5>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-rose-gold transition-colors block py-2"
-                    prefetch={false}
-                  >
-                    {link.name}
-                  </Link>
+                <li className="flex items-center gap-3 text-gray-300 text-base whitespace-nowrap">
+                  <Mail style={{ color: '#B56A82' }} className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                  <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-white transition-colors">ayezacosmtics@gmail.com</a>
                 </li>
-              ))}
-            </ul>
-          </div>
+              </ul>
+            </div>
 
-          {/* Contact Info */}
-          <div>
-            <h5 className="font-semibold mb-4">Contact Us</h5>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-gray-400 py-1">
-                <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                <span>Sahiwal, Punjab, Pakistan</span>
-              </li>
-              <li className="flex items-center gap-3 text-gray-400 py-1">
-                <Phone className="w-5 h-5 flex-shrink-0" />
-                <a href="tel:+923060466911" className="hover:text-rose-gold py-2 block">+92 306 0466911</a>
-              </li>
-              <li className="flex items-center gap-3 text-gray-400 py-1">
-                <Mail className="w-5 h-5 flex-shrink-0" />
-                <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-rose-gold py-2 block">ayezacosmtics@gmail.com</a>
-              </li>
-            </ul>
           </div>
         </div>
       </div>
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
-        <div className="w-full px-6 md:px-12 lg:px-20 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
+        <div className="max-w-[1600px] mx-auto w-full px-6 md:px-10 py-4">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+            <p className="text-gray-400 text-base">
               © {currentYear} AYEZA COSMETICS. All rights reserved.
             </p>
-            <div className="flex gap-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-rose-gold transition-colors p-2" prefetch={false}>
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-rose-gold transition-colors p-2" prefetch={false}>
-                Terms of Service
-              </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-rose-gold transition-colors p-2" prefetch={false}>
-                Cookie Policy
-              </Link>
+            <div className="flex flex-wrap justify-center lg:justify-end gap-x-5 gap-y-2 text-base text-gray-400">
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <span className="text-gray-700 hidden lg:inline">|</span>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
+              <span className="text-gray-700 hidden lg:inline">|</span>
+              <Link href="/shipping" className="hover:text-white transition-colors">Shipping Policy</Link>
+              <span className="text-gray-700 hidden lg:inline">|</span>
+              <Link href="/refunds" className="hover:text-white transition-colors">Refund & Returns</Link>
+              <span className="text-gray-700 hidden lg:inline">|</span>
+              <Link href="/cookies" className="hover:text-white transition-colors">Cookies Policy</Link>
             </div>
           </div>
         </div>

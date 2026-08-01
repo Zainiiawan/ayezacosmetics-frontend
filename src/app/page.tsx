@@ -17,7 +17,7 @@ export default async function Home() {
       categories = data.data || [];
     }
   } catch (error) {
-    console.error('Failed to fetch categories on server:', error);
+    console.warn('⚠️ Backend API is unreachable. Rendering with empty categories instead of crashing.');
   }
 
   return <HomeClient initialCategories={categories} />;
