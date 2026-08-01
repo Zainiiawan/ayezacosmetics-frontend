@@ -54,8 +54,8 @@ const Header = () => {
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <h1 className="text-2xl font-serif font-bold text-black">
+          <Link href="/" className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <h1 className="text-xl sm:text-2xl font-serif font-bold text-black tracking-tight">
               AYEZA <span className="text-rose-gold">COSMETICS</span>
             </h1>
           </Link>
