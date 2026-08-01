@@ -24,149 +24,137 @@ export const blogPosts: BlogPost[] = [
     excerpt: 'Discover the secrets to achieving a radiant, glowing complexion with our step-by-step skincare guide featuring Ayeza Cosmetics essentials.',
     content: `
       <h2>The Foundation of Glowing Skin</h2>
-      <p>Achieving a radiant complexion starts with a solid foundation. Glowing skin is a reflection of overall skin health, which requires consistency, the right ingredients, and premium formulations. At Ayeza Cosmetics, we believe that true luxury lies in the efficacy of your skincare routine.</p>
+      <p>Achieving a radiant complexion starts with a solid foundation. Glowing skin is a reflection of overall skin health, which requires consistency, the right ingredients, and premium formulations. At <a href="/" className="text-rose-gold hover:underline">Ayeza Cosmetics</a>, we believe that true luxury lies in the efficacy of your skincare routine.</p>
       
       <h2>Step 1: Gentle Cleansing</h2>
-      <p>Never underestimate the power of a clean canvas. A gentle, hydrating cleanser removes impurities without stripping your skin's natural moisture barrier. Start your morning and evening routine with our <strong>Ayeza Luxury Foaming Cleanser</strong> to dissolve makeup, pollution, and excess oils.</p>
+      <p>Never underestimate the power of a clean canvas. A gentle, hydrating cleanser removes impurities without stripping your skin's natural moisture barrier. Start your morning and evening routine with our <a href="/products/ayeza-face-wash" className="text-rose-gold font-medium hover:underline">Ayeza Face Wash</a> to dissolve makeup, pollution, and excess oils.</p>
       
       <h2>Step 2: Potent Serums</h2>
-      <p>Serums are the heavy lifters of any skincare regimen. To achieve that coveted glow, incorporate a Vitamin C serum in the morning to protect against environmental stressors and brighten the skin. In the evening, hyaluronic acid will provide deep hydration, plumping the skin from within.</p>
+      <p>Serums are the heavy lifters of any skincare regimen. To achieve that coveted glow, incorporate the <a href="/products/ayeza-vitamin-c-serum" className="text-rose-gold font-medium hover:underline">Ayeza Vitamin C Serum</a> in the morning to protect against environmental stressors and brighten the skin. In the evening, the <a href="/products/ayeza-hyaluronic-acid-serum" className="text-rose-gold font-medium hover:underline">Ayeza Hyaluronic Acid Serum</a> will provide deep hydration, plumping the skin from within.</p>
       
       <h2>Step 3: Luxurious Hydration</h2>
-      <p>Lock in all the active ingredients with a rich, nourishing moisturizer. The <strong>Ayeza Deep Radiance Crème</strong> is formulated with botanical extracts and ceramides to repair the skin barrier and leave your face feeling velvety soft and deeply hydrated.</p>
+      <p>Lock in all the active ingredients with a rich, nourishing moisturizer. The <a href="/products/ayeza-moisturizer" className="text-rose-gold font-medium hover:underline">Ayeza Moisturizer</a> is formulated with botanical extracts to repair the skin barrier and leave your face feeling velvety soft and deeply hydrated.</p>
       
       <h2>Step 4: Sun Protection</h2>
-      <p>No skincare routine is complete without broad-spectrum SPF. Protecting your skin from UV damage prevents premature aging and dark spots, ensuring your glow remains youthful and vibrant.</p>
+      <p>No skincare routine is complete without broad-spectrum SPF. Protecting your skin from UV damage prevents premature aging and dark spots. Always finish your morning routine with our <a href="/products/ayeza-sunscreen-spf-50" className="text-rose-gold font-medium hover:underline">Ayeza Sunscreen SPF 50</a>.</p>
     `,
-    featuredImage: { url: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?q=80&w=1000&auto=format&fit=crop', alt: 'Woman applying skincare' },
+    featuredImage: { url: '/blog/vitamin-c.jpg', alt: 'Ayeza Vitamin C Serum' },
     author: 'Ayeza Beauty Expert',
     publishDate: '2026-08-01',
     readingTime: '5 min read',
     categories: ['Skincare Routine'],
-    tags: ['Glowing Skin', 'Hydration', 'Serums'],
+    tags: ['Glowing Skin', 'Vitamin C', 'Serums'],
     faqs: [
-      { question: 'How often should I use the luxury foaming cleanser?', answer: 'We recommend using it twice daily—once in the morning and once at night.' },
-      { question: 'Can I use Vitamin C and Hyaluronic Acid together?', answer: 'Yes! They work beautifully together. Apply Vitamin C first, followed by Hyaluronic Acid for maximum absorption.' }
+      { question: 'How often should I use the Ayeza Face Wash?', answer: 'We recommend using the Ayeza Face Wash twice daily—once in the morning and once at night.' },
+      { question: 'Can I use Ayeza Vitamin C and Hyaluronic Acid together?', answer: 'Yes! They work beautifully together. Apply the Ayeza Vitamin C Serum first, followed by the Ayeza Hyaluronic Acid Serum for maximum absorption.' }
     ]
   },
   {
-    slug: 'top-5-ingredients-for-anti-aging',
-    title: 'Top 5 Ingredients for Anti-Aging You Need to Know',
-    excerpt: 'Turn back the clock with these scientifically proven anti-aging ingredients found in Ayeza Cosmetics premium product line.',
+    slug: 'benefits-of-niacinamide-for-clear-skin',
+    title: 'The Unmatched Benefits of Niacinamide for Clear Skin',
+    excerpt: 'Learn why Niacinamide is the ultimate powerhouse ingredient for minimizing pores, clearing acne, and achieving flawless skin with Ayeza Cosmetics.',
     content: `
-      <h2>Understanding Anti-Aging</h2>
-      <p>Aging is a natural, beautiful process, but preserving your skin's elasticity and firmness requires targeted care. The key to an effective anti-aging routine lies in clinically proven ingredients that stimulate collagen production and accelerate cell turnover.</p>
+      <h2>Understanding Niacinamide</h2>
+      <p>Niacinamide, also known as Vitamin B3, has taken the skincare world by storm, and for good reason. It is one of the most versatile and well-tolerated ingredients available for all skin types, especially for those prone to breakouts or uneven texture.</p>
       
-      <h2>1. Retinol (Vitamin A)</h2>
-      <p>The gold standard of anti-aging. Retinol speeds up cell turnover, fades dark spots, and reduces the appearance of fine lines. Start with a lower concentration to allow your skin to build tolerance.</p>
+      <h2>Minimizing Pores and Controlling Oil</h2>
+      <p>One of the most celebrated benefits of niacinamide is its ability to regulate sebum production. By keeping oil in check, it prevents pores from stretching and appearing larger. Regular use of the <a href="/products/ayeza-niacinamide-serum" className="text-rose-gold font-medium hover:underline">Ayeza Niacinamide Serum</a> visibly refines pore size and keeps your T-zone matte throughout the day.</p>
       
-      <h2>2. Peptides</h2>
-      <p>Peptides are the building blocks of collagen and elastin fibers. Incorporating a peptide-rich serum, like our <strong>Ayeza Youth Restoring Elixir</strong>, signals your skin to produce more collagen, resulting in firmer, plumper skin.</p>
+      <h2>Clearing Acne and Blemishes</h2>
+      <p>Niacinamide is naturally anti-inflammatory, making it incredibly effective at calming the redness and irritation associated with breakouts. Pair it with the <a href="/products/ayeza-acne-control-face-wash" className="text-rose-gold font-medium hover:underline">Ayeza Acne Control Face Wash</a> to create the ultimate acne-fighting duo.</p>
       
-      <h2>3. Ceramides</h2>
-      <p>As we age, our skin's natural ceramide levels deplete, leading to dryness and irritation. Topical ceramides restore the protective barrier and lock in moisture.</p>
-      
-      <h2>4. Niacinamide</h2>
-      <p>Also known as Vitamin B3, niacinamide is a powerhouse ingredient that improves skin texture, minimizes pores, and evens out skin tone while providing soothing anti-inflammatory benefits.</p>
-      
-      <h2>5. Hyaluronic Acid</h2>
-      <p>A moisture-binding molecule that holds up to 1000 times its weight in water. It instantly plumps fine lines and delivers an immediate dewy finish to mature skin.</p>
+      <h2>Strengthening the Skin Barrier</h2>
+      <p>By stimulating the production of ceramides, niacinamide helps fortify the skin's protective barrier. This means your skin retains moisture better and is less susceptible to environmental damage. Follow up your serum application with the <a href="/products/ayeza-beauty-cream" className="text-rose-gold font-medium hover:underline">Ayeza Beauty Cream</a> to lock in that essential hydration.</p>
     `,
-    featuredImage: { url: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1000&auto=format&fit=crop', alt: 'Luxury anti-aging creams' },
-    author: 'Dr. Sarah Ahmed',
-    publishDate: '2026-07-28',
-    readingTime: '6 min read',
-    categories: ['Ingredients', 'Anti-Aging'],
-    tags: ['Retinol', 'Peptides', 'Youthful Skin'],
-    faqs: [
-      { question: 'At what age should I start using anti-aging products?', answer: 'Prevention is key. Dermatologists generally recommend introducing gentle anti-aging products in your mid-to-late 20s.' }
-    ]
-  },
-  {
-    slug: 'how-to-choose-the-perfect-foundation-shade',
-    title: 'How to Choose the Perfect Foundation Shade',
-    excerpt: 'Struggling to find your perfect match? Follow our expert guide to identifying your undertones and selecting the ideal Ayeza Cosmetics foundation.',
-    content: `
-      <h2>The Importance of the Perfect Match</h2>
-      <p>Finding the right foundation shade is the most crucial step in any makeup routine. A perfect match seamlessly blends into your neck and chest, providing a flawless, second-skin finish.</p>
-      
-      <h2>Step 1: Identify Your Undertone</h2>
-      <p>Your skin's surface color may change with sun exposure or breakouts, but your undertone remains constant. There are three main undertones:</p>
-      <ul>
-        <li><strong>Cool:</strong> Pink, red, or bluish hints. (Your veins look blue/purple).</li>
-        <li><strong>Warm:</strong> Yellow, peachy, or golden hues. (Your veins look green).</li>
-        <li><strong>Neutral:</strong> A mix of warm and cool. (Your veins look olive or blue-green).</li>
-      </ul>
-      
-      <h2>Step 2: Test in Natural Light</h2>
-      <p>Always test foundation shades in natural daylight. Apply a stripe of the <strong>Ayeza Luminous Silk Foundation</strong> from your cheek down to your jawline and neck. The shade that disappears into your skin is your match.</p>
-      
-      <h2>Step 3: Consider Your Skin Type</h2>
-      <p>Beyond the shade, consider the formula. If you have dry skin, opt for a hydrating, dewy finish. For oily skin, a matte, long-wear formula will serve you best.</p>
-    `,
-    featuredImage: { url: 'https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=1000&auto=format&fit=crop', alt: 'Assortment of foundation shades' },
-    author: 'Ayeza Makeup Artist',
-    publishDate: '2026-07-25',
-    readingTime: '4 min read',
-    categories: ['Makeup Tips'],
-    tags: ['Foundation', 'Beauty Guide', 'Complexion'],
-    faqs: [
-      { question: 'Should my foundation match my face or my neck?', answer: 'Always match your foundation to your neck and chest to avoid a stark line of demarcation.' }
-    ]
-  },
-  {
-    slug: 'benefits-of-botanical-extracts-in-luxury-cosmetics',
-    title: 'The Benefits of Botanical Extracts in Luxury Cosmetics',
-    excerpt: 'Explore why Ayeza Cosmetics prioritizes natural, plant-based botanical extracts to deliver safe and highly effective beauty results.',
-    content: `
-      <h2>Nature Meets Science</h2>
-      <p>In the world of luxury cosmetics, the fusion of nature and advanced science creates unparalleled results. Botanical extracts offer a wealth of vitamins, antioxidants, and essential oils that nourish the skin deeply.</p>
-      
-      <h2>Why We Love Rose Extract</h2>
-      <p>Rose extract is a cornerstone of the Ayeza Cosmetics formulation philosophy. Renowned for its hydrating and anti-inflammatory properties, it soothes redness and balances the skin's pH, while offering a delicate, luxurious sensory experience.</p>
-      
-      <h2>The Power of Green Tea</h2>
-      <p>Rich in polyphenols, green tea extract is a potent antioxidant that protects the skin from environmental damage and free radicals. It helps reduce puffiness and regulates sebum production.</p>
-      
-      <h2>Aloe Vera: The Ultimate Soother</h2>
-      <p>A classic for a reason. Aloe vera is packed with vitamins A and C, enzymes, and antioxidants. It provides instant cooling relief and exceptional hydration without leaving a greasy residue.</p>
-    `,
-    featuredImage: { url: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=1000&auto=format&fit=crop', alt: 'Natural botanical ingredients' },
+    featuredImage: { url: '/blog/niacinamide.jpg', alt: 'Ayeza Niacinamide Serum' },
     author: 'Ayeza R&D Team',
-    publishDate: '2026-07-20',
-    readingTime: '5 min read',
+    publishDate: '2026-07-28',
+    readingTime: '4 min read',
     categories: ['Ingredients'],
-    tags: ['Botanical', 'Natural Skincare', 'Rose Extract'],
+    tags: ['Niacinamide', 'Acne Control', 'Clear Skin'],
+    faqs: [
+      { question: 'Is the Ayeza Niacinamide Serum safe for sensitive skin?', answer: 'Yes! Niacinamide is known for being extremely gentle and soothing, making our serum perfectly safe for sensitive and rosacea-prone skin.' }
+    ]
+  },
+  {
+    slug: 'how-to-choose-the-right-moisturizer',
+    title: 'How to Choose the Right Moisturizer for Your Skin Type',
+    excerpt: 'Hydration is key to healthy skin. Discover how to select the perfect Ayeza Cosmetics moisturizer tailored to your unique skin concerns.',
+    content: `
+      <h2>Why Moisturizing is Non-Negotiable</h2>
+      <p>Regardless of whether your skin is dry, oily, or combination, moisturizing is an essential step. A good moisturizer acts as a protective seal, preventing transepidermal water loss and keeping the skin barrier intact. <a href="/categories/skincare" className="text-rose-gold hover:underline">Explore our skincare category</a> for a variety of options.</p>
+      
+      <h2>For Dry and Dehydrated Skin</h2>
+      <p>If your skin often feels tight, flaky, or dull, you need a rich, emollient formula. Look for ingredients like ceramides and shea butter. The <a href="/products/ayeza-moisturizer" className="text-rose-gold font-medium hover:underline">Ayeza Moisturizer</a> provides deep, long-lasting hydration without feeling heavy or greasy on the skin.</p>
+      
+      <h2>For Oily and Acne-Prone Skin</h2>
+      <p>It's a common myth that oily skin doesn't need moisturizer. Skipping this step actually causes your skin to produce *more* oil to compensate! Instead, opt for a lightweight, water-based gel. The <a href="/products/ayeza-aloe-vera-gel" className="text-rose-gold font-medium hover:underline">Ayeza Aloe Vera Gel</a> is incredibly soothing, non-comedogenic, and absorbs instantly, leaving a matte finish.</p>
+      
+      <h2>For Dull and Uneven Skin</h2>
+      <p>If your goal is to achieve a brighter, more radiant complexion, you need a moisturizer packed with antioxidants and brightening agents. The <a href="/products/ayeza-brightening-cream" className="text-rose-gold font-medium hover:underline">Ayeza Brightening Cream</a> is formulated to tackle dark spots and hyperpigmentation while delivering essential moisture.</p>
+    `,
+    featuredImage: { url: '/blog/moisturizer-aloe.jpg', alt: 'Ayeza Moisturizer and Aloe Vera' },
+    author: 'Ayeza Beauty Expert',
+    publishDate: '2026-07-25',
+    readingTime: '5 min read',
+    categories: ['Skincare Routine'],
+    tags: ['Moisturizer', 'Hydration', 'Aloe Vera'],
+    faqs: [
+      { question: 'Can I use the Ayeza Aloe Vera Gel under makeup?', answer: 'Absolutely. It acts as an excellent, lightweight primer that hydrates the skin without causing your makeup to slide off.' }
+    ]
+  },
+  {
+    slug: 'achieve-glass-skin-with-glow-serum',
+    title: 'Achieve the Perfect Glass Skin with Ayeza Glow Serum',
+    excerpt: 'The "glass skin" trend is here to stay. Learn how to achieve that luminous, translucent, and poreless look with our signature Ayeza Glow Serum.',
+    content: `
+      <h2>What is Glass Skin?</h2>
+      <p>Originating from K-beauty, "glass skin" refers to a complexion that is so intensely hydrated, smooth, and clear that it looks almost translucent—like a pane of glass. It’s the ultimate sign of healthy, well-nourished skin.</p>
+      
+      <h2>The Secret Weapon: Ayeza Glow Serum</h2>
+      <p>The path to glass skin requires intense hydration and a flawless texture. That’s where the <a href="/products/ayeza-glow-serum" className="text-rose-gold font-medium hover:underline">Ayeza Glow Serum</a> comes in. Infused with potent botanical extracts and light-reflecting properties, this serum instantly transforms dull skin into a luminous masterpiece.</p>
+      
+      <h2>The Step-by-Step Glass Skin Routine</h2>
+      <ol>
+        <li><strong>Double Cleanse:</strong> Start with an oil-based cleanser, followed by the <a href="/products/ayeza-rice-face-wash" className="text-rose-gold font-medium hover:underline">Ayeza Rice Face Wash</a> to gently polish the skin and remove impurities.</li>
+        <li><strong>Tone and Prep:</strong> Apply a hydrating toner to balance the skin's pH.</li>
+        <li><strong>The Glow Step:</strong> Apply 3-4 drops of the <a href="/products/ayeza-glow-serum" className="text-rose-gold font-medium hover:underline">Ayeza Glow Serum</a>. Press it gently into the skin until fully absorbed.</li>
+        <li><strong>Seal it in:</strong> Lock in that dewy finish with the <a href="/products/ayeza-beauty-cream" className="text-rose-gold font-medium hover:underline">Ayeza Beauty Cream</a>.</li>
+      </ol>
+      <p>Consistency is key. Use this routine morning and night, and watch your skin transform into a radiant, glass-like canvas.</p>
+    `,
+    featuredImage: { url: '/blog/glow-serum.jpg', alt: 'Ayeza Glow Serum' },
+    author: 'Ayeza Makeup Artist',
+    publishDate: '2026-07-20',
+    readingTime: '4 min read',
+    categories: ['Beauty Trends'],
+    tags: ['Glass Skin', 'Glow Serum', 'Radiance'],
     faqs: []
   },
   {
-    slug: 'preparing-your-skin-for-flawless-makeup',
-    title: 'Preparing Your Skin for Flawless Makeup Application',
-    excerpt: 'Great makeup starts with great skin. Learn the essential skin prep steps to ensure your makeup lasts all day and looks impeccable.',
+    slug: 'night-vs-day-skincare-routine',
+    title: 'Night vs. Day Skincare: Why You Need Both',
+    excerpt: 'Your skin has different needs during the day compared to the night. Discover how to optimize your AM and PM routines with Ayeza Cosmetics.',
     content: `
-      <h2>The Secret to Flawless Makeup</h2>
-      <p>Even the most luxurious foundation cannot hide poorly prepped skin. A smooth, hydrated canvas is essential for makeup that looks fresh, luminous, and lasts from morning until night.</p>
+      <h2>The Circadian Rhythm of Your Skin</h2>
+      <p>Just like your body, your skin operates on a circadian rhythm. During the day, it’s in "defense mode," fighting off environmental aggressors like UV rays and pollution. At night, it switches to "repair mode," focusing on cellular regeneration and healing. Your skincare routine should reflect these changing needs.</p>
       
-      <h2>Step 1: Exfoliation</h2>
-      <p>Dead skin cells can cause foundation to look cakey and uneven. Use a gentle chemical exfoliant (like AHA or BHA) twice a week to reveal fresh, smooth skin. Skip physical scrubs that can cause micro-tears.</p>
+      <h2>Your AM Routine: Protect and Defend</h2>
+      <p>Your morning routine should be lightweight and focused on protection. After cleansing with the <a href="/products/ayeza-charcoal-face-wash" className="text-rose-gold font-medium hover:underline">Ayeza Charcoal Face Wash</a> to remove overnight oils, apply a potent antioxidant.</p>
+      <p>Follow this with the <a href="/products/ayeza-day-cream" className="text-rose-gold font-medium hover:underline">Ayeza Day Cream</a>. This lightweight formula provides all-day moisture without feeling greasy under makeup. Finally, never leave the house without a generous layer of <a href="/products/ayeza-sunscreen-spf-50" className="text-rose-gold font-medium hover:underline">Ayeza Sunscreen SPF 50</a>.</p>
       
-      <h2>Step 2: Deep Hydration</h2>
-      <p>Hydration plumps the skin and fills in fine lines. Apply the <strong>Ayeza Hydrating Primer Serum</strong>. Let it absorb fully for 2-3 minutes before applying any complexion products.</p>
-      
-      <h2>Step 3: The Right Primer</h2>
-      <p>A primer acts as a velcro for your makeup. If you have large pores, use a smoothing, silicone-based primer on your T-zone. If you want a dewy look, opt for an illuminating primer.</p>
-      
-      <h2>Step 4: Eye Cream</h2>
-      <p>Don't neglect the under-eye area! A lightweight, hydrating eye cream prevents concealer from creasing and keeps the delicate skin looking bright and awake.</p>
+      <h2>Your PM Routine: Repair and Rejuvenate</h2>
+      <p>Nighttime is when you can bring out the heavy-hitting treatment products. After a thorough cleanse, apply your active serums (like Retinol or AHA/BHAs) to encourage cell turnover.</p>
+      <p>Finish your evening routine with the <a href="/products/ayeza-night-cream" className="text-rose-gold font-medium hover:underline">Ayeza Night Cream</a>. Formulated to be richer and deeply nourishing, this cream supports your skin's natural repair process while you sleep, ensuring you wake up with a plump, refreshed complexion.</p>
     `,
-    featuredImage: { url: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=1000&auto=format&fit=crop', alt: 'Makeup preparation' },
+    featuredImage: { url: '/blog/day-night-cream.jpg', alt: 'Ayeza Day and Night Creams' },
     author: 'Ayeza Beauty Expert',
     publishDate: '2026-07-15',
-    readingTime: '4 min read',
-    categories: ['Makeup Tips', 'Skincare Routine'],
-    tags: ['Skin Prep', 'Primer', 'Flawless Base'],
+    readingTime: '5 min read',
+    categories: ['Skincare Routine'],
+    tags: ['Day Cream', 'Night Cream', 'Skin Repair'],
     faqs: [
-      { question: 'Do I really need a primer if I use a moisturizer?', answer: 'Yes! While moisturizer hydrates, primer specifically creates a gripping layer that extends makeup wear time and smooths texture.' }
+      { question: 'Can I use my day cream at night?', answer: 'While you can, it’s not optimal. Day creams are lighter and often lack the intense reparative ingredients found in the Ayeza Night Cream.' }
     ]
   }
 ];
