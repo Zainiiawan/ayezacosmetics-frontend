@@ -7,8 +7,12 @@ import { formatPrice } from '@/lib/utils';
 import { userApi } from '@/lib/api/userApi';
 import { formatDate } from '@/lib/utils';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+
 export default function AdminCustomersPage() {
   const queryClient = useQueryClient();
+  const { user: currentUser } = useSelector((state: RootState) => state.auth);
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-users'],
@@ -96,41 +100,45 @@ export default function AdminCustomersPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
-                          <button
-                            onClick={() =>
-                              roleMutation.mutate({
-                                userId: user._id,
-                                role: user.role === 'admin' ? 'customer' : 'admin',
-                              })
-                            }
-                            className="p-1.5 text-gray-500 hover:text-rose-gold"
-                            title="Toggle role"
-                          >
-                            <Shield className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() =>
-                              activeMutation.mutate({
-                                userId: user._id,
-                                isActive: user.isActive === false,
-                              })
-                            }
-                            className="p-1.5 text-gray-500 hover:text-red-500"
-                            title="Toggle active"
-                          >
-                            <ShieldOff className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (window.confirm('Are you sure you want to permanently delete this user?')) {
-                                deleteMutation.mutate(user._id);
-                              }
-                            }}
-                            className="p-1.5 text-gray-500 hover:text-red-600"
-                            title="Delete user"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {currentUser?._id !== user._id && (
+                            <>
+                              <button
+                                onClick={() =>
+                                  roleMutation.mutate({
+                                    userId: user._id,
+                                    role: user.role === 'admin' ? 'customer' : 'admin',
+                                  })
+                                }
+                                className="p-1.5 text-gray-500 hover:text-rose-gold"
+                                title="Toggle role"
+                              >
+                                <Shield className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  activeMutation.mutate({
+                                    userId: user._id,
+                                    isActive: user.isActive === false,
+                                  })
+                                }
+                                className="p-1.5 text-gray-500 hover:text-red-500"
+                                title="Toggle active"
+                              >
+                                <ShieldOff className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm('Are you sure you want to permanently delete this user?')) {
+                                    deleteMutation.mutate(user._id);
+                                  }
+                                }}
+                                className="p-1.5 text-gray-500 hover:text-red-600"
+                                title="Delete user"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>

@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
           <Input
             label="Email Address"
             type="email"
-            placeholder="you@example.com"
+            placeholder="Enter Your Email"
             icon={<Mail className="w-5 h-5 text-gray-400" />}
             {...register('email', {
               required: 'Email is required',
