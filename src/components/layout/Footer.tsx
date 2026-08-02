@@ -207,7 +207,7 @@ const Footer = ({ className }: { className?: string }) => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
+      <div className="border-t border-gray-800 pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-[1600px] mx-auto w-full px-6 md:px-10 py-4">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-base">
