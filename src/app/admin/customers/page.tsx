@@ -71,7 +71,7 @@ export default function AdminCustomersPage() {
                     <tr key={user._id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 font-medium flex items-center gap-2">
                         {user.firstName} {user.lastName}
-                        {user.isVip && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" title="VIP Customer" />}
+                        {user.isVip && <span title="VIP Customer"><Star className="w-4 h-4 text-yellow-500 fill-yellow-500" /></span>}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
                       <td className="px-4 py-3 text-sm text-gray-600 font-medium">
