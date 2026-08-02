@@ -59,6 +59,9 @@ html {
   color-scheme: light;
   overflow-x: hidden;
   max-width: 100vw;
+  /* Fix iOS rubber-banding: top overscroll white, bottom overscroll black */
+  background: linear-gradient(to bottom, var(--background) 0%, var(--background) 50%, #0a0a0a 50%, #0a0a0a 100%);
+  background-attachment: fixed;
 }
 
 body {
