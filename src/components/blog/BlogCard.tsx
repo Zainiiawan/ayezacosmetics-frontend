@@ -17,7 +17,7 @@ const BlogCard = ({ post, featured = false }: BlogCardProps) => {
 
   if (featured) {
     return (
-      <Link href={`/blog/${post.slug}`} className="group block w-full bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow luxury-border">
+      <Link href={`/blog/${post.slug}`} className="group block w-full bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 luxury-border hover:border-rose-gold/40 flex flex-col group-hover:-translate-y-1">
         <div className="flex flex-col md:flex-row h-full">
           <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto overflow-hidden bg-gray-100">
             <Image
@@ -62,7 +62,7 @@ const BlogCard = ({ post, featured = false }: BlogCardProps) => {
   }
 
   return (
-    <Link href={`/blog/${post.slug}`} className="group flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow luxury-border">
+    <Link href={`/blog/${post.slug}`} className="group flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 luxury-border hover:border-rose-gold/40 group-hover:-translate-y-1">
       <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
         <Image
           src={post.featuredImage.url}

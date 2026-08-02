@@ -102,14 +102,14 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
 
   return (
     <motion.div
-      className={cn('group', className)}
+      className={cn('group h-full flex flex-col', className)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <div className="relative bg-white rounded-xl overflow-hidden luxury-border">
+      <div className="relative bg-white rounded-xl overflow-hidden luxury-border hover:shadow-xl transition-all duration-500 hover:border-rose-gold/40 flex-1">
         {product.isComingSoon ? (
           <div className="absolute top-3 left-3 bg-orange-500/90 backdrop-blur text-white text-[10px] font-bold px-3 py-1.5 rounded-md z-10 shadow-lg border border-orange-400/50 uppercase tracking-wider">
             Coming Soon
