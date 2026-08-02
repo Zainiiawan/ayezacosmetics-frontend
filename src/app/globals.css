@@ -59,6 +59,7 @@ html {
   color-scheme: light;
   overflow-x: hidden;
   max-width: 100vw;
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -70,6 +71,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   max-width: 100vw;
+  overscroll-behavior-y: none;
 }
 
 /* Luxury Design System */
