@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { m as motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { ArrowLeft, RefreshCw, Trash2 } from 'lucide-react';
 import { orderApi, Order } from '@/lib/api/orderApi';
 import { formatPrice, formatDate } from '@/lib/utils';
 import Button from '@/components/ui/Button';
@@ -33,6 +34,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function AdminOrdersPage() {
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [newStatus, setNewStatus] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
@@ -48,10 +50,7 @@ export default function AdminOrdersPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ orderId, status, trackingNumber, courierName, trackingUrl, estimatedDelivery, message }: {
-      orderId: string; status: string; trackingNumber?: string; courierName?: string;
-      trackingUrl?: string; estimatedDelivery?: string; message?: string;
-    }) => orderApi.updateStatus(orderId, { status, trackingNumber, courierName, trackingUrl, estimatedDelivery, message }),
+    mutationFn: (data: any) => orderApi.updateStatus(data.orderId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
       setSelectedOrder(null);
@@ -64,7 +63,25 @@ export default function AdminOrdersPage() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (orderId: string) => orderApi.deleteOrder(orderId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      setSelectedOrder(null);
+    },
+  });
+
   const orders = data?.orders ?? [];
+
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id && orders.length > 0 && !selectedOrder) {
+      const order = orders.find((o: Order) => o._id === id);
+      if (order) {
+        setSelectedOrder(order);
+      }
+    }
+  }, [searchParams, orders, selectedOrder]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -112,7 +129,7 @@ export default function AdminOrdersPage() {
                         <tr key={order._id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 font-medium">{order.orderNumber}</td>
                           <td className="px-4 py-3 text-sm text-gray-600">
-                            {customer ? `${customer.firstName} ${customer.lastName}` : '—'}
+                            {order.customerName || `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`}
                           </td>
                           <td className="px-4 py-3 font-medium text-rose-gold">{formatPrice(order.total)}</td>
                           <td className="px-4 py-3">
@@ -251,6 +268,21 @@ export default function AdminOrdersPage() {
                     Save
                   </Button>
                   <Button variant="outline" onClick={() => setSelectedOrder(null)}>Cancel</Button>
+                </div>
+                <div className="pt-4 border-t border-gray-100">
+                  <Button 
+                    variant="outline" 
+                    className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                    loading={deleteMutation.isPending}
+                    onClick={() => {
+                      if (window.confirm('Are you sure you want to completely delete this order? This action cannot be undone and will restore stock if not already cancelled.')) {
+                        deleteMutation.mutate(selectedOrder._id);
+                      }
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Order
+                  </Button>
                 </div>
               </div>
             </motion.div>

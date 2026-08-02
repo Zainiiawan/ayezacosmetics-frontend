@@ -10,6 +10,8 @@ export interface UserProfile {
   isActive?: boolean;
   avatar?: string;
   phone?: string;
+  totalSpent?: number;
+  isVip?: boolean;
   createdAt?: string;
 }
 
@@ -36,6 +38,11 @@ export const userApi = {
 
   setActive: async (userId: string, isActive: boolean): Promise<UserProfile> => {
     const response = await api.patch(`/users/${userId}/activate`, { isActive });
+    return response.data.data;
+  },
+
+  deleteUser: async (userId: string): Promise<{ _id: string }> => {
+    const response = await api.delete(`/users/${userId}`);
     return response.data.data;
   },
 };

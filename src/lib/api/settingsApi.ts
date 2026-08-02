@@ -4,6 +4,7 @@ export interface Settings {
   _id: string;
   defaultShippingCost: number;
   freeShippingThreshold: number;
+  vipThreshold?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,7 +15,7 @@ export const settingsApi = {
     return data.data;
   },
 
-  updateSettings: async (settingsData: { defaultShippingCost: number; freeShippingThreshold: number }): Promise<Settings> => {
+  updateSettings: async (settingsData: { defaultShippingCost: number; freeShippingThreshold: number; vipThreshold?: number }): Promise<Settings> => {
     const { data } = await api.put('/settings', settingsData);
     return data.data;
   },

@@ -2,7 +2,8 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { ArrowLeft, Shield, ShieldOff } from 'lucide-react';
+import { ArrowLeft, Shield, ShieldOff, Trash2, Star } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
 import { userApi } from '@/lib/api/userApi';
 import { formatDate } from '@/lib/utils';
 
@@ -23,6 +24,11 @@ export default function AdminCustomersPage() {
   const activeMutation = useMutation({
     mutationFn: ({ userId, isActive }: { userId: string; isActive: boolean }) =>
       userApi.setActive(userId, isActive),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (userId: string) => userApi.deleteUser(userId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
   });
 
@@ -53,6 +59,7 @@ export default function AdminCustomersPage() {
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Name</th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Email</th>
+                    <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Total Spent</th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Role</th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Status</th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">Joined</th>
@@ -62,10 +69,14 @@ export default function AdminCustomersPage() {
                 <tbody>
                   {users.map((user) => (
                     <tr key={user._id} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium">
+                      <td className="px-4 py-3 font-medium flex items-center gap-2">
                         {user.firstName} {user.lastName}
+                        {user.isVip && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" title="VIP Customer" />}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 font-medium">
+                        {user.totalSpent ? formatPrice(user.totalSpent) : 'Rs. 0'}
+                      </td>
                       <td className="px-4 py-3">
                         <span className={`text-xs px-2 py-1 rounded-full capitalize ${
                           user.role === 'admin' ? 'bg-rose-gold/10 text-rose-gold' : 'bg-gray-100 text-gray-600'
@@ -108,6 +119,17 @@ export default function AdminCustomersPage() {
                             title="Toggle active"
                           >
                             <ShieldOff className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to permanently delete this user?')) {
+                                deleteMutation.mutate(user._id);
+                              }
+                            }}
+                            className="p-1.5 text-gray-500 hover:text-red-600"
+                            title="Delete user"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>

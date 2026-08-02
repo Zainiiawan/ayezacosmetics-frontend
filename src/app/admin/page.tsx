@@ -63,6 +63,7 @@ export default function AdminDashboard() {
       change: 'Paid orders',
       trend: 'up',
       icon: DollarSign,
+      href: '/admin/orders',
     },
     {
       name: 'Total Orders',
@@ -70,6 +71,7 @@ export default function AdminDashboard() {
       change: 'Completed payments',
       trend: 'up',
       icon: ShoppingCart,
+      href: '/admin/orders',
     },
     {
       name: 'Low Stock',
@@ -77,6 +79,7 @@ export default function AdminDashboard() {
       change: 'Needs attention',
       trend: 'up',
       icon: Package,
+      href: '/admin/products',
     },
     {
       name: 'Top Sellers',
@@ -84,6 +87,7 @@ export default function AdminDashboard() {
       change: 'Active products',
       trend: 'up',
       icon: Users,
+      href: '/admin/catalog',
     },
   ];
 
@@ -193,7 +197,8 @@ export default function AdminDashboard() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white rounded-xl p-6 shadow-sm"
+                    onClick={() => router.push(stat.href)}
+                    className="bg-white rounded-xl p-6 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-12 h-12 bg-rose-gold/10 rounded-lg flex items-center justify-center">

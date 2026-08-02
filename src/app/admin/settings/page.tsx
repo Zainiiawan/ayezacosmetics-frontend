@@ -15,6 +15,7 @@ export default function AdminSettingsPage() {
 
   const [shippingCost, setShippingCost] = useState(200);
   const [freeThreshold, setFreeThreshold] = useState(5000);
+  const [vipThreshold, setVipThreshold] = useState(5000);
 
   const { data: storeSettings, isLoading: settingsLoading } = useQuery({
     queryKey: ['store-settings'],
@@ -22,6 +23,7 @@ export default function AdminSettingsPage() {
       const data = await settingsApi.getSettings();
       setShippingCost(data.defaultShippingCost);
       setFreeThreshold(data.freeShippingThreshold);
+      if (data.vipThreshold !== undefined) setVipThreshold(data.vipThreshold);
       return data;
     }
   });
@@ -144,7 +146,7 @@ export default function AdminSettingsPage() {
               </div>
             </div>
             <Button
-              onClick={() => updateSettingsMutation.mutate({ defaultShippingCost: shippingCost, freeShippingThreshold: freeThreshold })}
+              onClick={() => updateSettingsMutation.mutate({ defaultShippingCost: shippingCost, freeShippingThreshold: freeThreshold, vipThreshold: vipThreshold })}
               disabled={updateSettingsMutation.isPending || settingsLoading}
             >
               <Save className="w-4 h-4 mr-2" />
@@ -173,6 +175,17 @@ export default function AdminSettingsPage() {
                 min="0"
               />
               <p className="text-xs text-gray-500 mt-1">Orders above this amount get free shipping automatically.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">VIP Customer Threshold (Rs.)</label>
+              <input
+                type="number"
+                value={vipThreshold}
+                onChange={(e) => setVipThreshold(Number(e.target.value))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                min="0"
+              />
+              <p className="text-xs text-gray-500 mt-1">Customers with total spent above this amount will get a VIP badge.</p>
             </div>
           </div>
         </div>

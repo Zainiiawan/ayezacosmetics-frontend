@@ -140,4 +140,9 @@ export const orderApi = {
     });
     return response.data.data;
   },
+
+  deleteOrder: async (orderId: string): Promise<{ _id: string }> => {
+    const response = await api.delete(`/orders/${orderId}`);
+    return response.data.data;
+  },
 };
