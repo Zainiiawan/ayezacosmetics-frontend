@@ -66,7 +66,7 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
                 transition={{ delay: index * 0.1 }}
               >
                 <Link href={`/categories/${category.slug}`} className="block group h-full">
-                  <div className="relative bg-white rounded-xl hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 h-full flex flex-col group-hover:-translate-y-1">
+                  <div className="relative bg-white rounded-xl luxury-border hover:shadow-xl transition-all duration-500 overflow-hidden hover:border-rose-gold/40 h-full flex flex-col group-hover:-translate-y-1">
                     <div className="relative h-[400px] w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                       {category.image?.url ? (
                         <img
