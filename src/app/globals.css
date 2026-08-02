@@ -57,9 +57,6 @@
 */
 html {
   color-scheme: light;
-  overflow-x: hidden;
-  max-width: 100vw;
-  /* Make overscroll background black to match footer */
   background-color: #0a0a0a;
 }
 
@@ -70,8 +67,17 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  max-width: 100vw;
+  min-height: 100vh;
+}
+
+/* Strictly lock overscroll rubber-banding on mobile devices (iOS/Android) 
+   to prevent the white gap under the footer. We use max-width: 767px so 
+   that laptops and tablets (which have snap-scrolling enabled) are unaffected 
+   and users don't get trapped at the bottom. */
+@media (max-width: 767px) {
+  html, body {
+    overscroll-behavior-y: none;
+  }
 }
 
 /* Luxury Design System */
