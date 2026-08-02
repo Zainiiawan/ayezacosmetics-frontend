@@ -20,7 +20,6 @@ const inter = Inter({
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://ayezacosmetics.store";
 
 export const viewport: Viewport = {
-  themeColor: "#f9f0f3",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -112,7 +111,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col overflow-x-hidden">
+      <body className="min-h-full flex flex-col overflow-x-hidden bg-[#0a0a0a]">
         <ScrollToTop />
         <Providers>
           <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
