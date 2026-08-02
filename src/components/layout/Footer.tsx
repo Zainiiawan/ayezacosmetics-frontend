@@ -54,7 +54,10 @@ const Footer = ({ className }: { className?: string }) => {
   };
 
   return (
-    <footer className={`bg-[#0a0a0a] text-white ${className || ''}`}>
+    <footer className={`bg-[#0a0a0a] text-white relative ${className || ''}`}>
+      {/* Hide white space during overscroll on mobile */}
+      <div className="absolute top-full left-0 w-full h-[100vh] bg-[#0a0a0a] pointer-events-none -z-10" aria-hidden="true" />
+      
       {/* Newsletter Section */}
       <div className="relative bg-[#8b4d5b] py-5 overflow-hidden">
         {/* Subtle Decorative Rose Graphics */}
