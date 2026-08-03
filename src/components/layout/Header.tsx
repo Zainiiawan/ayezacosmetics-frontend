@@ -18,20 +18,6 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    };
-  }, [isMobileMenuOpen]);
-
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const cartItemCount = useSelector((state: RootState) =>
     state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
@@ -66,7 +52,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <header className="bg-white border-b border-gray-100 fixed top-0 left-0 right-0 w-full z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-1 sm:gap-2 shrink-0">
