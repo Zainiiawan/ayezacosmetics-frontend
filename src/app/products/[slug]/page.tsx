@@ -32,12 +32,17 @@ export async function generateMetadata({
     };
   }
 
-  const title = product.seo?.metaTitle || `${product.name} | AYEZA COSMETICS`;
-  const description =
+  let title = product.seo?.metaTitle || `${product.name} | AYEZA COSMETICS`;
+  let description =
     product.seo?.metaDescription ||
     product.shortDescription ||
     product.description?.slice(0, 155) ||
     'Premium luxury cosmetics curated for the modern woman.';
+  
+  if (product.name === 'Ayeza Beauty Cream' || product.slug === 'ayeza-beauty-cream') {
+    title = 'Ayeza Beauty Cream - Whitening Cream in Pakistan | Ayeza Cosmetics';
+    description = 'Buy Ayeza Beauty Cream online in Pakistan. Premium skincare designed for brighter, healthier-looking skin with fast nationwide delivery from Ayeza Cosmetics.';
+  }
   
   const images = product.images?.map((img: any) => img.url) || ['/logo.png'];
   const canonicalUrl = product.seo?.canonicalUrl || `/products/${product.slug}`;
