@@ -9,13 +9,17 @@ export interface Review {
   rating: number;
   title: string;
   body: string;
-  images?: Array<{ url: string; alt?: string }>;
+  images?: string[];
   isVerifiedPurchase?: boolean;
   isApproved?: boolean;
   helpfulVotes?: number;
   helpfulVoters?: string[];
   createdAt: string;
   moderationNote?: string;
+  adminReply?: {
+    body: string;
+    createdAt: string;
+  };
 }
 
 export interface ReviewStats {
@@ -42,7 +46,7 @@ export const reviewApi = {
     body: string;
     guestName?: string;
     guestEmail?: string;
-    images?: Array<{ url: string; alt?: string }>;
+    images?: string[];
   }): Promise<Review> => {
     const response = await api.post('/reviews', data);
     return response.data.data;
@@ -63,6 +67,20 @@ export const reviewApi = {
     data: { isApproved: boolean; moderationNote?: string }
   ): Promise<Review> => {
     const response = await api.patch(`/reviews/${reviewId}/moderate`, data);
+    return response.data.data;
+  },
+
+  getAllAdmin: async (): Promise<Review[]> => {
+    const response = await api.get('/reviews/admin/all');
+    return response.data.data;
+  },
+
+  delete: async (reviewId: string): Promise<void> => {
+    await api.delete(`/reviews/${reviewId}`);
+  },
+
+  reply: async (reviewId: string, data: { body: string }): Promise<Review> => {
+    const response = await api.patch(`/reviews/${reviewId}/reply`, data);
     return response.data.data;
   },
 };

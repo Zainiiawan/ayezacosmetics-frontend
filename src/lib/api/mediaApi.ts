@@ -24,6 +24,15 @@ export const mediaApi = {
     return response.data.data;
   },
 
+  uploadPublic: async (files: File[]): Promise<UploadedFile[]> => {
+    const form = new FormData();
+    files.forEach((file) => form.append('files', file));
+    const response = await api.post('/media/upload/public', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.data;
+  },
+
   getSmtpStatus: async (): Promise<SmtpStatus> => {
     const response = await api.get('/media/smtp-status');
     return response.data.data;
