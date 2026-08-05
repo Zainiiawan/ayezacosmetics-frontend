@@ -45,6 +45,11 @@ export default function AdminReviewsPage() {
     replyMutation.mutate({ reviewId, body: replyBody });
   };
 
+  const handleEditClick = (reviewId: string, currentBody: string) => {
+    setReplyingTo(reviewId);
+    setReplyBody(currentBody);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white border-b border-gray-200 px-6 py-4">
@@ -112,13 +117,19 @@ export default function AdminReviewsPage() {
                     </p>
 
                     {/* Admin Reply Section */}
-                    {review.adminReply ? (
-                      <div className="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                    {review.adminReply && replyingTo !== review._id ? (
+                      <div className="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-100 relative group">
                         <div className="flex items-center gap-2 mb-1 text-rose-gold font-medium text-sm">
                           <MessageSquare className="w-4 h-4" />
                           <span>Admin Reply</span>
                         </div>
                         <p className="text-gray-700 text-sm">{review.adminReply.body}</p>
+                        <button
+                          onClick={() => handleEditClick(review._id, review.adminReply!.body)}
+                          className="absolute top-4 right-4 text-xs text-gray-400 hover:text-rose-gold opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          Edit Reply
+                        </button>
                       </div>
                     ) : (
                       <div className="mt-4">
