@@ -41,7 +41,7 @@ export default function AdminReviewsPage() {
   });
 
   const handleReplySubmit = (reviewId: string) => {
-    if (!replyBody.trim()) return;
+    if (!replyBody || !replyBody.trim()) return;
     replyMutation.mutate({ reviewId, body: replyBody });
   };
 
@@ -136,7 +136,7 @@ export default function AdminReviewsPage() {
                         {replyingTo === review._id ? (
                           <div className="space-y-3">
                             <textarea
-                              value={replyBody}
+                              value={replyBody || ''}
                               onChange={(e) => setReplyBody(e.target.value)}
                               placeholder="Type your reply here..."
                               className="w-full rounded-lg border-gray-300 shadow-sm focus:border-rose-gold focus:ring-rose-gold text-sm"
@@ -147,7 +147,7 @@ export default function AdminReviewsPage() {
                                 size="sm"
                                 onClick={() => handleReplySubmit(review._id)}
                                 loading={replyMutation.isPending}
-                                disabled={!replyBody.trim()}
+                                disabled={!replyBody || !replyBody.trim()}
                               >
                                 Post Reply
                               </Button>
