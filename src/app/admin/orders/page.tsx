@@ -206,48 +206,56 @@ export default function AdminOrdersPage() {
                 
                 <h4 className="font-medium text-gray-900 mb-2">Order Items</h4>
                 <div className="space-y-2 mb-4">
-                  {selectedOrder.items.map((item, i) => (
-                    <div key={i} className="flex justify-between text-gray-600 items-start">
-                      <div className="flex flex-col">
-                        <span>{item.quantity}x {item.name} {item.variant ? `(${item.variant})` : ''}</span>
-                        {((item.productDiscount || 0) > 0 || (item.originalPrice && item.originalPrice > item.price)) && (
-                          <span className="text-xs text-green-600 font-medium mt-0.5">
-                            Discount applied: {formatPrice((item.productDiscount || 0) > 0 ? item.productDiscount! : ((item.originalPrice || 0) - item.price))} each
+                  {selectedOrder.items.map((item, i) => {
+                    const originalP = item.originalPrice || 0;
+                    const prodDiscount = item.productDiscount || 0;
+                    const hasDiscount = prodDiscount > 0 || (originalP > 0 && originalP > item.price);
+                    const discountValue = prodDiscount > 0 ? prodDiscount : (originalP - item.price);
+                    const originalTotal = originalP > 0 ? (originalP * item.quantity) : ((item.price + prodDiscount) * item.quantity);
+
+                    return (
+                      <div key={i} className="flex justify-between text-gray-600 items-start">
+                        <div className="flex flex-col">
+                          <span>{item.quantity}x {item.name} {item.variant ? `(${item.variant})` : ''}</span>
+                          {hasDiscount ? (
+                            <span className="text-xs text-green-600 font-medium mt-0.5">
+                              Discount applied: {formatPrice(discountValue)} each
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="flex flex-col items-end">
+                          {hasDiscount ? (
+                            <span className="text-xs text-gray-400 line-through mb-0.5">
+                              {formatPrice(originalTotal)}
+                            </span>
+                          ) : null}
+                          <span className={hasDiscount ? 'text-rose-gold font-medium' : ''}>
+                            {formatPrice(item.total)}
                           </span>
-                        )}
+                        </div>
                       </div>
-                      <div className="flex flex-col items-end">
-                        {((item.productDiscount || 0) > 0 || (item.originalPrice && item.originalPrice > item.price)) && (
-                          <span className="text-xs text-gray-400 line-through mb-0.5">
-                            {formatPrice(((item.originalPrice || 0) || (item.price + (item.productDiscount || 0))) * item.quantity)}
-                          </span>
-                        )}
-                        <span className={((item.productDiscount || 0) > 0 || (item.originalPrice && item.originalPrice > item.price)) ? 'text-rose-gold font-medium' : ''}>
-                          {formatPrice(item.total)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="space-y-1 pt-4 border-t text-right">
-                  {selectedOrder.productDiscount && selectedOrder.productDiscount > 0 && (
-                    <p className="text-gray-400 text-sm"><span className="mr-4">Original Subtotal:</span> <span className="line-through">{formatPrice(selectedOrder.subtotal + selectedOrder.productDiscount)}</span></p>
-                  )}
+                  {(selectedOrder.productDiscount || 0) > 0 ? (
+                    <p className="text-gray-400 text-sm"><span className="mr-4">Original Subtotal:</span> <span className="line-through">{formatPrice(selectedOrder.subtotal + (selectedOrder.productDiscount || 0))}</span></p>
+                  ) : null}
                   <p className="text-gray-800 font-medium"><span className="mr-4">Subtotal:</span> {formatPrice(selectedOrder.subtotal)}</p>
-                  {selectedOrder.productDiscount && selectedOrder.productDiscount > 0 && (
-                    <p className="text-green-600 text-sm"><span className="mr-4">Product Savings:</span> -{formatPrice(selectedOrder.productDiscount)}</p>
-                  )}
-                  {selectedOrder.discount > 0 && (
-                    <p className="text-green-600"><span className="mr-4">Coupon Discount:</span> -{formatPrice(selectedOrder.discount)}</p>
-                  )}
-                  {selectedOrder.manualDiscount && selectedOrder.manualDiscount > 0 && (
-                    <p className="text-orange-600"><span className="mr-4">Manual Discount:</span> -{formatPrice(selectedOrder.manualDiscount)}</p>
-                  )}
-                  <p className="text-gray-600"><span className="mr-4">Shipping:</span> +{formatPrice(selectedOrder.shippingCost)}</p>
-                  {selectedOrder.tax > 0 && (
-                    <p className="text-gray-600"><span className="mr-4">Tax:</span> +{formatPrice(selectedOrder.tax)}</p>
-                  )}
+                  {(selectedOrder.productDiscount || 0) > 0 ? (
+                    <p className="text-green-600 text-sm"><span className="mr-4">Product Savings:</span> -{formatPrice(selectedOrder.productDiscount || 0)}</p>
+                  ) : null}
+                  {(selectedOrder.discount || 0) > 0 ? (
+                    <p className="text-green-600"><span className="mr-4">Coupon Discount:</span> -{formatPrice(selectedOrder.discount || 0)}</p>
+                  ) : null}
+                  {(selectedOrder.manualDiscount || 0) > 0 ? (
+                    <p className="text-orange-600"><span className="mr-4">Manual Discount:</span> -{formatPrice(selectedOrder.manualDiscount || 0)}</p>
+                  ) : null}
+                  <p className="text-gray-600"><span className="mr-4">Shipping:</span> +{formatPrice(selectedOrder.shippingCost || 0)}</p>
+                  {(selectedOrder.tax || 0) > 0 ? (
+                    <p className="text-gray-600"><span className="mr-4">Tax:</span> +{formatPrice(selectedOrder.tax || 0)}</p>
+                  ) : null}
                   <p className="text-lg font-bold text-gray-900 pt-2"><span className="mr-4 text-base font-medium">Total:</span> {formatPrice(selectedOrder.total)}</p>
                 </div>
               </div>
