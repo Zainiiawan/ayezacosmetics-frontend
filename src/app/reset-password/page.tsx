@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { m as motion } from 'framer-motion';
 import Link from 'next/link';
-import { Lock, CheckCircle, ArrowLeft, KeyRound, Mail } from 'lucide-react';
+import { Lock, CheckCircle, ArrowLeft, KeyRound, Mail, RefreshCw } from 'lucide-react';
 import { authApi } from '@/lib/api/authApi';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -28,6 +28,33 @@ function ResetPasswordForm() {
   // If we already have a token in URL (old flow), we can skip straight to Step 2
   const [step, setStep] = useState<1 | 2>(tokenParam ? 2 : 1);
   const [secureToken, setSecureToken] = useState<string>(tokenParam);
+  
+  const [countdown, setCountdown] = useState(60);
+  const [isResending, setIsResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
+
+  useEffect(() => {
+    if (step === 1 && countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown, step]);
+
+  const handleResendOtp = async () => {
+    if (!emailParam || countdown > 0) return;
+    setIsResending(true);
+    setError('');
+    setResendSuccess(false);
+    try {
+      await authApi.forgotPassword(emailParam);
+      setCountdown(60);
+      setResendSuccess(true);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to resend code. Please try again.');
+    } finally {
+      setIsResending(false);
+    }
+  };
   
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -136,6 +163,25 @@ function ResetPasswordForm() {
           <Button type="submit" className="w-full" loading={isLoading}>
             Verify Code
           </Button>
+          
+          <div className="mt-4 text-center">
+            {countdown > 0 ? (
+              <p className="text-sm text-gray-500">
+                Resend code in <span className="font-semibold text-rose-gold">{countdown}s</span>
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                disabled={isResending}
+                className="text-sm font-medium text-rose-gold hover:text-rose-gold-dark inline-flex items-center disabled:opacity-50 transition-colors"
+              >
+                <RefreshCw className={`w-4 h-4 mr-1.5 ${isResending ? 'animate-spin' : ''}`} />
+                {isResending ? 'Sending...' : 'Resend Verification Code'}
+              </button>
+            )}
+            {resendSuccess && <p className="text-xs text-green-600 mt-2">A new code has been sent!</p>}
+          </div>
         </form>
       )}
 

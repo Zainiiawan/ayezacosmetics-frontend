@@ -16,6 +16,7 @@ interface ForgotPasswordFormData {
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
 
   const {
@@ -26,11 +27,13 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setIsLoading(true);
+    setErrorMsg('');
     try {
       await authApi.forgotPassword(data.email);
       router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Password reset failed:', error);
+      setErrorMsg(error.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +74,7 @@ export default function ForgotPasswordPage() {
             })}
             error={errors.email?.message}
           />
+          {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
 
           <Button type="submit" className="w-full" loading={isLoading}>
             Send Verification Code
