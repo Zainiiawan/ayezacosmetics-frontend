@@ -210,19 +210,19 @@ export default function AdminOrdersPage() {
                     <div key={i} className="flex justify-between text-gray-600 items-start">
                       <div className="flex flex-col">
                         <span>{item.quantity}x {item.name} {item.variant ? `(${item.variant})` : ''}</span>
-                        {(item.productDiscount > 0 || (item.originalPrice && item.originalPrice > item.price)) && (
+                        {((item.productDiscount || 0) > 0 || (item.originalPrice && item.originalPrice > item.price)) && (
                           <span className="text-xs text-green-600 font-medium mt-0.5">
-                            Discount applied: {formatPrice(item.productDiscount > 0 ? item.productDiscount : (item.originalPrice - item.price))} each
+                            Discount applied: {formatPrice((item.productDiscount || 0) > 0 ? item.productDiscount! : ((item.originalPrice || 0) - item.price))} each
                           </span>
                         )}
                       </div>
                       <div className="flex flex-col items-end">
-                        {(item.productDiscount > 0 || (item.originalPrice && item.originalPrice > item.price)) && (
+                        {((item.productDiscount || 0) > 0 || (item.originalPrice && item.originalPrice > item.price)) && (
                           <span className="text-xs text-gray-400 line-through mb-0.5">
-                            {formatPrice((item.originalPrice || (item.price + (item.productDiscount || 0))) * item.quantity)}
+                            {formatPrice(((item.originalPrice || 0) || (item.price + (item.productDiscount || 0))) * item.quantity)}
                           </span>
                         )}
-                        <span className={(item.productDiscount > 0 || (item.originalPrice && item.originalPrice > item.price)) ? 'text-rose-gold font-medium' : ''}>
+                        <span className={((item.productDiscount || 0) > 0 || (item.originalPrice && item.originalPrice > item.price)) ? 'text-rose-gold font-medium' : ''}>
                           {formatPrice(item.total)}
                         </span>
                       </div>
