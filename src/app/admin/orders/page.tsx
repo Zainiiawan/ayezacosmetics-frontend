@@ -9,6 +9,7 @@ import { ArrowLeft, RefreshCw, Trash2 } from 'lucide-react';
 import { orderApi, Order } from '@/lib/api/orderApi';
 import { formatPrice, formatDate } from '@/lib/utils';
 import Button from '@/components/ui/Button';
+import EditOrderModal from './EditOrderModal';
 
 const STATUS_OPTIONS = [
   'pending',
@@ -42,6 +43,7 @@ export default function AdminOrdersPage() {
   const [trackingUrl, setTrackingUrl] = useState('');
   const [estimatedDelivery, setEstimatedDelivery] = useState('');
   const [message, setMessage] = useState('');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const { data, isLoading, dataUpdatedAt } = useQuery({
     queryKey: ['admin-orders'],
@@ -170,7 +172,11 @@ export default function AdminOrdersPage() {
               animate={{ opacity: 1, x: 0 }}
               className="bg-white rounded-xl shadow-sm p-6"
             >
-              <h3 className="font-serif font-bold text-lg mb-4">Order Details</h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-serif font-bold text-lg">Order Details</h3>
+                <Button variant="outline" size="sm" onClick={() => setIsEditModalOpen(true)}>Edit Order</Button>
+              </div>
+
               <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm">
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-semibold text-gray-900">{selectedOrder.orderNumber}</span>
@@ -180,12 +186,40 @@ export default function AdminOrdersPage() {
                     {selectedOrder.customerType === 'guest' ? 'Guest' : 'Registered'}
                   </span>
                 </div>
-                <div className="space-y-1 text-gray-600">
+                <div className="space-y-1 text-gray-600 mb-4 pb-4 border-b">
                   <p><span className="font-medium text-gray-700">Name:</span> {selectedOrder.customerName || `${selectedOrder.shippingAddress.firstName} ${selectedOrder.shippingAddress.lastName}`}</p>
                   <p><span className="font-medium text-gray-700">Email:</span> {selectedOrder.customerEmail || (typeof selectedOrder.user === 'object' && selectedOrder.user?.email) || 'N/A'}</p>
                   <p><span className="font-medium text-gray-700">Phone:</span> {selectedOrder.customerPhone || selectedOrder.shippingAddress.phone || 'N/A'}</p>
                   <p><span className="font-medium text-gray-700">City:</span> {selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.country}</p>
                   <p><span className="font-medium text-gray-700">Address:</span> {selectedOrder.shippingAddress.street}</p>
+                </div>
+                
+                <h4 className="font-medium text-gray-900 mb-2">Order Items</h4>
+                <div className="space-y-2 mb-4">
+                  {selectedOrder.items.map((item, i) => (
+                    <div key={i} className="flex justify-between text-gray-600">
+                      <span>{item.quantity}x {item.name} {item.variant ? `(${item.variant})` : ''}</span>
+                      <span>{formatPrice(item.total)}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-1 pt-4 border-t text-right">
+                  <p className="text-gray-600"><span className="mr-4">Subtotal:</span> {formatPrice(selectedOrder.subtotal)}</p>
+                  {selectedOrder.productDiscount && selectedOrder.productDiscount > 0 && (
+                    <p className="text-green-600"><span className="mr-4">Product Discount:</span> -{formatPrice(selectedOrder.productDiscount)}</p>
+                  )}
+                  {selectedOrder.discount > 0 && (
+                    <p className="text-green-600"><span className="mr-4">Coupon Discount:</span> -{formatPrice(selectedOrder.discount)}</p>
+                  )}
+                  {selectedOrder.manualDiscount && selectedOrder.manualDiscount > 0 && (
+                    <p className="text-orange-600"><span className="mr-4">Manual Discount:</span> -{formatPrice(selectedOrder.manualDiscount)}</p>
+                  )}
+                  <p className="text-gray-600"><span className="mr-4">Shipping:</span> +{formatPrice(selectedOrder.shippingCost)}</p>
+                  {selectedOrder.tax > 0 && (
+                    <p className="text-gray-600"><span className="mr-4">Tax:</span> +{formatPrice(selectedOrder.tax)}</p>
+                  )}
+                  <p className="text-lg font-bold text-gray-900 pt-2"><span className="mr-4 text-base font-medium">Total:</span> {formatPrice(selectedOrder.total)}</p>
                 </div>
               </div>
 
@@ -289,6 +323,14 @@ export default function AdminOrdersPage() {
           )}
         </div>
       </div>
+      <EditOrderModal 
+        order={selectedOrder} 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={() => {
+          setIsEditModalOpen(false);
+        }}
+      />
     </div>
   );
 }

@@ -19,8 +19,12 @@ export interface OrderItem {
   name: string;
   image?: string;
   price: number;
+  originalPrice?: number;
+  salePrice?: number;
+  productDiscount?: number;
   quantity: number;
   total: number;
+  lineTotal?: number;
   sku?: string;
 }
 
@@ -47,8 +51,11 @@ export interface Order {
   shippingAddress: ShippingAddress;
   billingAddress?: ShippingAddress;
   subtotal: number;
+  productDiscount?: number;
   shippingCost: number;
   discount: number;
+  manualDiscount?: number;
+  manualDiscountReason?: string;
   tax: number;
   total: number;
   couponCode?: string;
@@ -69,6 +76,13 @@ export interface Order {
     location?: string;
   }>;
   notes?: string;
+  auditLog?: Array<{
+    timestamp: string;
+    adminUser?: string;
+    adminName?: string;
+    actionPerformed: string;
+    reason?: string;
+  }>;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -138,6 +152,27 @@ export const orderApi = {
     const response = await api.get('/orders/track/lookup', {
       params: { orderNumber, email },
     });
+    return response.data.data;
+  },
+
+  adminEditOrder: async (
+    orderId: string,
+    data: {
+      customerName?: string;
+      customerEmail?: string;
+      customerPhone?: string;
+      shippingAddress?: Partial<ShippingAddress>;
+      items?: Array<{
+        product: string;
+        variant?: string;
+        quantity: number;
+      }>;
+      shippingCost?: number;
+      manualDiscount?: number;
+      manualDiscountReason?: string;
+    }
+  ): Promise<Order> => {
+    const response = await api.patch(`/orders/${orderId}/admin-edit`, data);
     return response.data.data;
   },
 
