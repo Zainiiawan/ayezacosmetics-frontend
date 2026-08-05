@@ -237,7 +237,15 @@ export default function AdminDashboard() {
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="font-medium text-black">{formatPrice(order.total)}</p>
+                              {((order.discount || 0) + (order.productDiscount || 0) + (order.manualDiscount || 0)) > 0 ? (
+                                <div className="flex flex-col items-end mb-1">
+                                  <span className="text-xs text-gray-400 line-through">{formatPrice(order.subtotal + (order.shippingCost || 0) + (order.tax || 0))}</span>
+                                  <span className="text-xs text-green-600">- {formatPrice((order.discount || 0) + (order.productDiscount || 0) + (order.manualDiscount || 0))}</span>
+                                  <p className="font-bold text-black border-t border-gray-100 mt-0.5 pt-0.5">{formatPrice(order.total)}</p>
+                                </div>
+                              ) : (
+                                <p className="font-medium text-black mb-1">{formatPrice(order.total)}</p>
+                              )}
                               <span className={`text-xs px-2 py-1 rounded-full capitalize ${STATUS_COLORS[order.status] ?? 'bg-gray-100 text-gray-700'}`}>
                                 {order.status.replace(/_/g, ' ')}
                               </span>

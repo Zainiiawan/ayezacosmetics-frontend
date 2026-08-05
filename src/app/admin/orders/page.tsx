@@ -133,7 +133,17 @@ export default function AdminOrdersPage() {
                           <td className="px-4 py-3 text-sm text-gray-600">
                             {order.customerName || `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`}
                           </td>
-                          <td className="px-4 py-3 font-medium text-rose-gold">{formatPrice(order.total)}</td>
+                          <td className="px-4 py-3">
+                            {((order.discount || 0) + (order.productDiscount || 0) + (order.manualDiscount || 0)) > 0 ? (
+                              <div className="flex flex-col text-sm text-right max-w-[100px]">
+                                <span className="text-gray-400 line-through text-xs">{formatPrice(order.subtotal + (order.shippingCost || 0) + (order.tax || 0))}</span>
+                                <span className="text-green-600 text-xs">- {formatPrice((order.discount || 0) + (order.productDiscount || 0) + (order.manualDiscount || 0))}</span>
+                                <span className="font-bold text-rose-gold border-t border-gray-100 mt-1 pt-1">{formatPrice(order.total)}</span>
+                              </div>
+                            ) : (
+                              <span className="font-medium text-rose-gold">{formatPrice(order.total)}</span>
+                            )}
+                          </td>
                           <td className="px-4 py-3">
                             <span className={`text-xs px-2 py-1 rounded-full capitalize ${STATUS_COLORS[order.status] ?? 'bg-gray-100'}`}>
                               {order.status.replace(/_/g, ' ')}
