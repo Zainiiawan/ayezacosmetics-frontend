@@ -47,8 +47,8 @@ export function optimizeCloudinaryUrl(url: string, width = 800, square = false):
     // f_auto: automatic format (WebP/AVIF)
     // q_auto: automatic quality
     // w_<width>: limit width to save bandwidth
-    // c_fill,g_auto,ar_1:1: crop to a perfect square centered on the most interesting part
-    const crop = square ? ',c_fill,g_auto,ar_1:1' : '';
+    // c_pad,b_white,ar_1:1: pad to a perfect square with white background (prevents transparent PNGs from turning black)
+    const crop = square ? ',c_pad,b_white,ar_1:1' : '';
     return `${parts[0]}/upload/f_auto,q_auto,w_${width}${crop}/${parts[1]}`;
   }
   return url;
