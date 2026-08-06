@@ -122,9 +122,9 @@ const Footer = ({ className }: { className?: string }) => {
                 Luxury beauty products curated for the modern woman. Experience the difference with premium cosmetics.
               </p>
               <div className="flex gap-4 mt-1">
-                <a href="#" aria-label="Instagram" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><InstagramIcon className="w-5 h-5" /></a>
-                <a href="#" aria-label="Facebook" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><FacebookIcon className="w-5 h-5" /></a>
-                <a href="#" aria-label="TikTok" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><TikTokIcon className="w-5 h-5" /></a>
+                <a href="https://www.instagram.com/ayezacosmetics.store?igsh=eTF3dnZkbHUwZmph" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><InstagramIcon className="w-5 h-5" /></a>
+                <a href="https://www.facebook.com/share/1JMakEmR81/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><FacebookIcon className="w-5 h-5" /></a>
+                <a href="https://www.tiktok.com/@ayezacosmetics.store?_r=1&_t=ZN-98aOm1iZDQF" target="_blank" rel="noopener noreferrer" aria-label="TikTok" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><TikTokIcon className="w-5 h-5" /></a>
                 <a href="#" aria-label="WhatsApp" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><WhatsAppIcon className="w-5 h-5" /></a>
               </div>
             </div>

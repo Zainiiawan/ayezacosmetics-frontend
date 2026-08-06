@@ -71,9 +71,9 @@ export default function RootLayout({
     url: APP_URL,
     logo: `${APP_URL}/logo.png`,
     sameAs: [
-      "https://www.facebook.com/ayezacosmetics",
-      "https://www.instagram.com/ayezacosmetics",
-      "https://twitter.com/ayezacosmetics",
+      "https://www.facebook.com/share/1JMakEmR81/",
+      "https://www.instagram.com/ayezacosmetics.store?igsh=eTF3dnZkbHUwZmph",
+      "https://www.tiktok.com/@ayezacosmetics.store?_r=1&_t=ZN-98aOm1iZDQF"
     ],
     contactPoint: {
       "@type": "ContactPoint",
