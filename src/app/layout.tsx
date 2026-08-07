@@ -42,13 +42,13 @@ export const metadata: Metadata = {
     type: "website",
     url: APP_URL,
     siteName: "AYEZA COSMETICS",
-    images: [{ url: "/logo.svg", width: 512, height: 512, alt: "AYEZA COSMETICS" }],
+    images: [{ url: "/logo.png", width: 512, height: 512, alt: "AYEZA COSMETICS" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "AYEZA COSMETICS | Luxury Beauty Products",
     description: "Discover premium luxury cosmetics curated for the modern woman.",
-    images: ["/logo.svg"],
+    images: ["/logo.png"],
   },
   verification: {
     google: "hJhcaTPMOXI5_KbIDYvh6rf99bjD9SSs-CrFGEcwtAo",
@@ -69,7 +69,7 @@ export default function RootLayout({
     "@type": "Organization",
     name: "AYEZA COSMETICS",
     url: APP_URL,
-    logo: `${APP_URL}/logo.svg`,
+    logo: `${APP_URL}/logo.png`,
     sameAs: [
       "https://www.facebook.com/share/1JMakEmR81/",
       "https://www.instagram.com/ayezacosmetics.store?igsh=eTF3dnZkbHUwZmph",
