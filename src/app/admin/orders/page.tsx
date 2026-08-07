@@ -136,7 +136,7 @@ export default function AdminOrdersPage() {
                           <td className="px-4 py-3">
                             {((order.discount || 0) + (order.productDiscount || 0) + (order.manualDiscount || 0)) > 0 ? (
                               <div className="flex flex-col text-sm text-right max-w-[100px]">
-                                <span className="text-gray-400 line-through text-xs">{formatPrice(order.subtotal + (order.shippingCost || 0) + (order.tax || 0))}</span>
+                                <span className="text-gray-400 line-through text-xs">{formatPrice(order.subtotal + (order.productDiscount || 0) + (order.shippingCost || 0) + (order.tax || 0))}</span>
                                 <span className="text-green-600 text-xs">- {formatPrice((order.discount || 0) + (order.productDiscount || 0) + (order.manualDiscount || 0))}</span>
                                 <span className="font-bold text-rose-gold border-t border-gray-100 mt-1 pt-1">{formatPrice(order.total)}</span>
                               </div>

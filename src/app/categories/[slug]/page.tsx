@@ -102,6 +102,26 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
     jsonLdArray = [categoryJsonLd, breadcrumbJsonLd];
   }
 
+  // Pre-fetch initial products for SSR
+  let initialProductsData = null;
+  if (category?._id) {
+    try {
+      // Default: page 1, limit 12, sortBy bestselling
+      const productsRes = await fetch(
+        `${config.apiUrl}/products?category=${category._id}&page=1&limit=12&sortBy=bestselling`,
+        {
+          next: { revalidate: 3600, tags: ['products'] },
+        }
+      );
+      if (productsRes.ok) {
+        const productsJson = await productsRes.json();
+        initialProductsData = productsJson.data;
+      }
+    } catch (error) {
+      console.error('Error fetching initial category products:', error);
+    }
+  }
+
   return (
     <>
       {jsonLdArray.length > 0 && (
@@ -110,7 +130,10 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArray) }}
         />
       )}
-      <CategoryPageClient />
+      <CategoryPageClient 
+        initialCategoryData={data} 
+        initialProductsData={initialProductsData} 
+      />
     </>
   );
 }

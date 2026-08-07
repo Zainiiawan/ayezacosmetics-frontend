@@ -22,12 +22,13 @@ interface ProductCardProps {
   > &
     Partial<Pick<Product, 'compareAtPrice' | 'isFeatured' | 'discount' | 'isComingSoon' | 'launchDate'>>;
   className?: string;
+  priority?: boolean;
 }
 
 const PLACEHOLDER =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23f9f0f3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23c29375'%3EAYEZA%3C/text%3E%3C/svg%3E";
 
-const ProductCard = ({ product, className }: ProductCardProps) => {
+const ProductCard = ({ product, className, priority = false }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -164,6 +165,8 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
               'w-full h-full object-cover transition-transform duration-500',
               isHovered ? 'scale-110' : 'scale-100'
             )}
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
             onError={(e) => {
               (e.target as HTMLImageElement).src = PLACEHOLDER;
             }}

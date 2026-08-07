@@ -27,7 +27,12 @@ const sortOptions = [
   { value: 'newest', label: 'Newest' },
 ];
 
-export default function CategoryPageClient() {
+interface CategoryPageClientProps {
+  initialCategoryData?: any;
+  initialProductsData?: any;
+}
+
+export default function CategoryPageClient({ initialCategoryData, initialProductsData }: CategoryPageClientProps) {
   const params = useParams();
   const slug = params?.slug as string;
 
@@ -35,6 +40,8 @@ export default function CategoryPageClient() {
     queryKey: ['category', slug],
     queryFn: () => categoryApi.getBySlug(slug),
     enabled: !!slug,
+    initialData: initialCategoryData,
+    staleTime: 60 * 1000,
   });
 
   const category = categoryData?.category;
@@ -43,6 +50,14 @@ export default function CategoryPageClient() {
   const [priceRange, setPriceRange] = useState([0, 50000]);
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
+
+  // If user hasn't changed filters, we can safely use the server-rendered initial products.
+  const isDefaultFilters = 
+    searchQuery === '' && 
+    sortBy === 'featured' && 
+    priceRange[0] === 0 && 
+    priceRange[1] === 50000 && 
+    page === 1;
 
   const { data, isLoading } = useQuery({
     queryKey: ['category-products', category?._id, searchQuery, sortBy, priceRange, page],
@@ -57,6 +72,8 @@ export default function CategoryPageClient() {
         limit: 12,
       }),
     enabled: !!category?._id,
+    initialData: isDefaultFilters ? initialProductsData : undefined,
+    staleTime: 60 * 1000,
   });
 
   const products = data?.products ?? [];
@@ -189,14 +206,14 @@ export default function CategoryPageClient() {
             ) : products.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product, index) => (
+                  {products.map((product: any, index: number) => (
                     <motion.div
                       key={product._id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.04 }}
                     >
-                      <ProductCard product={product} />
+                      <ProductCard product={product} priority={index < 4} />
                     </motion.div>
                   ))}
                 </div>

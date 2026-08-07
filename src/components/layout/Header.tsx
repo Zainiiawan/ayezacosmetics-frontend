@@ -190,61 +190,70 @@ const Header = () => {
 
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            id="mobile-menu"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="absolute top-full left-0 w-full bg-white overflow-hidden overflow-y-auto overscroll-none h-[calc(100dvh-81px)] lg:h-auto lg:max-h-[calc(100vh-100px)] lg:right-0 lg:left-auto lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b z-50"
-          >
-            <nav className="container mx-auto px-4 py-4">
-              <div className="flex flex-col gap-4">
-                {navigation.map((item) => (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 top-[65px] sm:top-[73px] bg-black/50 z-40 lg:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <motion.div
+              id="mobile-menu"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="absolute top-full left-0 w-full bg-white overflow-hidden overflow-y-auto overscroll-contain max-h-[calc(100dvh-65px)] sm:max-h-[calc(100dvh-73px)] lg:h-auto lg:max-h-[calc(100vh-100px)] lg:right-0 lg:left-auto lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b z-50 shadow-lg"
+            >
+              <nav className="container mx-auto px-4 py-4">
+                <div className="flex flex-col gap-4">
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="text-gray-700 hover:text-rose-gold transition-colors font-medium py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                  
                   <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-gray-700 hover:text-rose-gold transition-colors font-medium py-2"
+                    href="/wishlist"
+                    className="text-gray-700 hover:text-rose-gold transition-colors font-medium py-2 flex items-center gap-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {item.name}
-                  </Link>
-                ))}
-                
-                <Link
-                  href="/wishlist"
-                  className="text-gray-700 hover:text-rose-gold transition-colors font-medium py-2 flex items-center gap-2"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Wishlist
-                  {wishlistItemCount > 0 && (
-                    <span className="bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                      {wishlistItemCount > 99 ? '99+' : wishlistItemCount}
-                    </span>
-                  )}
-                </Link>
-                {isAuthenticated && user ? (
-                  <>
-                    <Link href="/account" className="text-gray-700 hover:text-rose-gold font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      My Account ({user.firstName})
-                    </Link>
-                    {user.role === 'admin' && (
-                      <Link href="/admin" className="text-gray-700 hover:text-rose-gold font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
-                        Admin Panel
-                      </Link>
+                    Wishlist
+                    {wishlistItemCount > 0 && (
+                      <span className="bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                        {wishlistItemCount > 99 ? '99+' : wishlistItemCount}
+                      </span>
                     )}
-                    <Button variant="outline" onClick={() => void handleLogout()} loading={isLoggingOut} className="w-full">
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button className="w-full">Sign In</Button>
                   </Link>
-                )}
-              </div>
-            </nav>
-          </motion.div>
+                  {isAuthenticated && user ? (
+                    <>
+                      <Link href="/account" className="text-gray-700 hover:text-rose-gold font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                        My Account ({user.firstName})
+                      </Link>
+                      {user.role === 'admin' && (
+                        <Link href="/admin" className="text-gray-700 hover:text-rose-gold font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                          Admin Panel
+                        </Link>
+                      )}
+                      <Button variant="outline" onClick={() => void handleLogout()} loading={isLoggingOut} className="w-full">
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button className="w-full">Sign In</Button>
+                    </Link>
+                  )}
+                </div>
+              </nav>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>

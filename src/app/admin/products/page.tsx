@@ -10,6 +10,7 @@ import { categoryApi, brandApi, Category, Brand } from '@/lib/api/categoryApi';
 import { mediaApi } from '@/lib/api/mediaApi';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { revalidateProductsCache } from '@/app/actions/revalidate';
 
 const getCategoryName = (product: Product) =>
   typeof product.category === 'object' ? product.category?.name ?? '' : product.category ?? '';
@@ -239,6 +240,7 @@ export default function AdminProductsPage() {
         await productApi.create(productData);
       }
 
+      await revalidateProductsCache();
       await fetchProducts();
       handleCloseModal();
     } catch (error: unknown) {
@@ -255,6 +257,7 @@ export default function AdminProductsPage() {
   const handleDeleteProduct = async (productId: string) => {
     try {
       await productApi.delete(productId);
+      await revalidateProductsCache();
       await fetchProducts();
       setDeleteConfirm(null);
     } catch (error) {
@@ -269,6 +272,7 @@ export default function AdminProductsPage() {
       if (product) {
         const newStatus = getProductStatus(product) === 'Active' ? 'Inactive' : 'Active';
         await productApi.update(productId, { status: newStatus });
+        await revalidateProductsCache();
         await fetchProducts();
       }
     } catch (error) {
@@ -403,7 +407,22 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-6 py-4 text-gray-600">{product.sku}</td>
                     <td className="px-6 py-4 text-gray-600">{getCategoryName(product)}</td>
-                    <td className="px-6 py-4 font-medium text-black">{formatPrice(product.basePrice)}</td>
+                    <td className="px-6 py-4">
+                      {product.discount && product.discount.value ? (
+                        <div className="flex flex-col">
+                          <span className="text-gray-400 line-through text-xs">{formatPrice(product.basePrice)}</span>
+                          <span className="font-medium text-rose-gold">
+                            {formatPrice(
+                              product.discount.type === 'percentage'
+                                ? product.basePrice * (1 - product.discount.value / 100)
+                                : Math.max(0, product.basePrice - product.discount.value)
+                            )}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="font-medium text-black">{formatPrice(product.basePrice)}</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-gray-600">{product.stock}</td>
                     <td className="px-6 py-4 flex flex-col items-start gap-1">
                       <button

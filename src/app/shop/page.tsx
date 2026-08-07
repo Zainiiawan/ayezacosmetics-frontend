@@ -26,13 +26,31 @@ export default async function ShopPageServer() {
     itemListElement: [], // Could be populated on client or just kept as a top-level descriptor
   };
 
+  // Pre-fetch initial products for SSR
+  let initialProductsData = null;
+  try {
+    // Default: page 1, limit 12, sortBy bestselling
+    const productsRes = await fetch(
+      `${config.apiUrl}/products?page=1&limit=12&sortBy=bestselling`,
+      {
+        next: { revalidate: 3600, tags: ['products'] },
+      }
+    );
+    if (productsRes.ok) {
+      const productsJson = await productsRes.json();
+      initialProductsData = productsJson.data;
+    }
+  } catch (error) {
+    console.error('Error fetching initial shop products:', error);
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ShopPageClient />
+      <ShopPageClient initialProductsData={initialProductsData} />
     </>
   );
 }

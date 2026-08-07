@@ -18,7 +18,11 @@ const SORT_MAP: Record<string, 'newest' | 'price_asc' | 'price_desc' | 'rating' 
   bestselling: 'bestselling',
 };
 
-export default function ShopPage() {
+interface ShopPageClientProps {
+  initialProductsData?: any;
+}
+
+export default function ShopPage({ initialProductsData }: ShopPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
@@ -26,6 +30,15 @@ export default function ShopPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [page, setPage] = useState(1);
+
+  const isDefaultFilters = 
+    searchQuery === '' && 
+    selectedCategory === null &&
+    selectedBrand === null &&
+    sortBy === 'featured' && 
+    priceRange[0] === 0 && 
+    priceRange[1] === 50000 && 
+    page === 1;
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
@@ -50,6 +63,8 @@ export default function ShopPage() {
         page,
         limit: 12,
       }),
+    initialData: isDefaultFilters ? initialProductsData : undefined,
+    staleTime: 60 * 1000,
   });
 
   const products = data?.products ?? [];
@@ -239,14 +254,14 @@ export default function ShopPage() {
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product, index) => (
+                  {products.map((product: any, index: number) => (
                     <motion.div
                       key={product._id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                      transition={{ delay: index * 0.04 }}
                     >
-                      <ProductCard product={product} />
+                      <ProductCard product={product} priority={index < 4} />
                     </motion.div>
                   ))}
                 </div>
