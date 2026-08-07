@@ -14,14 +14,18 @@ async function generate() {
     '<svg width="1024" height="1024"><circle cx="512" cy="512" r="500" /></svg>'
   );
 
-  // Process the source image: add the mask to create transparency
-  const roundedCorners = sharp(srcPath)
-    .resize(1024, 1024)
+  // Resize first, then composite
+  const resizedBuffer = await sharp(srcPath).resize(1024, 1024).toBuffer();
+  
+  const roundedCornersBuffer = await sharp(resizedBuffer)
     .composite([{
       input: mask,
       blend: 'dest-in'
     }])
-    .png();
+    .png()
+    .toBuffer();
+
+  const roundedCorners = sharp(roundedCornersBuffer);
 
   // Save the main preview
   await roundedCorners.toFile(path.join(brainDir, 'final_logo_preview.png'));
