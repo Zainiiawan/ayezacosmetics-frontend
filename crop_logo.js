@@ -1,50 +1,24 @@
 const sharp = require('sharp');
 const path = require('path');
 
-const srcPath = '/Users/zain/.gemini/antigravity/brain/b0983520-7a75-41d7-a94a-4041f2cd77f7/logo_rosegold_black_1786137869957.jpg';
+const srcPath = '/Users/zain/.gemini/antigravity/brain/b0983520-7a75-41d7-a94a-4041f2cd77f7/logo_final_rose_black_ring.png';
 
 async function generate() {
   const publicDir = path.join(__dirname, 'public');
   const appDir = path.join(__dirname, 'src', 'app');
-  const backendDir = path.join(__dirname, '..', 'ayezacosmetics-backend', 'public');
-  const brainDir = '/Users/zain/.gemini/antigravity/brain/b0983520-7a75-41d7-a94a-4041f2cd77f7';
 
-  // Create a circular SVG mask for a 1024x1024 image
-  const mask = Buffer.from(
-    '<svg width="1024" height="1024"><circle cx="512" cy="512" r="500" /></svg>'
-  );
-
-  // Resize first, then composite
-  const resizedBuffer = await sharp(srcPath).resize(1024, 1024).toBuffer();
-  
-  const roundedCornersBuffer = await sharp(resizedBuffer)
-    .composite([{
-      input: mask,
-      blend: 'dest-in'
-    }])
-    .png()
-    .toBuffer();
-
-  const roundedCorners = sharp(roundedCornersBuffer);
-
-  // Save the main preview
-  await roundedCorners.toFile(path.join(brainDir, 'final_logo_preview.png'));
+  // The image is already a perfect circle with transparency.
+  // We just need to resize it and distribute it to the correct paths.
+  const src = sharp(srcPath);
 
   // Save the required sizes
-  await roundedCorners.clone().resize(512, 512).toFile(path.join(publicDir, 'logo.png'));
-  await roundedCorners.clone().resize(512, 512).toFile(path.join(publicDir, 'icon-512.png'));
-  await roundedCorners.clone().resize(192, 192).toFile(path.join(publicDir, 'icon-192.png'));
-  await roundedCorners.clone().resize(512, 512).toFile(path.join(appDir, 'icon.png'));
-  await roundedCorners.clone().resize(180, 180).toFile(path.join(appDir, 'apple-icon.png'));
+  await src.clone().resize(512, 512).toFile(path.join(publicDir, 'logo.png'));
+  await src.clone().resize(512, 512).toFile(path.join(publicDir, 'icon-512.png'));
+  await src.clone().resize(192, 192).toFile(path.join(publicDir, 'icon-192.png'));
+  await src.clone().resize(512, 512).toFile(path.join(appDir, 'icon.png'));
+  await src.clone().resize(180, 180).toFile(path.join(appDir, 'apple-icon.png'));
   
-  // Save for backend if directory exists
-  try {
-    await roundedCorners.clone().resize(512, 512).toFile(path.join(backendDir, 'icon.png'));
-  } catch (e) {
-    console.log("Backend public directory not found, skipping backend logo update.");
-  }
-
-  console.log("All circular logo PNGs have been generated successfully.");
+  console.log("All circular logo PNGs have been resized and replaced successfully.");
 }
 
 generate().catch(console.error);
