@@ -45,7 +45,8 @@ export async function generateMetadata({
   }
   
   const images = product.images?.map((img: any) => img.url) || ['/logo.png'];
-  const canonicalUrl = product.seo?.canonicalUrl || `/products/${product.slug}`;
+  const canonicalPath = product.seo?.canonicalUrl || `/products/${product.slug}`;
+  const canonicalUrl = canonicalPath.startsWith('http') ? canonicalPath : new URL(canonicalPath, config.getBaseUrl()).toString();
 
   return {
     title,
@@ -102,7 +103,7 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
         priceCurrency: 'PKR',
         price: effectivePrice,
         availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-        url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/products/${product.slug}`,
+        url: `${config.getBaseUrl()}/products/${product.slug}`,
       },
     };
 
@@ -122,19 +123,19 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}`,
+          item: `${config.getBaseUrl()}`,
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Products',
-          item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/shop`,
+          item: `${config.getBaseUrl()}/shop`,
         },
         {
           '@type': 'ListItem',
           position: 3,
           name: product.name,
-          item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/products/${product.slug}`,
+          item: `${config.getBaseUrl()}/products/${product.slug}`,
         },
       ],
     };

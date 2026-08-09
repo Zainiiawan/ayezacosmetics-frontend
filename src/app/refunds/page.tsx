@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { config } from '@/lib/config';
 import Link from 'next/link';
 import { RefreshCcw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 
@@ -22,7 +23,7 @@ export default function RefundsPage() {
     '@type': 'WebPage',
     name: 'Refund & Returns - AYEZA COSMETICS',
     description: 'Our hassle-free 14-day refund and return policy.',
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/refunds`,
+    url: `${config.getBaseUrl()}/refunds`,
   };
 
   return (

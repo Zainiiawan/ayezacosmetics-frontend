@@ -6,6 +6,7 @@ import { blogPosts } from '@/lib/data/blog';
 import TableOfContents from '@/components/blog/TableOfContents';
 import BlogCard from '@/components/blog/BlogCard';
 import { Calendar, Clock, User, ChevronRight } from 'lucide-react';
+import { config } from '@/lib/config';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -32,17 +33,18 @@ export async function generateMetadata(
   }
 
   const previousImages = (await parent).openGraph?.images || [];
+  const canonicalUrl = `${config.getBaseUrl()}/blog/${post.slug}`;
 
   return {
-    title: `\${post.title} | Ayeza Cosmetics Blog`,
+    title: `${post.title} | Ayeza Cosmetics Blog`,
     description: post.excerpt,
     alternates: {
-      canonical: `https://ayezacosmetics.com/blog/\${post.slug}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      url: `https://ayezacosmetics.com/blog/\${post.slug}`,
+      url: canonicalUrl,
       type: 'article',
       publishedTime: post.publishDate,
       authors: [post.author],
@@ -100,19 +102,19 @@ export default async function BlogPostPage({ params }: Props) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://ayezacosmetics.com',
+        item: `${config.getBaseUrl()}`,
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Blog',
-        item: 'https://ayezacosmetics.com/blog',
+        item: `${config.getBaseUrl()}/blog`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: post.title,
-        item: `https://ayezacosmetics.com/blog/\${post.slug}`,
+        item: `${config.getBaseUrl()}/blog/${post.slug}`,
       },
     ],
   };
@@ -135,7 +137,7 @@ export default async function BlogPostPage({ params }: Props) {
       name: 'Ayeza Cosmetics',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://ayezacosmetics.com/icon.png',
+        url: `${config.getBaseUrl()}/icon.png`,
       },
     },
     description: post.excerpt,

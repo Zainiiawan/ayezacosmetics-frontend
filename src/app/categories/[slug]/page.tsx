@@ -35,7 +35,8 @@ export async function generateMetadata({
 
   const title = `${category.name} | AYEZA COSMETICS`;
   const description = category.description || `Browse our premium collection of ${category.name} at AYEZA COSMETICS.`;
-  const canonicalUrl = `/categories/${category.slug}`;
+  const canonicalPath = `/categories/${category.slug}`;
+  const canonicalUrl = new URL(canonicalPath, config.getBaseUrl()).toString();
 
   return {
     title,
@@ -71,7 +72,7 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
       '@type': 'CollectionPage',
       name: category.name,
       description: category.description,
-      url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/categories/${category.slug}`,
+      url: `${config.getBaseUrl()}/categories/${category.slug}`,
     };
 
     const breadcrumbJsonLd = {
@@ -82,19 +83,19 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}`,
+          item: `${config.getBaseUrl()}`,
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Categories',
-          item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/categories`,
+          item: `${config.getBaseUrl()}/categories`,
         },
         {
           '@type': 'ListItem',
           position: 3,
           name: category.name,
-          item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/categories/${category.slug}`,
+          item: `${config.getBaseUrl()}/categories/${category.slug}`,
         },
       ],
     };

@@ -1,11 +1,8 @@
 import type { MetadataRoute } from 'next';
-import { config } from '@/lib/config';
+import { config, getBaseUrl } from '@/lib/config';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  let base = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://ayezacosmetics.store';
-  if (base.includes('vercel.app')) {
-    base = 'https://ayezacosmetics.store';
-  }
+  const base = getBaseUrl();
   const now = new Date();
 
   const staticPages = [

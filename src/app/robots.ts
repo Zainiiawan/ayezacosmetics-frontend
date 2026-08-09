@@ -1,10 +1,8 @@
 import type { MetadataRoute } from 'next';
+import { getBaseUrl } from '@/lib/config';
 
 export default function robots(): MetadataRoute.Robots {
-  let base = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://ayezacosmetics.store';
-  if (base.includes('vercel.app')) {
-    base = 'https://ayezacosmetics.store';
-  }
+  const base = getBaseUrl();
   return {
     rules: {
       userAgent: '*',

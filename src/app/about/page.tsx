@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { config } from '@/lib/config';
 import Link from 'next/link';
 import { Sparkles, Heart, Shield, Leaf } from 'lucide-react';
 import Button from '@/components/ui/Button';
@@ -30,7 +31,7 @@ export default function AboutPage() {
     '@type': 'AboutPage',
     name: 'About AYEZA COSMETICS',
     description: 'Discover the story behind AYEZA COSMETICS — luxury beauty crafted for the modern woman in Pakistan.',
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/about`,
+    url: `${config.getBaseUrl()}/about`,
   };
 
   return (

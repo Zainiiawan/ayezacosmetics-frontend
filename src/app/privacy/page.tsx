@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { config } from '@/lib/config';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function PrivacyPage() {
     '@type': 'WebPage',
     name: 'Privacy Policy - AYEZA COSMETICS',
     description: 'Our Privacy Policy explains how we collect, use, and protect your personal information at AYEZA COSMETICS.',
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/privacy`,
+    url: `${config.getBaseUrl()}/privacy`,
   };
 
   return (

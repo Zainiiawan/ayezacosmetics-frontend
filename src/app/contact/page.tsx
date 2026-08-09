@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { config } from '@/lib/config';
 import ContactPageClient from './ContactPageClient';
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function ContactPage() {
     '@type': 'ContactPage',
     name: 'Contact AYEZA COSMETICS',
     description: 'Get in touch with AYEZA COSMETICS for orders, product advice, or partnership enquiries.',
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/contact`,
+    url: `${config.getBaseUrl()}/contact`,
   };
 
   return (

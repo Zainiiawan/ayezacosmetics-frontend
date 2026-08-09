@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { config } from '@/lib/config';
 import Link from 'next/link';
 import { Truck, Clock, ShieldCheck, MapPin } from 'lucide-react';
 
@@ -22,7 +23,7 @@ export default function ShippingPage() {
     '@type': 'WebPage',
     name: 'Shipping Policy - AYEZA COSMETICS',
     description: 'Learn about our shipping and delivery processes across Pakistan.',
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/shipping`,
+    url: `${config.getBaseUrl()}/shipping`,
   };
 
   return (

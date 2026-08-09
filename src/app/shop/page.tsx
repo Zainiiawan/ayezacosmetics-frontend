@@ -22,7 +22,7 @@ export default async function ShopPageServer() {
     '@type': 'ItemList',
     name: 'Ayeza Cosmetics Product Catalog',
     description: 'Browse all premium luxury cosmetics products from AYEZA COSMETICS.',
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/shop`,
+    url: `${config.getBaseUrl()}/shop`,
     itemListElement: [], // Could be populated on client or just kept as a top-level descriptor
   };
 

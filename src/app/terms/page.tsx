@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { config } from '@/lib/config';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function TermsPage() {
     '@type': 'WebPage',
     name: 'Terms of Service - AYEZA COSMETICS',
     description: 'Read the Terms of Service for AYEZA COSMETICS.',
-    url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store'}/terms`,
+    url: `${config.getBaseUrl()}/terms`,
   };
 
   return (

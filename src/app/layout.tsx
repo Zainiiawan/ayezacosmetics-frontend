@@ -17,7 +17,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://ayezacosmetics.store";
+import { getBaseUrl } from "@/lib/config";
+
+const APP_URL = getBaseUrl();
 
 export const viewport: Viewport = {
   width: "device-width",
