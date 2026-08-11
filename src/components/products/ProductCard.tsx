@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { m as motion } from 'framer-motion';
-import { ShoppingCart, Eye, Heart } from 'lucide-react';
+import { ShoppingCart, Eye, Heart, Star } from 'lucide-react';
 import { cn, formatPrice, optimizeCloudinaryUrl, getCloudinarySrcSet } from '@/lib/utils';
 import { getDiscountPercentage, getEffectivePrice, getDiscountDisplay } from '@/lib/productUtils';
 import { useDispatch, useSelector } from 'react-redux';
