@@ -1,20 +1,38 @@
-'use client';
-
-import { useQuery } from '@tanstack/react-query';
+import { Metadata } from 'next';
 import ProductCard from '@/components/products/ProductCard';
-import { productApi } from '@/lib/api/productApi';
 import { getEffectivePrice } from '@/lib/productUtils';
+import { config } from '@/lib/config';
+import { Product } from '@/lib/api/productApi';
 
-export default function OffersPage() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['offers-products'],
-    queryFn: () => productApi.getAll({ limit: 100 }),
-  });
+export const metadata: Metadata = {
+  title: 'Special Offers | AYEZA COSMETICS',
+  description: 'Exclusive deals on luxury beauty — limited time only.',
+  alternates: {
+    canonical: '/offers',
+  },
+};
 
-  const products = (data?.products ?? []).filter((p) => {
-    const effective = getEffectivePrice(p);
-    return (p.discount && p.discount.value > 0) || (p.compareAtPrice && p.compareAtPrice > effective);
-  });
+export default async function OffersPage() {
+  let products: Product[] = [];
+
+  try {
+    const res = await fetch(`${config.apiUrl}/products?limit=100`, {
+      next: { tags: ['products'], revalidate: 3600 },
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      const allProducts: Product[] = data.data?.products || [];
+      
+      // Filter for active offers
+      products = allProducts.filter((p) => {
+        const effective = getEffectivePrice(p);
+        return (p.discount && p.discount.value > 0) || (p.compareAtPrice && p.compareAtPrice > effective);
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch offers:', error);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,9 +43,7 @@ export default function OffersPage() {
         </div>
       </section>
       <div className="container mx-auto px-4 py-10">
-        {isLoading ? (
-          <p className="text-center text-gray-500 py-12">Loading offers…</p>
-        ) : products.length === 0 ? (
+        {products.length === 0 ? (
           <p className="text-center text-gray-500 py-12">No active offers right now. Check back soon!</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
