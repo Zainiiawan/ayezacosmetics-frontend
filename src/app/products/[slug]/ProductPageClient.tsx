@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { m as motion } from 'framer-motion';
 import { ShoppingCart, Heart, Star, Share2, Truck, Shield, RefreshCw, Check, Zap, Play } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
-import { getDiscountPercentage, getEffectivePrice } from '@/lib/productUtils';
+import { getDiscountDisplay, getEffectivePrice } from '@/lib/productUtils';
 import Button from '@/components/ui/Button';
 import ProductReviews from '@/components/products/ProductReviews';
 import { productApi } from '@/lib/api/productApi';
@@ -61,7 +61,7 @@ export default function ProductPageClient() {
   }
 
   const effectivePrice = getEffectivePrice(product);
-  const discountPercentage = getDiscountPercentage(product);
+  const discountDisplay = getDiscountDisplay(product);
   const brandName = typeof product.brand === 'object' ? product.brand?.name : product.brand;
   const images = product.images?.length ? product.images : [{ url: PLACEHOLDER, alt: product.name, isMain: true }];
 
@@ -180,9 +180,9 @@ export default function ProductPageClient() {
                 <div className="absolute top-4 left-4 bg-orange-500/90 backdrop-blur text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg border border-orange-400/50 uppercase tracking-wider">
                   Coming Soon
                 </div>
-              ) : discountPercentage > 0 ? (
+              ) : discountDisplay ? (
                 <div className="absolute top-4 left-4 bg-rose-gold text-white px-3 py-1 rounded-full text-sm font-bold">
-                  -{discountPercentage}%
+                  {discountDisplay}
                 </div>
               ) : null}
             </div>

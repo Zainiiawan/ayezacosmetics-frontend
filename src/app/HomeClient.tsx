@@ -19,6 +19,8 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
     queryKey: ['categories'],
     queryFn: categoryApi.getAll,
     initialData: initialCategories,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const featuredCategories = categories;

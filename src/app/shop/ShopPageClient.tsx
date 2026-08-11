@@ -64,7 +64,8 @@ export default function ShopPage({ initialProductsData }: ShopPageClientProps) {
         limit: 12,
       }),
     initialData: isDefaultFilters ? initialProductsData : undefined,
-    staleTime: 60 * 1000,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const products = data?.products ?? [];

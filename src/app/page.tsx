@@ -9,7 +9,7 @@ export default async function Home() {
   let categories: Category[] = [];
   try {
     const res = await fetch(`${config.apiUrl}/categories`, {
-      next: { revalidate: 3600 },
+      next: { tags: ['categories'], revalidate: 3600 },
     });
     
     if (res.ok) {

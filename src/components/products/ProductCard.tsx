@@ -4,9 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { m as motion } from 'framer-motion';
-import { Heart, ShoppingCart, Eye, Star } from 'lucide-react';
+import { ShoppingCart, Eye, Heart } from 'lucide-react';
 import { cn, formatPrice, optimizeCloudinaryUrl, getCloudinarySrcSet } from '@/lib/utils';
-import { getDiscountPercentage, getEffectivePrice } from '@/lib/productUtils';
+import { getDiscountPercentage, getEffectivePrice, getDiscountDisplay } from '@/lib/productUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem as addToCart } from '@/store/slices/cartSlice';
 import { addItem as addToWishlist, removeItem as removeFromWishlist } from '@/store/slices/wishlistSlice';
@@ -40,7 +40,7 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
 
   const mainImage = product.images?.find((img) => img.isMain) || product.images?.[0];
   const effectivePrice = getEffectivePrice(product);
-  const discountPercentage = getDiscountPercentage(product);
+  const discountDisplay = getDiscountDisplay(product);
   const imageSrc = mainImage?.url ? optimizeCloudinaryUrl(mainImage.url, 600, true) : PLACEHOLDER;
   const imageSrcSet = mainImage?.url ? getCloudinarySrcSet(mainImage.url, undefined, true) : '';
 
@@ -115,9 +115,9 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
           <div className="absolute top-3 left-3 bg-orange-500/90 backdrop-blur text-white text-[10px] font-bold px-3 py-1.5 rounded-md z-10 shadow-lg border border-orange-400/50 uppercase tracking-wider">
             Coming Soon
           </div>
-        ) : discountPercentage > 0 ? (
+        ) : discountDisplay ? (
           <div className="absolute top-3 left-3 bg-rose-gold-dark text-white text-xs font-bold px-2 py-1 rounded-md z-10">
-            -{discountPercentage}%
+            {discountDisplay}
           </div>
         ) : null}
 
