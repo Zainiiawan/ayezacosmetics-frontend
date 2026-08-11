@@ -6,6 +6,7 @@ import { ArrowLeft, Plus, Edit, Trash2, X, Tag, Layers } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { categoryApi, brandApi, Category, Brand } from '@/lib/api/categoryApi';
 import { mediaApi } from '@/lib/api/mediaApi';
+import { revalidateCategoriesCache } from '@/app/actions/revalidate';
 
 type Tab = 'categories' | 'brands';
 
@@ -83,6 +84,7 @@ export default function AdminCatalogPage() {
       }
       setModalOpen(false);
       await fetchData();
+      await revalidateCategoriesCache();
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -116,6 +118,7 @@ export default function AdminCatalogPage() {
       if (tab === 'categories') await categoryApi.delete(id);
       else await brandApi.delete(id);
       await fetchData();
+      await revalidateCategoriesCache();
     } catch (err) {
       console.error('Delete failed:', err);
     }
