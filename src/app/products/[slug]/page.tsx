@@ -16,6 +16,34 @@ async function getProductBySlug(slug: string) {
   }
 }
 
+async function getReviewsByProductId(productId: string) {
+  try {
+    const res = await fetch(`${config.apiUrl}/reviews/${productId}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch (error) {
+    console.error('Error fetching reviews for SEO:', error);
+    return [];
+  }
+}
+
+async function getStoreSettings() {
+  try {
+    const res = await fetch(`${config.apiUrl}/settings`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error('Error fetching settings for SEO:', error);
+    return null;
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -81,6 +109,9 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
 
   let jsonLdArray: any[] = [];
   if (product) {
+    const settings = await getStoreSettings();
+    const defaultShippingCost = settings?.defaultShippingCost ?? 200;
+
     const effectivePrice = product.discount?.value 
       ? (product.discount.type === 'percentage' 
           ? product.basePrice * (1 - product.discount.value / 100) 
@@ -104,15 +135,49 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
         price: effectivePrice,
         availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
         url: `${config.getBaseUrl()}/products/${product.slug}`,
+        shippingDetails: {
+          '@type': 'OfferShippingDetails',
+          shippingDestination: {
+            '@type': 'DefinedRegion',
+            addressCountry: 'PK'
+          },
+          shippingRate: {
+            '@type': 'MonetaryAmount',
+            value: defaultShippingCost,
+            currency: 'PKR'
+          }
+        }
       },
     };
 
     if (product.reviewCount > 0) {
-      productJsonLd.aggregateRating = {
-        '@type': 'AggregateRating',
-        ratingValue: product.rating,
-        reviewCount: product.reviewCount,
-      };
+      const genuineReviews = await getReviewsByProductId(product._id);
+      
+      if (genuineReviews && genuineReviews.length > 0) {
+        const actualReviewCount = genuineReviews.length;
+        const actualRatingValue = genuineReviews.reduce((acc: number, r: any) => acc + r.rating, 0) / actualReviewCount;
+
+        productJsonLd.aggregateRating = {
+          '@type': 'AggregateRating',
+          ratingValue: Number(actualRatingValue.toFixed(1)),
+          reviewCount: actualReviewCount,
+        };
+
+        productJsonLd.review = genuineReviews.map((r: any) => ({
+          '@type': 'Review',
+          reviewRating: {
+            '@type': 'Rating',
+            ratingValue: r.rating,
+            bestRating: '5',
+          },
+          author: {
+            '@type': 'Person',
+            name: r.user ? `${r.user.firstName} ${r.user.lastName?.[0] || ''}`.trim() : (r.guestName || 'Anonymous'),
+          },
+          datePublished: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : undefined,
+          reviewBody: r.body,
+        }));
+      }
     }
 
     const breadcrumbJsonLd = {

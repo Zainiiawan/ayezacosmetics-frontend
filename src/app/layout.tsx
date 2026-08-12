@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   verification: {
     google: "hJhcaTPMOXI5_KbIDYvh6rf99bjD9SSs-CrFGEcwtAo",
     other: {
-      "msvalidate.01": "YOUR_BING_VERIFICATION_CODE", // Placeholder
+      "msvalidate.01": "105E6AD2380F7172A929A733738D3436",
       "p:domain_verify": "YOUR_PINTEREST_VERIFICATION_CODE", // Placeholder
     },
   },
@@ -84,6 +84,14 @@ export default function RootLayout({
       areaServed: "PK",
       availableLanguage: ["English", "Urdu"],
     },
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      merchantReturnDays: 14,
+      itemCondition: "https://schema.org/NewCondition",
+      returnMethod: "https://schema.org/ReturnByMail",
+      returnFees: "https://schema.org/CustomerResponsibility",
+      url: `${APP_URL}/refunds`,
+    }
   };
 
   const websiteJsonLd = {
