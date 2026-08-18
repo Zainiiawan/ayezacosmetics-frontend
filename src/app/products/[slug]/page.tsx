@@ -140,6 +140,14 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
         price: effectivePrice,
         availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
         url: `${config.getBaseUrl()}/products/${product.slug}`,
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: 'PK',
+          returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: 14,
+          returnMethod: 'https://schema.org/ReturnByMail',
+          returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility'
+        },
         shippingDetails: {
           '@type': 'OfferShippingDetails',
           shippingDestination: {
@@ -150,13 +158,29 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
             '@type': 'MonetaryAmount',
             value: defaultShippingCost,
             currency: 'PKR'
+          },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: {
+              '@type': 'QuantitativeValue',
+              minValue: 1,
+              maxValue: 2,
+              unitCode: 'DAY'
+            },
+            transitTime: {
+              '@type': 'QuantitativeValue',
+              minValue: 3,
+              maxValue: 5,
+              unitCode: 'DAY'
+            }
           }
         }
       },
     };
 
     if (product.reviewCount > 0) {
-      const genuineReviews = await getReviewsByProductId(product._id);
+      const allFetchedReviews = await getReviewsByProductId(product._id);
+      const genuineReviews = allFetchedReviews.filter((r: any) => r.isApproved !== false);
       
       if (genuineReviews && genuineReviews.length > 0) {
         const actualReviewCount = genuineReviews.length;
@@ -164,23 +188,24 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
 
         productJsonLd.aggregateRating = {
           '@type': 'AggregateRating',
-          ratingValue: Number(actualRatingValue.toFixed(1)),
-          reviewCount: actualReviewCount,
+          ratingValue: String(actualRatingValue.toFixed(1)),
+          reviewCount: String(actualReviewCount),
         };
 
         productJsonLd.review = genuineReviews.map((r: any) => ({
           '@type': 'Review',
-          reviewRating: {
-            '@type': 'Rating',
-            ratingValue: r.rating,
-            bestRating: '5',
-          },
           author: {
             '@type': 'Person',
             name: r.user ? `${r.user.firstName} ${r.user.lastName?.[0] || ''}`.trim() : (r.guestName || 'Anonymous'),
           },
           datePublished: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : undefined,
           reviewBody: r.body,
+          reviewRating: {
+            '@type': 'Rating',
+            ratingValue: String(r.rating),
+            bestRating: '5',
+            worstRating: '1',
+          }
         }));
       }
     }

@@ -86,10 +86,12 @@ export default function RootLayout({
     },
     hasMerchantReturnPolicy: {
       "@type": "MerchantReturnPolicy",
+      applicableCountry: "PK",
+      returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
       merchantReturnDays: 14,
       itemCondition: "https://schema.org/NewCondition",
       returnMethod: "https://schema.org/ReturnByMail",
-      returnFees: "https://schema.org/CustomerResponsibility",
+      returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
       url: `${APP_URL}/refunds`,
     }
   };
