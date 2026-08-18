@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { config, getBaseUrl } from '@/lib/config';
+import { blogPosts } from '@/lib/data/blog';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getBaseUrl();
@@ -10,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/shop',
     '/categories',
     '/offers',
+    '/blog',
     '/about',
     '/contact',
     '/help',
@@ -27,6 +29,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: path === '' ? 'daily' : 'weekly',
     priority: path === '' ? 1 : 0.8,
   }));
+
+  blogPosts.forEach((post) => {
+    sitemapEntries.push({
+      url: `${base}/blog/${post.slug}`,
+      lastModified: new Date(post.publishDate),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    });
+  });
 
   try {
     // Fetch products (Paginated to respect 100 limit)

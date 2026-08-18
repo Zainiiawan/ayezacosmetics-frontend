@@ -156,5 +156,32 @@ export const blogPosts: BlogPost[] = [
     faqs: [
       { question: 'Can I use my day cream at night?', answer: 'While you can, it’s not optimal. Day creams are lighter and often lack the intense reparative ingredients found in the Ayeza Night Cream.' }
     ]
+  },
+  {
+    slug: 'best-face-wash-for-oily-acne-prone-skin',
+    title: 'How to Choose the Best Face Wash for Oily & Acne-Prone Skin',
+    excerpt: 'Struggling with breakouts and excess oil? Discover the science behind choosing the perfect cleanser and how Ayeza Radiance Face Wash can transform your skincare routine.',
+    content: `
+      <h2>The Importance of the Right Cleanser</h2>
+      <p>If you have oily or acne-prone skin, your face wash is arguably the most important step in your routine. Using a cleanser that is too harsh will strip your skin of its natural oils, triggering a rebound effect where your skin produces even more oil to compensate. On the other hand, a cleanser that is too mild won't effectively remove the sebum, dirt, and dead skin cells that clog pores.</p>
+      
+      <h2>What to Look For</h2>
+      <p>When shopping in our <a href="/categories/face-wash" className="text-rose-gold hover:underline">Face Wash category</a>, you should look for formulas that are sulfate-free and non-comedogenic. Ingredients that gently exfoliate and soothe inflammation are key to managing breakouts without causing redness.</p>
+      
+      <h2>The Solution: Ayeza Radiance Face Wash</h2>
+      <p>Our top recommendation for oily skin types is the <a href="/products/ayeza-radiance-face-wash" className="text-rose-gold font-medium hover:underline">Ayeza Radiance Face Wash</a>. It strikes the perfect balance—deeply purifying your pores while maintaining your skin's delicate moisture barrier. Regular use helps to keep your T-zone matte and significantly reduces the frequency of breakouts.</p>
+      
+      <h2>How to Use It Effectively</h2>
+      <p>For best results, wash your face twice daily. Lather a small amount of the face wash in your hands, gently massage it over your face in circular motions for at least 60 seconds (this gives the active ingredients time to work), and rinse with lukewarm—never hot—water.</p>
+    `,
+    featuredImage: { url: '/blog/face-wash.jpg', alt: 'Ayeza Radiance Face Wash' },
+    author: 'Ayeza Skincare Specialist',
+    publishDate: '2026-08-15',
+    readingTime: '6 min read',
+    categories: ['Acne Control'],
+    tags: ['Face Wash', 'Oily Skin', 'Acne'],
+    faqs: [
+      { question: 'Will this face wash dry out my skin?', answer: 'No, the Ayeza Radiance Face Wash is formulated to balance oil production without stripping your skin of essential moisture.' }
+    ]
   }
 ];

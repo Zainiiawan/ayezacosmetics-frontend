@@ -17,11 +17,14 @@ import { RootState } from '@/store';
 import { cartApi } from '@/lib/api/cartApi';
 import { wishlistApi } from '@/lib/api/wishlistApi';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
+import { ArrowLeft, Minus, Plus, Info } from 'lucide-react';
+import ProductSeoContent from '@/components/products/ProductSeoContent';
 
 const PLACEHOLDER =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23f9f0f3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23c29375'%3EAYEZA%3C/text%3E%3C/svg%3E";
 
-export default function ProductPageClient() {
+export default function ProductPageClient({ initialProductData }: { initialProductData?: any }) {
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug as string;
@@ -34,6 +37,7 @@ export default function ProductPageClient() {
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ['product', slug],
     queryFn: () => productApi.getBySlug(slug),
+    initialData: initialProductData,
     enabled: !!slug,
   });
 
@@ -199,7 +203,7 @@ export default function ProductPageClient() {
                     <Play className="w-8 h-8 text-rose-gold fill-rose-gold opacity-80" />
                   </button>
                 )}
-                {images.map((image, index) => (
+                {images.map((image: any, index: number) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -371,6 +375,8 @@ export default function ProductPageClient() {
             dangerouslySetInnerHTML={{ __html: product.seoContent }}
           />
         )}
+
+        <ProductSeoContent slug={product.slug} />
 
         <ProductReviews productId={product._id} />
       </div>

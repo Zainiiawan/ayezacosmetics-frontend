@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import ProductPageClient from './ProductPageClient';
 import { config } from '@/lib/config';
 
@@ -106,6 +107,10 @@ export async function generateMetadata({
 export default async function ProductPageServer({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
+
+  if (!product) {
+    notFound();
+  }
 
   let jsonLdArray: any[] = [];
   if (product) {
@@ -216,7 +221,7 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArray) }}
         />
       )}
-      <ProductPageClient />
+      <ProductPageClient initialProductData={product} />
     </>
   );
 }

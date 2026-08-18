@@ -1,6 +1,12 @@
 import { Category } from '@/lib/api/categoryApi';
 import { config } from '@/lib/config';
 import HomeClient from './HomeClient';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Ayeza Cosmetics | Premium Skincare & Beauty Products in Pakistan',
+  description: 'Discover Ayeza Cosmetics. Shop premium skincare, beauty creams, and face washes designed for radiant, healthy skin. Fast delivery across Pakistan.',
+};
 
 // Ensure this page is cached and revalidated hourly
 export const revalidate = 3600;

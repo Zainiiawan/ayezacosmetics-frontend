@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { categoryApi } from '@/lib/api/categoryApi';
 import { productApi } from '@/lib/api/productApi';
+import CategorySeoContent from '@/components/categories/CategorySeoContent';
 
 const SORT_MAP: Record<string, 'newest' | 'price_asc' | 'price_desc' | 'rating' | 'bestselling' | undefined> = {
   featured: 'bestselling',
@@ -248,6 +249,8 @@ export default function CategoryPageClient({ initialCategoryData, initialProduct
             dangerouslySetInnerHTML={{ __html: category.seoContent }}
           />
         )}
+        
+        <CategorySeoContent slug={slug} />
       </div>
     </div>
   );

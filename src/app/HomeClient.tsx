@@ -36,10 +36,10 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
               transition={{ duration: 0.6 }}
             >
               <h1 className="text-4xl md:text-6xl font-serif font-bold text-black mb-2 leading-tight">
-                Discover Your <span className="text-rose-gold">True Beauty</span>
+                Welcome to <span className="text-rose-gold">AYEZA COSMETICS</span> - Premium Skincare
               </h1>
               <p className="text-base text-gray-600 mb-4 max-w-md mx-auto">
-                Experience the difference with premium skincare and makeup.
+                Discover the best skincare, beauty creams, and face washes in Pakistan.
               </p>
             </motion.div>
           </div>
@@ -107,7 +107,7 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
 
 
 
-      <section className="py-12 bg-white flex flex-col justify-center">
+      <section className="py-12 bg-white flex flex-col justify-center border-t border-gray-100">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -119,11 +119,11 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
               Why Choose AYEZA COSMETICS
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              We are committed to delivering the best beauty experience
+              We are committed to delivering the best beauty experience in Pakistan
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {whyChooseUs.map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -142,6 +142,95 @@ export default function HomeClient({ initialCategories }: { initialCategories: C
             ))}
           </div>
         </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 bg-gray-50 flex flex-col justify-center border-t border-gray-100">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-black mb-3">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Learn more about our premium skincare products
+            </p>
+          </motion.div>
+
+          <div className="max-w-3xl mx-auto space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-white p-6 rounded-xl luxury-border"
+            >
+              <h3 className="text-lg font-bold text-black mb-2">Are Ayeza Cosmetics products safe for sensitive skin?</h3>
+              <p className="text-gray-600">Yes, our products are formulated with gentle, skin-loving ingredients. However, we always recommend patch-testing any new product before full application.</p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-white p-6 rounded-xl luxury-border"
+            >
+              <h3 className="text-lg font-bold text-black mb-2">How long does shipping take within Pakistan?</h3>
+              <p className="text-gray-600">Standard shipping typically takes 3-5 business days across Pakistan. We offer free shipping on all orders over PKR 5,000.</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-white p-6 rounded-xl luxury-border"
+            >
+              <h3 className="text-lg font-bold text-black mb-2">Are your products cruelty-free?</h3>
+              <p className="text-gray-600">Absolutely! Ayeza Cosmetics is 100% cruelty-free. We never test our formulations or ingredients on animals.</p>
+            </motion.div>
+          </div>
+        </div>
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "Are Ayeza Cosmetics products safe for sensitive skin?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, our products are formulated with gentle, skin-loving ingredients. However, we always recommend patch-testing any new product before full application."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "How long does shipping take within Pakistan?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Standard shipping typically takes 3-5 business days across Pakistan. We offer free shipping on all orders over PKR 5,000."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Are your products cruelty-free?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Absolutely! Ayeza Cosmetics is 100% cruelty-free. We never test our formulations or ingredients on animals."
+                  }
+                }
+              ]
+            })
+          }}
+        />
       </section>
     </div>
   );
