@@ -2,7 +2,8 @@
  * The catalogue in the backend still carries the old brand name in product
  * and category text. Until it is renamed in the admin panel, the storefront
  * shows AZEEORA instead. Display only: nothing is written back, slugs, URLs
- * and stored image paths are untouched, and the admin panel shows the stored data.
+ * and stored image paths are untouched. The admin panel gets the names only,
+ * so saving a product there renames it for good without touching its photos.
  * Product photos showing the old pack are swapped for the AZEEORA pack shots.
  */
 const TEXT_KEYS = new Set(['name', 'description', 'shortDescription', 'seoContent', 'metaTitle', 'metaDescription']);
@@ -20,6 +21,8 @@ const CREAM = '/brand/products/azeeora-beauty-cream.jpg';
 const PRODUCT_PHOTOS: Record<string, string> = {
   'ayeza-radiance-face-wash': FACE_WASH,
   'ayeza-beauty-cream': CREAM,
+  'azeeora-radiance-face-wash': FACE_WASH,
+  'azeeora-beauty-cream': CREAM,
 };
 const CATEGORY_PHOTOS: Record<string, string> = {
   'face-wash': FACE_WASH,
@@ -37,13 +40,13 @@ function swapPhotos(doc: Record<string, unknown>) {
   if (categoryPhoto && doc.image && typeof doc.image === 'object') doc.image = { ...(doc.image as object), url: categoryPhoto };
 }
 
-export function rebrand<T>(value: T, key?: string): T {
+export function rebrand<T>(value: T, key?: string, photos = true): T {
   if (typeof value === 'string') return (key && TEXT_KEYS.has(key) ? swap(value) : value) as T;
-  if (Array.isArray(value)) return value.map((v) => rebrand(v, key)) as T;
+  if (Array.isArray(value)) return value.map((v) => rebrand(v, key, photos)) as T;
   if (value && typeof value === 'object') {
     const out: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(value as Record<string, unknown>)) out[k] = rebrand(v, k);
-    swapPhotos(out);
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) out[k] = rebrand(v, k, photos);
+    if (photos) swapPhotos(out);
     return out as T;
   }
   return value;

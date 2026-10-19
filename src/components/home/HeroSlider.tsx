@@ -16,6 +16,8 @@ const mainImage = (p: Product) => (p.images?.find((i) => i.isMain) || p.images?.
 const BANNERS: Record<string, string> = {
   'ayeza-radiance-face-wash': '/brand/banners/radiance-face-wash.jpg',
   'ayeza-beauty-cream': '/brand/banners/beauty-cream.jpg',
+  'azeeora-radiance-face-wash': '/brand/banners/radiance-face-wash.jpg',
+  'azeeora-beauty-cream': '/brand/banners/beauty-cream.jpg',
 };
 
 /**

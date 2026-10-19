@@ -37,9 +37,9 @@ const createAxiosInstance = (): AxiosInstance => {
 
   instance.interceptors.response.use(
     (response) => {
-      // storefront shows the AZEEORA name on catalogue text; admin keeps the stored text
+      // show the AZEEORA name on catalogue text everywhere; photo swaps are storefront only
       const onAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
-      if (!onAdmin && response.data && typeof response.data === 'object') response.data = rebrand(response.data);
+      if (response.data && typeof response.data === 'object') response.data = rebrand(response.data, undefined, !onAdmin);
       return response;
     },
     async (error: AxiosError) => {

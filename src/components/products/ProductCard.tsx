@@ -109,10 +109,6 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
   return (
     <motion.article
       className={cn('group flex flex-col', className)}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.6 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >

@@ -13,9 +13,11 @@ import HeroSlider from '@/components/home/HeroSlider';
 import { optimizeCloudinaryUrl, getCloudinarySrcSet, formatPrice } from '@/lib/utils';
 import { getEffectivePrice } from '@/lib/productUtils';
 
+// slide in only, never hidden: some in-app browsers (WhatsApp, Instagram) never report
+// sections as in view, and content that waits on that would stay invisible
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
+  initial: { y: 18 },
+  whileInView: { y: 0 },
   viewport: { once: true, margin: '-60px' },
   transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
 };
@@ -170,13 +172,13 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
 
       {/* ---------------- Perks ---------------- */}
       <section className="border-b border-line">
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:divide-x divide-line">
+        <div className="max-w-[1440px] mx-auto px-5 lg:px-10 grid grid-cols-2 lg:grid-cols-4 gap-x-4 lg:gap-x-0 lg:divide-x divide-line">
           {perks.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex items-center gap-4 py-6 lg:px-6 first:lg:pl-0">
-              <Icon className="w-6 h-6 text-crimson shrink-0" strokeWidth={1.4} />
+            <div key={title} className="flex items-start sm:items-center gap-2.5 sm:gap-4 py-4 sm:py-6 lg:px-6 first:lg:pl-0">
+              <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-crimson shrink-0 mt-0.5 sm:mt-0" strokeWidth={1.4} />
               <span className="min-w-0">
-                <span className="block font-medium text-[0.92rem] text-ink leading-snug">{title}</span>
-                <span className="block text-[0.8rem] text-muted">{text}</span>
+                <span className="block font-medium text-[0.8rem] sm:text-[0.92rem] text-ink leading-snug">{title}</span>
+                <span className="block text-[0.72rem] sm:text-[0.8rem] text-muted leading-snug">{text}</span>
               </span>
             </div>
           ))}
@@ -184,12 +186,12 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
       </section>
 
       {/* ---------------- Categories ---------------- */}
-      <section className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-16 lg:py-24">
+      <section className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-12 sm:py-16 lg:py-24">
         <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto">
           <p className="eyebrow text-crimson">The collection</p>
           <h2 className={sectionTitle}>Shop by category</h2>
         </motion.div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+        <div className="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 lg:gap-6">
           {categories.map((c, i) => (
             <motion.div key={c._id} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.08 }}>
               <Link href={`/categories/${c.slug}`} className="group block">
@@ -199,32 +201,32 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
                     <img
                       src={optimizeCloudinaryUrl(c.image.url, 800, false)}
                       srcSet={getCloudinarySrcSet(c.image.url) || undefined}
-                      sizes="(max-width: 640px) 90vw, 33vw"
+                      sizes="(max-width: 1024px) 50vw, 33vw"
                       alt={c.name}
                       className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-105"
                     />
                   )}
                 </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <h3 className="font-serif text-[1.25rem] text-ink capitalize">{c.name.toLowerCase()}</h3>
+                <div className="mt-3 sm:mt-4 flex items-center justify-between gap-2">
+                  <h3 className="font-serif text-[1rem] sm:text-[1.25rem] text-ink capitalize">{c.name.toLowerCase()}</h3>
                   <ArrowRight className="w-5 h-5 text-crimson transition-transform group-hover:translate-x-1" />
                 </div>
               </Link>
             </motion.div>
           ))}
-          <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: categories.length * 0.08 }}>
+          <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: categories.length * 0.08 }} className={categories.length % 2 === 0 ? 'col-span-2 lg:col-span-1' : undefined}>
             <Link href="/shop" className="group block">
-              <div className="relative aspect-[4/5] bg-crimson text-white flex flex-col items-center justify-center p-8 overflow-hidden">
+              <div className={`relative ${categories.length % 2 === 0 ? 'aspect-[2/1]' : 'aspect-[4/5]'} lg:aspect-[4/5] bg-crimson text-white flex flex-col items-center justify-center p-5 sm:p-8 overflow-hidden`}>
                 <Sprig className="absolute -top-2 -right-2 w-20 text-white/25 rotate-12" />
                 <Sprig className="absolute -bottom-4 -left-2 w-16 text-white/20 rotate-[200deg]" />
-                <p className="font-urdu text-[1.9rem]" lang="ur" dir="rtl">سب دیکھیں</p>
-                <p className="mt-1 font-serif text-[1.7rem]">Shop everything</p>
-                <span className="mt-6 w-14 h-14 rounded-full bg-white text-crimson flex items-center justify-center transition-transform group-hover:scale-110">
+                <p className="font-urdu text-[1.5rem] sm:text-[1.9rem]" lang="ur" dir="rtl">سب دیکھیں</p>
+                <p className="mt-1 font-serif text-[1.3rem] sm:text-[1.7rem]">Shop everything</p>
+                <span className="mt-4 sm:mt-6 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white text-crimson flex items-center justify-center transition-transform group-hover:scale-110">
                   <ArrowUpRight className="w-5 h-5" />
                 </span>
               </div>
-              <div className="mt-4 flex items-center justify-between">
-                <h3 className="font-serif text-[1.25rem] text-ink">The full edit</h3>
+              <div className="mt-3 sm:mt-4 flex items-center justify-between">
+                <h3 className="font-serif text-[1rem] sm:text-[1.25rem] text-ink">The full edit</h3>
                 <ArrowRight className="w-5 h-5 text-crimson transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
@@ -275,7 +277,7 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
 
       {/* ---------------- Concerns ---------------- */}
       <section className="bg-blush">
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-10 py-16 lg:py-24 grid lg:grid-cols-[0.9fr_1.6fr] gap-12 items-start">
+        <div className="max-w-[1440px] mx-auto px-5 lg:px-10 py-12 sm:py-12 sm:py-16 lg:py-24 grid lg:grid-cols-[0.9fr_1.6fr] gap-8 sm:gap-12 items-start">
           <motion.div {...fadeUp} className="lg:sticky lg:top-36">
             <p className="eyebrow text-crimson">Skin, season by season</p>
             <h2 className={sectionTitle}>Made for our weather</h2>
@@ -283,14 +285,14 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
               Lahore summers, Karachi humidity, Islamabad winters. Pakistani skin goes through a lot in a year. Pick what your skin is asking for today.
             </p>
           </motion.div>
-          <div className="grid sm:grid-cols-2 gap-px bg-blush-deep">
+          <div className="grid grid-cols-2 gap-px bg-blush-deep">
             {concerns.map(({ icon: Icon, title, text, hint }, i) => (
               <motion.div key={title} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.06 }} className="bg-white">
-                <Link href={concernLink(hint)} className="group block h-full p-8 hover:bg-white/60 transition-colors">
-                  <Icon className="w-7 h-7 text-crimson" strokeWidth={1.3} />
-                  <h3 className="mt-5 font-serif text-[1.2rem] text-ink">{title}</h3>
-                  <p className="mt-2 text-[0.92rem] text-gray-600 leading-relaxed">{text}</p>
-                  <span className="mt-5 inline-flex items-center gap-1.5 text-[0.75rem] uppercase tracking-[0.14em] font-medium text-crimson">
+                <Link href={concernLink(hint)} className="group block h-full p-4 sm:p-8 hover:bg-white/60 transition-colors">
+                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-crimson" strokeWidth={1.3} />
+                  <h3 className="mt-3 sm:mt-5 font-serif text-[1rem] sm:text-[1.2rem] text-ink leading-snug">{title}</h3>
+                  <p className="mt-2 text-[0.8rem] sm:text-[0.92rem] text-gray-600 leading-relaxed">{text}</p>
+                  <span className="mt-3 sm:mt-5 inline-flex items-center gap-1.5 text-[0.75rem] uppercase tracking-[0.14em] font-medium text-crimson">
                     Shop the fix <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </span>
                 </Link>
@@ -301,25 +303,25 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
       </section>
 
       {/* ---------------- Ritual ---------------- */}
-      <section id="ritual" className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-16 lg:py-24 scroll-mt-28">
+      <section id="ritual" className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-12 sm:py-16 lg:py-24 scroll-mt-28">
         <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto">
           <p className="eyebrow text-crimson">The daily ritual</p>
           <h2 className={sectionTitle}>Two minutes, morning and night</h2>
           <p className="mt-4 text-gray-600">Simple steps you will actually keep doing. Consistency is the real secret of glowing skin.</p>
         </motion.div>
-        <div className="mt-12 grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div className="mt-8 sm:mt-12 grid lg:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {[
             { title: 'Morning', icon: Sun, steps: [['Cleanse', cleanser], ['Moisturise', cream], ['Sunscreen, always', undefined]] as [string, Product | undefined][] },
             { title: 'Night', icon: Moon, steps: [['Cleanse away the day', cleanser], ['Nourish', cream], ['Let skin rest', undefined]] as [string, Product | undefined][] },
           ].map(({ title, icon: Icon, steps }, i) => (
-            <motion.div key={title} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.1 }} className="bg-tile p-8 lg:p-10">
+            <motion.div key={title} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.1 }} className="bg-tile p-5 sm:p-8 lg:p-10">
               <div className="flex items-center gap-3">
                 <Icon className="w-6 h-6 text-crimson" strokeWidth={1.4} />
                 <h3 className="font-serif text-[1.5rem] text-ink">{title}</h3>
               </div>
-              <ol className="mt-8 space-y-6">
+              <ol className="mt-5 sm:mt-8 space-y-4 sm:space-y-6">
                 {steps.map(([label, product], n) => (
-                  <li key={label} className="flex items-center gap-5">
+                  <li key={label} className="flex items-center gap-3 sm:gap-5">
                     <span className="w-10 h-10 shrink-0 rounded-full bg-crimson text-white font-serif flex items-center justify-center">{n + 1}</span>
                     <span className="flex-1 min-w-0">
                       <span className="block font-medium text-ink">{label}</span>
@@ -347,7 +349,7 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
       <section className="bg-crimson text-white relative overflow-hidden">
         <Sprig className="absolute left-6 top-6 w-14 text-white/20 -rotate-12" />
         <div className="max-w-[1440px] mx-auto grid lg:grid-cols-2 items-stretch">
-          <motion.div {...fadeUp} className="px-6 lg:px-16 py-16 lg:py-24 flex flex-col justify-center">
+          <motion.div {...fadeUp} className="px-6 lg:px-16 py-12 sm:py-16 lg:py-24 flex flex-col justify-center">
             <p className="eyebrow text-petal">Shaadi season</p>
             <h2 className="mt-4 font-serif text-[2rem] sm:text-[2.8rem] !text-white leading-[1.1]">
               Mehndi, baraat, walima.
@@ -393,7 +395,7 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
 
       {/* ---------------- Journal ---------------- */}
       <section className="bg-tile">
-        <div className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-16 lg:py-24">
+        <div className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-12 sm:py-16 lg:py-24">
           <motion.div {...fadeUp} className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow text-crimson">The journal</p>
@@ -422,7 +424,7 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
       </section>
 
       {/* ---------------- FAQ ---------------- */}
-      <section className="max-w-3xl mx-auto w-full px-5 lg:px-10 py-16 lg:py-24">
+      <section className="max-w-3xl mx-auto w-full px-5 lg:px-10 py-12 sm:py-16 lg:py-24">
         <motion.div {...fadeUp} className="text-center">
           <p className="eyebrow text-crimson">Good to know</p>
           <h2 className={sectionTitle}>Questions, answered</h2>
