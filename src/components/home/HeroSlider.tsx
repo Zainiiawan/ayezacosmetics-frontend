@@ -44,7 +44,7 @@ export default function HeroSlider({ products }: { products: Product[] }) {
 
   return (
     <section
-      className="relative overflow-hidden bg-blush h-[calc(100svh-98px)] lg:h-[calc(100svh-110px)] min-h-[420px] max-h-[900px]"
+      className="relative overflow-hidden bg-tile aspect-square sm:aspect-auto sm:h-[calc(100svh-98px)] lg:h-[calc(100svh-110px)] sm:min-h-[420px] max-h-[900px]"
       aria-roledescription="carousel"
       aria-label="Our products"
       // pause while a mouse rests on it; taps on phones should not stop the slideshow
@@ -68,9 +68,6 @@ export default function HeroSlider({ products }: { products: Product[] }) {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <Link href={`/products/${current.slug}`} className="absolute inset-0 block" aria-label={`${current.name}, view product`}>
-            {/* soft blurred fill so wide screens never show empty bands */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={optimizeCloudinaryUrl(mainImage(current)!, 600, false)} alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60" />
             {/* the poster itself, never cropped */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
