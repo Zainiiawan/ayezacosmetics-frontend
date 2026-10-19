@@ -165,7 +165,7 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       {/* Hero Section */}
-      <div className="bg-sand jaali-light border-b border-gold/25">
+      <div className="bg-blush border-b border-line">
         <div className="container mx-auto px-4 py-4">
           <nav className="text-sm text-gray-500 flex items-center gap-2 flex-wrap">
             <Link href="/" className="hover:text-rose-gold transition-colors">Home</Link>

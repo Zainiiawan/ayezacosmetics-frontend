@@ -9,22 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'rose-gold': '#b8892b',
-        'rose-gold-light': '#ead7a6',
-        'rose-gold-dark': '#0f3b2e',
-        'black': '#10231c',
+        'rose-gold': '#c8213f',
+        'rose-gold-light': '#f6d9de',
+        'rose-gold-dark': '#a01b35',
+        'black': '#231f20',
         'white': '#ffffff',
       },
       fontFamily: {
-        serif: ['"Marcellus"', 'Georgia', 'serif'],
-        sans: ['"Manrope"', 'system-ui', 'sans-serif'],
+        serif: ['"Cinzel"', 'Georgia', 'serif'],
+        sans: ['"Jost"', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'rose-gold-gradient': 'linear-gradient(135deg, #b8892b 0%, #ead7a6 100%)',
+        'rose-gold-gradient': 'linear-gradient(135deg, #c8213f 0%, #f2a9b6 100%)',
       },
       boxShadow: {
-        'luxury': '0 4px 20px rgba(15, 59, 46, 0.15)',
-        'luxury-lg': '0 10px 40px rgba(15, 59, 46, 0.2)',
+        'luxury': '0 4px 20px rgba(35, 31, 32, 0.08)',
+        'luxury-lg': '0 10px 40px rgba(35, 31, 32, 0.12)',
       },
     },
   },

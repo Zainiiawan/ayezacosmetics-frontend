@@ -13,7 +13,7 @@ const BlogSidebar = ({ categories, tags, searchQuery, onSearchChange }: BlogSide
   return (
     <aside className="w-full flex flex-col gap-8">
       {/* Search Widget */}
-      <div className="bg-white p-6 rounded-xl shadow-sm luxury-border">
+      <div className="bg-tile p-6">
         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">Search</h3>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -28,7 +28,7 @@ const BlogSidebar = ({ categories, tags, searchQuery, onSearchChange }: BlogSide
       </div>
 
       {/* Categories Widget */}
-      <div className="bg-white p-6 rounded-xl shadow-sm luxury-border">
+      <div className="bg-tile p-6">
         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">Categories</h3>
         <ul className="flex flex-col gap-3">
           {categories.map((category) => (
@@ -42,7 +42,7 @@ const BlogSidebar = ({ categories, tags, searchQuery, onSearchChange }: BlogSide
       </div>
 
       {/* Tags Widget */}
-      <div className="bg-white p-6 rounded-xl shadow-sm luxury-border">
+      <div className="bg-tile p-6">
         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
           <Tag className="w-4 h-4" /> Popular Tags
         </h3>

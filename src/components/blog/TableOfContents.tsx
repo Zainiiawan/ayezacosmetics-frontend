@@ -49,7 +49,7 @@ const TableOfContents = () => {
   if (headings.length === 0) return null;
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm luxury-border sticky top-24">
+    <div className="bg-tile p-6 sticky top-24">
       <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">
         Table of Contents
       </h3>

@@ -82,7 +82,7 @@ export default function CategoryPageClient({ initialCategoryData, initialProduct
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-sand jaali-light border-b border-gold/25">
+      <div className="bg-blush border-b border-line">
         <div className="container mx-auto px-4 py-3">
           <nav className="text-sm text-gray-500 flex items-center gap-2">
             <Link href="/" className="hover:text-rose-gold transition-colors">Home</Link>
@@ -94,7 +94,7 @@ export default function CategoryPageClient({ initialCategoryData, initialProduct
         </div>
       </div>
 
-      <div className="bg-sand jaali-light border-b border-gold/25">
+      <div className="bg-blush border-b border-line">
         <div className="container mx-auto px-4 py-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-black mb-2">
@@ -245,7 +245,7 @@ export default function CategoryPageClient({ initialCategoryData, initialProduct
 
         {category?.seoContent && (
           <article 
-            className="mt-16 mb-12 max-w-4xl mx-auto text-gray-700 bg-white p-8 rounded-2xl shadow-sm luxury-border [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-gray-800 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-4 [&>li]:mb-2 [&>strong]:text-gray-900"
+            className="mt-16 mb-12 max-w-4xl mx-auto text-gray-700 bg-tile p-8 lg:p-12 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-gray-800 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-4 [&>li]:mb-2 [&>strong]:text-gray-900"
             dangerouslySetInnerHTML={{ __html: category.seoContent }}
           />
         )}

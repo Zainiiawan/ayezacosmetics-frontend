@@ -75,31 +75,27 @@ const Footer = ({ className }: { className?: string }) => {
   ];
 
   return (
-    <footer className={`relative bg-emerald text-ivory overflow-hidden ${className || ''}`}>
-      <div className="absolute inset-0 jaali opacity-60 pointer-events-none" aria-hidden />
-
+    <footer className={`bg-white text-ink ${className || ''}`}>
       {/* Newsletter */}
-      <div className="relative border-b border-gold/20">
+      <div className="bg-blush">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-14 grid lg:grid-cols-2 gap-8 items-center">
           <div>
-            <p className="eyebrow text-gold-soft">The AZEEORA circle</p>
-            <h3 className="mt-3 font-serif text-[2rem] md:text-[2.6rem] leading-tight !text-ivory">
-              Glow notes, first looks <span className="gold-text">&amp; Eid offers</span>
-            </h3>
-            <p className="mt-3 text-ivory/70 max-w-md">New launches, skin tips for Pakistani weather and members-only offers. A few emails a season, never spam.</p>
+            <p className="eyebrow text-crimson">The AZEEORA circle</p>
+            <h3 className="mt-3 font-serif text-[1.8rem] md:text-[2.3rem] leading-tight">Glow notes, first looks and offers</h3>
+            <p className="mt-3 text-muted max-w-md">New launches, skin tips for Pakistani weather and members-only offers. A few emails a season, never spam.</p>
           </div>
           <form className="flex flex-col sm:flex-row gap-3 lg:justify-end">
             <label className="relative flex-1 max-w-md">
               <span className="sr-only">Email address</span>
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald/50" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
               <input
                 type="email"
                 placeholder="Your email address"
-                className="w-full pl-11 pr-4 py-3.5 rounded-full bg-ivory border border-gold/40 text-emerald placeholder:text-gray-500 focus:outline-none focus:border-gold text-sm"
+                className="w-full pl-11 pr-4 py-3.5 rounded-full bg-white border border-line text-ink placeholder:text-gray-500 focus:outline-none focus:border-crimson text-sm"
               />
             </label>
-            <button type="submit" className="bg-gold text-emerald px-7 py-3.5 rounded-full font-semibold tracking-[0.06em] hover:bg-gold-soft transition-colors flex items-center justify-center gap-2 text-sm">
-              Join the circle
+            <button type="submit" className="bg-crimson text-white px-7 py-3.5 rounded-full font-medium uppercase tracking-[0.12em] text-[0.78rem] hover:bg-crimson-deep transition-colors flex items-center justify-center gap-2">
+              Subscribe
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -107,16 +103,13 @@ const Footer = ({ className }: { className?: string }) => {
       </div>
 
       {/* Main footer */}
-      <div className="relative max-w-[1440px] mx-auto px-6 lg:px-10 py-14 grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.3fr]">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-14 grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.3fr]">
         <div className="max-w-sm">
-          <Link href="/" className="text-[34px] inline-block" aria-label="AZEEORA home">
-            <Wordmark light />
+          <Link href="/" className="text-[32px] inline-block" aria-label="AZEEORA home">
+            <Wordmark />
           </Link>
-          <p className="mt-5 text-ivory/70 leading-relaxed">
+          <p className="mt-5 text-muted leading-relaxed">
             Thoughtful skincare made for Pakistani skin, sun and seasons. Gentle formulas, honest prices, delivered to your door.
-          </p>
-          <p className="mt-4 font-urdu text-[1.35rem] text-gold-soft" lang="ur" dir="rtl">
-            آپ کی خوبصورتی، ہماری پہچان
           </p>
           <div className="flex gap-3 mt-6">
             {social.map(({ label, href, Icon }) => (
@@ -126,7 +119,7 @@ const Footer = ({ className }: { className?: string }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="w-10 h-10 rounded-full border border-gold/40 text-gold-soft flex items-center justify-center hover:bg-gold hover:text-emerald transition-all"
+                className="w-10 h-10 rounded-full bg-blush text-crimson flex items-center justify-center hover:bg-crimson hover:text-white transition-colors"
               >
                 <Icon className="w-[18px] h-[18px]" />
               </a>
@@ -136,11 +129,11 @@ const Footer = ({ className }: { className?: string }) => {
 
         {columns.map(([title, links]) => (
           <div key={title}>
-            <h5 className="eyebrow text-gold-soft !font-semibold">{title}</h5>
+            <h5 className="eyebrow text-ink !font-semibold">{title}</h5>
             <ul className="mt-5 space-y-3">
               {links.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-ivory/75 hover:text-gold-soft transition-colors">
+                  <Link href={link.href} className="text-muted hover:text-crimson transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -150,34 +143,34 @@ const Footer = ({ className }: { className?: string }) => {
         ))}
 
         <div>
-          <h5 className="eyebrow text-gold-soft !font-semibold">Contact us</h5>
-          <ul className="mt-5 space-y-4 text-ivory/75">
+          <h5 className="eyebrow text-ink !font-semibold">Contact us</h5>
+          <ul className="mt-5 space-y-4 text-muted">
             <li className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-gold-soft shrink-0 mt-0.5" strokeWidth={1.5} />
+              <MapPin className="w-5 h-5 text-crimson shrink-0 mt-0.5" strokeWidth={1.5} />
               <span>Sahiwal, Punjab, Pakistan</span>
             </li>
             <li className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-gold-soft shrink-0 mt-0.5" strokeWidth={1.5} />
-              <a href="tel:+923060466911" className="hover:text-gold-soft transition-colors">+92 306 0466911</a>
+              <Phone className="w-5 h-5 text-crimson shrink-0 mt-0.5" strokeWidth={1.5} />
+              <a href="tel:+923060466911" className="hover:text-crimson transition-colors">+92 306 0466911</a>
             </li>
             <li className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-gold-soft shrink-0 mt-0.5" strokeWidth={1.5} />
-              <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-gold-soft transition-colors break-all">ayezacosmtics@gmail.com</a>
+              <Mail className="w-5 h-5 text-crimson shrink-0 mt-0.5" strokeWidth={1.5} />
+              <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-crimson transition-colors break-all">ayezacosmtics@gmail.com</a>
             </li>
           </ul>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="relative border-t border-gold/20 pb-[env(safe-area-inset-bottom)]">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-5 flex flex-col lg:flex-row justify-between items-center gap-4 text-sm text-ivory/55">
+      <div className="border-t border-line pb-[env(safe-area-inset-bottom)]">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-5 flex flex-col lg:flex-row justify-between items-center gap-4 text-sm text-muted">
           <p>© {currentYear} AZEEORA. All rights reserved.</p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            <Link href="/privacy" className="hover:text-gold-soft transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-gold-soft transition-colors">Terms</Link>
-            <Link href="/shipping" className="hover:text-gold-soft transition-colors">Shipping</Link>
-            <Link href="/refunds" className="hover:text-gold-soft transition-colors">Refunds</Link>
-            <Link href="/cookies" className="hover:text-gold-soft transition-colors">Cookies</Link>
+            <Link href="/privacy" className="hover:text-crimson transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-crimson transition-colors">Terms</Link>
+            <Link href="/shipping" className="hover:text-crimson transition-colors">Shipping</Link>
+            <Link href="/refunds" className="hover:text-crimson transition-colors">Refunds</Link>
+            <Link href="/cookies" className="hover:text-crimson transition-colors">Cookies</Link>
           </div>
         </div>
       </div>

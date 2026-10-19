@@ -142,7 +142,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-12 bg-white rounded-2xl p-8 luxury-border"
+      className="mt-12 bg-tile p-8"
     >
       <h2 className="text-2xl font-serif font-bold text-black mb-6 flex items-center gap-2">
         <MessageSquare className="w-6 h-6 text-rose-gold" />

@@ -50,7 +50,7 @@ export default function BlogListingPage() {
       />
       
       {/* Breadcrumb Header */}
-      <div className="bg-sand jaali-light border-b border-gold/25">
+      <div className="bg-blush border-b border-line">
         <div className="container mx-auto px-4 py-3">
           <nav className="text-sm text-gray-500 flex items-center gap-2">
             <Link href="/" className="hover:text-rose-gold transition-colors">Home</Link>
@@ -61,7 +61,7 @@ export default function BlogListingPage() {
       </div>
 
       {/* Hero Header */}
-      <div className="bg-sand jaali-light border-b border-gold/25 pb-12 pt-16">
+      <div className="bg-blush border-b border-line pb-12 pt-16">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-black mb-4">
             The <span className="text-rose-gold">Beauty</span> Edit

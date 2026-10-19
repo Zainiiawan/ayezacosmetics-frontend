@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Marcellus, Manrope, Noto_Nastaliq_Urdu } from "next/font/google";
+import { Cinzel, Jost, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 
-const display = Marcellus({
+const display = Cinzel({
   variable: "--font-display",
-  weight: "400",
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
   display: "swap",
 });
 
-const body = Manrope({
+const body = Jost({
   variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
@@ -135,7 +135,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col overflow-x-hidden bg-[#10231c]">
+      <body className="min-h-full flex flex-col overflow-x-hidden bg-white">
         <ScrollToTop />
         <Providers>
           <ConditionalSiteChrome>{children}</ConditionalSiteChrome>

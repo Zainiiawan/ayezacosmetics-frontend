@@ -74,19 +74,19 @@ const Header = () => {
     }
   };
 
-  const iconBtn = 'w-11 h-11 flex items-center justify-center text-emerald hover:bg-sand hover:text-gold rounded-full transition-colors relative shrink-0';
-  const badge = 'absolute -top-0.5 -right-0.5 bg-rani text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center';
+  const iconBtn = 'w-11 h-11 flex items-center justify-center text-ink hover:bg-blush hover:text-crimson rounded-full transition-colors relative shrink-0';
+  const badge = 'absolute -top-0.5 -right-0.5 bg-crimson text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center';
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50">
-      <div className="bg-emerald text-gold-soft overflow-hidden h-[34px] flex items-center" aria-label="Store announcements">
+      <div className="bg-crimson text-white overflow-hidden h-[34px] flex items-center" aria-label="Store announcements">
         <div className="marquee-track flex whitespace-nowrap w-max">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex" aria-hidden={copy === 1}>
               {announcements.map((t) => (
                 <span key={t} className="eyebrow !text-[0.66rem] !tracking-[0.28em] px-8 flex items-center gap-8">
                   {t}
-                  <span className="text-gold/60">✦</span>
+                  <span className="text-white/60">❀</span>
                 </span>
               ))}
             </div>
@@ -94,7 +94,7 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="bg-ivory/95 backdrop-blur-md border-b border-gold/25">
+      <div className="bg-white/95 backdrop-blur-md border-b border-line">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-10 h-16 lg:h-[76px] grid grid-cols-[1fr_auto_1fr] items-center gap-4">
           <div className="flex items-center gap-1">
             <button
@@ -108,9 +108,9 @@ const Header = () => {
             </button>
             <nav className="hidden lg:flex items-center gap-7">
               {navigation.map((item) => (
-                <Link key={item.name} href={item.href} className="group relative text-[0.82rem] uppercase tracking-[0.14em] font-semibold text-emerald hover:text-gold transition-colors">
+                <Link key={item.name} href={item.href} className="group relative text-[0.8rem] uppercase tracking-[0.16em] font-medium text-ink hover:text-crimson transition-colors">
                   {item.name}
-                  <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+                  <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-crimson transition-all duration-300 group-hover:w-full" />
                 </Link>
               ))}
             </nav>
@@ -136,11 +136,11 @@ const Header = () => {
 
             {isAuthenticated && user ? (
               <div className="hidden lg:flex items-center gap-1">
-                <Link href="/account" className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-gold/30 hover:bg-sand transition-colors">
-                  <span className="w-7 h-7 rounded-full bg-emerald text-gold-soft flex items-center justify-center text-[0.8rem] font-semibold">
+                <Link href="/account" className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-line hover:bg-blush transition-colors">
+                  <span className="w-7 h-7 rounded-full bg-blush text-crimson flex items-center justify-center text-[0.8rem] font-semibold">
                     {user.firstName?.[0]?.toUpperCase() ?? <User className="w-4 h-4" />}
                   </span>
-                  <span className="text-sm font-semibold text-emerald max-w-[90px] truncate">{user.firstName}</span>
+                  <span className="text-sm font-medium text-ink max-w-[90px] truncate">{user.firstName}</span>
                 </Link>
                 {user.role === 'admin' && (
                   <Link href="/admin" className={iconBtn} aria-label="Admin Panel" title="Admin Panel">
@@ -150,7 +150,7 @@ const Header = () => {
                 <button
                   onClick={() => void handleLogout()}
                   disabled={isLoggingOut}
-                  className={`${iconBtn} hover:!text-rani disabled:opacity-50`}
+                  className={`${iconBtn} hover:!text-crimson disabled:opacity-50`}
                   aria-label={isLoggingOut ? 'Logging out' : 'Logout'}
                   title="Logout"
                 >
@@ -177,7 +177,7 @@ const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-sand border-b border-gold/25 overflow-hidden"
+            className="bg-blush border-b border-line overflow-hidden"
           >
             <div className="max-w-3xl mx-auto px-4 py-5">
               <form action="/shop" method="get" className="relative">
@@ -186,7 +186,7 @@ const Header = () => {
                   type="text"
                   name="search"
                   placeholder="Search face wash, cream, glow..."
-                  className="w-full pl-12 pr-4 py-3.5 rounded-full border border-gold/40 bg-white text-gray-900 placeholder:text-gray-500 focus:border-gold focus:ring-2 focus:ring-gold/25 focus:outline-none"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-full border border-line bg-white text-gray-900 placeholder:text-gray-500 focus:border-crimson focus:ring-2 focus:ring-crimson/20 focus:outline-none"
                   autoFocus
                 />
               </form>
@@ -202,7 +202,7 @@ const Header = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 top-[98px] bg-emerald/60 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 top-[98px] bg-ink/40 backdrop-blur-sm z-40 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.div
@@ -210,7 +210,7 @@ const Header = () => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="absolute top-full left-0 w-full bg-ivory jaali-light overflow-hidden overflow-y-auto overscroll-contain max-h-[calc(100dvh-98px)] z-50 shadow-xl lg:hidden"
+              className="absolute top-full left-0 w-full bg-white overflow-hidden overflow-y-auto overscroll-contain max-h-[calc(100dvh-98px)] z-50 shadow-xl lg:hidden"
             >
               <nav className="px-6 py-6">
                 <div className="flex flex-col gap-1">
@@ -218,7 +218,7 @@ const Header = () => {
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="font-serif text-[1.35rem] text-emerald hover:text-gold transition-colors py-2 border-b border-gold/15"
+                      className="font-serif text-[1.2rem] text-ink hover:text-crimson transition-colors py-2.5 border-b border-line"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.name}
@@ -227,23 +227,23 @@ const Header = () => {
                   
                   <Link
                     href="/wishlist"
-                    className="font-serif text-[1.35rem] text-emerald hover:text-gold transition-colors py-2 border-b border-gold/15 flex items-center gap-2"
+                    className="font-serif text-[1.2rem] text-ink hover:text-crimson transition-colors py-2.5 border-b border-line flex items-center gap-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Wishlist
                     {wishlistItemCount > 0 && (
-                      <span className="bg-rani text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                      <span className="bg-crimson text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
                         {wishlistItemCount > 99 ? '99+' : wishlistItemCount}
                       </span>
                     )}
                   </Link>
                   {isAuthenticated && user ? (
                     <>
-                      <Link href="/account" className="text-emerald hover:text-gold font-semibold py-3" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link href="/account" className="text-ink hover:text-crimson font-medium py-3" onClick={() => setIsMobileMenuOpen(false)}>
                         My Account ({user.firstName})
                       </Link>
                       {user.role === 'admin' && (
-                        <Link href="/admin" className="text-emerald hover:text-gold font-semibold py-3" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Link href="/admin" className="text-ink hover:text-crimson font-medium py-3" onClick={() => setIsMobileMenuOpen(false)}>
                           Admin Panel
                         </Link>
                       )}
