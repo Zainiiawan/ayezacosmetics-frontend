@@ -9,6 +9,7 @@ import { formatDate } from '@/lib/utils';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import ReallocateButton from '@/components/member/ReallocateButton';
 
 export default function AdminCustomersPage() {
   const queryClient = useQueryClient();
@@ -118,6 +119,7 @@ export default function AdminCustomersPage() {
                                   <option value="admin">Admin</option>
                                 </select>
                               </label>
+                              {user.role === 'customer' && <ReallocateButton userId={user._id} name={`${user.firstName} ${user.lastName}`} invalidate={['admin-users']} />}
                               <button
                                 onClick={() =>
                                   activeMutation.mutate({

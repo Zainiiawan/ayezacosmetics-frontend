@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { m as motion } from 'framer-motion';
-import { Heart, Share2, Check, Star, Truck, Banknote, RotateCcw } from 'lucide-react';
+import { Heart, Check, Star, Truck, Banknote, RotateCcw } from 'lucide-react';
 import { cn, displayName, formatPrice, optimizeCloudinaryUrl } from '@/lib/utils';
 import { getDiscountDisplay, getEffectivePrice } from '@/lib/productUtils';
 import Button from '@/components/ui/Button';
@@ -21,6 +21,7 @@ import { toast } from 'react-hot-toast';
 import { Minus, Plus } from 'lucide-react';
 import ProductSeoContent from '@/components/products/ProductSeoContent';
 import { useMemberPrice } from '@/lib/member/useMemberPrice';
+import ProductMemberActions from '@/components/member/ProductMemberActions';
 
 const PLACEHOLDER =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23f4f4f4'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23111111'%3EAZEEORA%3C/text%3E%3C/svg%3E";
@@ -127,26 +128,6 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
           // best-effort
         }
       }
-    }
-  };
-
-  const handleShare = async () => {
-    if (typeof window === 'undefined') return;
-    const url = window.location.href;
-    const shareData = {
-      title: `${product?.name} | AZEEORA COSMETICS`,
-      text: product?.shortDescription || 'Check out this product from AZEEORA COSMETICS!',
-      url,
-    };
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(url);
-        alert('Link copied to clipboard!');
-      }
-    } catch (err) {
-      console.error('Error sharing:', err);
     }
   };
 
@@ -352,9 +333,7 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
               </details>
             </div>
 
-            <button onClick={handleShare} className="mt-6 inline-flex items-center gap-2 text-[0.85rem] text-ink underline underline-offset-4">
-              <Share2 className="w-4 h-4" strokeWidth={1.3} /> Share
-            </button>
+            <ProductMemberActions productId={product._id} slug={product.slug} name={product.name} price={effectivePrice} />
           </div>
         </div>
       </div>

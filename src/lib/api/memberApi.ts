@@ -55,8 +55,14 @@ export interface MemberProfile {
   wallet: WalletSummary;
   discountPct?: number;
   nextTier?: Tier | null;
-  links?: { store: string; join: string };
-  sponsor?: { name: string; memberCode: string };
+  links?: { store: string; join: string; member: string };
+  inviteCode?: string;
+  inviteAlias?: string | null;
+  sponsor?: { name: string; memberCode: string; phone?: string | null; email?: string };
+  titleProgress?: TitleProgress;
+  preferences: { shareContact: boolean; myWhy: string };
+  welcomeDiscountPct: number;
+  cashbackPct: number;
   settings: {
     referralCommissionPct: number;
     partnerDiscountTiers: Tier[];
@@ -67,6 +73,45 @@ export interface MemberProfile {
     wholesaleDefaultDiscountPct: number;
     wholesaleDefaultMinQty: number;
   };
+}
+
+export type Title = { name: string; minPersonalBV: number; minGroupBV: number; minRecruits: number };
+export interface TitleProgress {
+  title: string;
+  personalBV: number;
+  groupBV: number;
+  recruits: number;
+  next: Title | null;
+  titles: Title[];
+}
+
+export interface TeamMember {
+  _id: string;
+  name: string;
+  city: string;
+  type: string;
+  joinedAt: string;
+  activated: boolean;
+  monthOrders: number;
+  monthSales: number;
+  monthBV: number;
+  allOrders: number;
+  lastOrderAt: string | null;
+  isNew: boolean;
+  starter: boolean;
+}
+
+export interface Earnings {
+  period: string;
+  periods: string[];
+  commission: { pending: number; available: number; cancelled: number };
+  cashback: { pending: number; available: number };
+  claimRefunds: number;
+  reversals: number;
+  adjustments: number;
+  withdrawn: number;
+  immediateDiscounts: number;
+  estimated: number;
 }
 
 export interface Programme {
@@ -137,7 +182,7 @@ export interface AdminMember {
   wallet?: WalletSummary;
 }
 
-export type MemberSettings = Programme & { rsPerBV: number; couponsForMembers: boolean };
+export type MemberSettings = Programme & { rsPerBV: number; couponsForMembers: boolean; welcomeDiscountPct: number; cashbackPct: number; claimWindowDays: number; titles: Title[] };
 
 export interface Quote {
   buyerType: 'customer' | 'partner' | 'business';
@@ -151,6 +196,10 @@ export interface Quote {
   couponCode?: string;
   couponError?: string;
   discount: number;
+  welcomeDiscount: number;
+  welcomeDiscountPct: number;
+  cashback: number;
+  cashbackPct: number;
   pointsBalance: number;
   pointsRedeemed: number;
   pointsValue: number;
@@ -181,6 +230,15 @@ export const memberApi = {
   withdraw: (amount: number) => d<Withdrawal>(api.post('/members/withdrawals', { amount })),
   wholesalePrices: () => d<WholesalePrice[]>(api.get('/members/wholesale-prices')),
   quote: (body: Record<string, unknown>) => d<Quote>(api.post('/orders/quote', body)),
+  setInviteCode: (code: string) => d<MemberProfile>(api.put('/members/invite-code', { code })),
+  setPreferences: (body: { shareContact?: boolean; myWhy?: string }) => d<MemberProfile>(api.put('/members/preferences', body)),
+  team: (filter = 'all') => d<{ people: TeamMember[]; totals: { people: number; active: number; newThisMonth: number; monthSales: number; monthBV: number }; month: string }>(api.get('/members/team', { params: { filter } })),
+  earnings: (period?: string) => d<Earnings>(api.get('/members/earnings', { params: { period } })),
+  recognition: () => d<{ month: string; list: { rank: number; name: string; city: string; groupBV: number; title: string; isMe: boolean }[] }>(api.get('/members/recognition')),
+  outOfStock: () => d<{ _id: string; name: string; slug: string; sku?: string; image: string; stock: number; variantsOut: string[] }[]>(api.get('/members/out-of-stock')),
+  registerFriend: (body: Record<string, unknown>) => d<{ _id: string; name: string; activationLink: string; expiresInDays: number }>(api.post('/members/register-friend', body)),
+  registered: () => d<{ _id: string; name: string; email: string; phone?: string; createdAt: string; activated: boolean; expired: boolean }[]>(api.get('/members/registered')),
+  newActivationLink: (id: string) => d<{ activationLink: string; expiresInDays: number }>(api.post(`/members/registered/${id}/link`, {})),
 
   admin: {
     overview: () =>
@@ -197,6 +255,7 @@ export const memberApi = {
     adjust: (userId: string, amount: number, note: string) => d<WalletSummary>(api.post('/members/admin/wallet-adjust', { userId, amount, note })),
     settings: () => d<MemberSettings>(api.get('/members/admin/settings')),
     saveSettings: (body: MemberSettings) => d<MemberSettings>(api.put('/members/admin/settings', body)),
+    reallocate: (userId: string, sponsorCode: string, note: string) => d<AdminMember>(api.post('/members/admin/reallocate', { userId, sponsorCode, note })),
     closeMonth: () => d<{ period: string; members: number }>(api.post('/members/admin/close-month', {})),
   },
 };

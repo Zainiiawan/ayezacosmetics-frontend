@@ -178,6 +178,7 @@ const trainingSchema = z.object({
   summary: z.string().max(300).optional(),
   body: z.string().max(20000).optional(),
   videoUrl: z.string().url().optional().or(z.literal('')),
+  track: z.enum(['onboarding', 'academy', 'beauty', 'tips']).default('academy'),
   order: z.number().int().optional(),
   isActive: z.boolean().default(true),
 });
@@ -186,7 +187,24 @@ trainings.get('/mine', authenticate, async ({ user }) => {
   const me = await db.users.findById(user!._id);
   if (!isPartner(me) && me?.role !== 'admin') throw new ForbiddenError('Training is for Brand Partners');
   const list = (await db.trainings.find({ isActive: true }, { sort: { order: 1, createdAt: 1 } })).filter((t) => t.isActive !== false);
-  return json({ success: true, message: 'Training', data: list });
+  const done = new Set<string>(me?.completedTrainings ?? []);
+  return json({ success: true, message: 'Training', data: list.map((t) => ({ ...t, track: t.track ?? 'academy', completed: done.has(t._id) })) });
+});
+
+/** Mark a module as done (or not). Stored as a list of ids on the member, updated in one statement. */
+trainings.post('/:id/complete', authenticate, validate(z.object({ done: z.boolean().default(true) })), async ({ params, body, user }) => {
+  const me = await db.users.findById(user!._id);
+  if (!isPartner(me) && me?.role !== 'admin') throw new ForbiddenError('Training is for Brand Partners');
+  const t = await db.trainings.findById(params.id);
+  if (!t) throw new NotFoundError('Training');
+  const sql = getSql();
+  if (body.done) {
+    await sql`update users set data = jsonb_set(data, '{completedTrainings}', coalesce(data->'completedTrainings','[]'::jsonb) || to_jsonb(${t._id}::text))
+              where _id = ${user!._id} and not coalesce(data->'completedTrainings','[]'::jsonb) ? ${t._id}`;
+  } else {
+    await sql`update users set data = jsonb_set(data, '{completedTrainings}', coalesce(data->'completedTrainings','[]'::jsonb) - ${t._id}::text) where _id = ${user!._id}`;
+  }
+  return json({ success: true, message: body.done ? 'Marked as done' : 'Marked as not done' });
 });
 trainings.get('/', adminOnly, async () => json({ success: true, message: 'Training', data: await db.trainings.find({}, { sort: { order: 1, createdAt: 1 } }) }));
 trainings.post('/', adminOnly, validate(trainingSchema), async ({ body }) => json({ success: true, message: 'Training created', data: await db.trainings.create(body) }, 201));

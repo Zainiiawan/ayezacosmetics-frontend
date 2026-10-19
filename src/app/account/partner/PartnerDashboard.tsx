@@ -10,13 +10,19 @@ import { RootState } from '@/store';
 import { memberApi, apiError } from '@/lib/api/memberApi';
 import { extrasApi, METRIC_LABEL } from '@/lib/api/extrasApi';
 import { useMember } from '@/lib/member/useMember';
-import { CopyField, Field, Notice, SelectField, Stat, StatusBadge, money } from '@/components/member/ui';
+import { Field, Notice, SelectField, Stat, StatusBadge, money } from '@/components/member/ui';
+import InviteCard from '@/components/member/InviteCard';
+import EarningsView from '@/components/member/EarningsView';
+import { NewsTeaser, OnboardingCard, RecognitionTab, SponsorCard, TeamTab, TitleCard, ToolsTab, TrainingProgressTab } from './PartnerTools';
 import { cn, formatDate } from '@/lib/utils';
 
 const TABS = [
   ['overview', 'Overview'],
-  ['referrals', 'My referrals'],
+  ['team', 'My team'],
+  ['tools', 'Tools'],
   ['wallet', 'Wallet'],
+  ['earnings', 'Earnings'],
+  ['recognition', 'Recognition'],
   ['incentives', 'Incentives'],
   ['training', 'Training'],
   ['payout', 'Payout details'],
@@ -28,6 +34,9 @@ const METHOD: Record<string, string> = { jazzcash: 'JazzCash', easypaisa: 'Easyp
 const ENTRY_LABEL: Record<string, string> = {
   commission: 'Referral commission',
   commission_reversal: 'Commission reversed',
+  cashback: 'Cashback',
+  cashback_reversal: 'Cashback reversed',
+  claim_refund: 'Claim refund',
   withdrawal: 'Withdrawal',
   withdrawal_reversal: 'Withdrawal returned',
   order_payment: 'Paid for an order',
@@ -89,11 +98,14 @@ export default function PartnerDashboard() {
           </button>
         ))}
       </div>
-      {tab === 'overview' && <Overview />}
-      {tab === 'referrals' && <Referrals />}
+      {tab === 'overview' && <Overview onTraining={() => setTab('training')} />}
+      {tab === 'team' && <TeamTab />}
+      {tab === 'tools' && <ToolsTab />}
       {tab === 'wallet' && <WalletTab onPayout={() => setTab('payout')} />}
+      {tab === 'earnings' && <EarningsView partner />}
+      {tab === 'recognition' && <RecognitionTab />}
       {tab === 'incentives' && <Incentives />}
-      {tab === 'training' && <TrainingTab />}
+      {tab === 'training' && <TrainingProgressTab />}
       {tab === 'payout' && <Payout />}
     </Shell>
   );
@@ -114,7 +126,7 @@ function Shell({ children, code }: { children: React.ReactNode; code?: string | 
   );
 }
 
-function Overview() {
+function Overview({ onTraining }: { onTraining: () => void }) {
   const { member } = useMember();
   if (!member) return null;
   const tiers = member.settings.partnerDiscountTiers;
@@ -129,17 +141,8 @@ function Overview() {
         <Stat label="Points this month" value={`${member.monthlyBV} BV`} sub={`Last month ${member.lastMonthBV} BV`} />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="border border-line p-6">
-          <h2 className="text-[1.3rem] font-light">Share and earn</h2>
-          <p className="mt-2 text-[0.9rem] text-gray-600 font-light">
-            Anyone who shops or signs up through your links is linked to you. You earn {member.settings.referralCommissionPct}% on their orders once delivered.
-          </p>
-          <div className="mt-5 space-y-4">
-            {member.links && <CopyField label="Your shop link" value={member.links.store} />}
-            {member.links && <CopyField label="Invite a partner" value={member.links.join} />}
-          </div>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 [&>*]:min-w-0">
+        <InviteCard member={member} />
         <div className="border border-line p-6">
           <h2 className="text-[1.3rem] font-light">Discount progress</h2>
           {next ? (
@@ -165,57 +168,12 @@ function Overview() {
           <Link href="/shop" className="btn-line mt-5">Shop at your price</Link>
         </div>
       </div>
-      {member.sponsor && <p className="text-[0.85rem] text-muted">Your sponsor: {member.sponsor.name} ({member.sponsor.memberCode})</p>}
-    </div>
-  );
-}
-
-function Referrals() {
-  const { data, isLoading } = useQuery({ queryKey: ['member-referrals'], queryFn: memberApi.referrals });
-  if (isLoading) return <p className="text-muted">Loading…</p>;
-  const people = data?.people ?? [];
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-        <Stat label="People linked to you" value={people.length} />
-        <Stat label="Their orders" value={people.reduce((s, p) => s + p.orders, 0) + (data?.guestOrders.orders ?? 0)} />
-        <Stat accent label="Commission from them" value={money(people.reduce((s, p) => s + p.commission, 0) + (data?.guestOrders.commission ?? 0))} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] gap-4 [&>*]:min-w-0">
+        <TitleCard member={member} />
+        <OnboardingCard onOpen={onTraining} />
+        <SponsorCard member={member} />
       </div>
-      {people.length === 0 ? (
-        <Notice>Nobody is linked to you yet. Share your shop link from the Overview tab to get started.</Notice>
-      ) : (
-        <div className="overflow-x-auto border border-line">
-          <table className="w-full text-[0.9rem]">
-            <thead className="bg-tile text-left text-[0.75rem] uppercase tracking-[0.06em] text-muted">
-              <tr>
-                <th className="px-4 py-3 font-normal">Name</th>
-                <th className="px-4 py-3 font-normal">Joined</th>
-                <th className="px-4 py-3 font-normal">Type</th>
-                <th className="px-4 py-3 font-normal text-right">Orders</th>
-                <th className="px-4 py-3 font-normal text-right">Commission</th>
-              </tr>
-            </thead>
-            <tbody>
-              {people.map((p) => (
-                <tr key={p._id} className="border-t border-line">
-                  <td className="px-4 py-3">{p.name}</td>
-                  <td className="px-4 py-3 font-light">{formatDate(p.joinedAt)}</td>
-                  <td className="px-4 py-3 font-light capitalize">{p.type}</td>
-                  <td className="px-4 py-3 text-right">{p.orders}</td>
-                  <td className="px-4 py-3 text-right">{money(p.commission)}</td>
-                </tr>
-              ))}
-              {data && data.guestOrders.orders > 0 && (
-                <tr className="border-t border-line">
-                  <td className="px-4 py-3 font-light" colSpan={3}>Guest orders through your link</td>
-                  <td className="px-4 py-3 text-right">{data.guestOrders.orders}</td>
-                  <td className="px-4 py-3 text-right">{money(data.guestOrders.commission)}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <NewsTeaser />
     </div>
   );
 }
@@ -428,46 +386,6 @@ function Incentives() {
           </div>
         );
       })}
-    </div>
-  );
-}
-
-function TrainingTab() {
-  const { data = [], isLoading } = useQuery({ queryKey: ['my-training'], queryFn: extrasApi.trainings.mine });
-  const [open, setOpen] = useState<string | null>(null);
-  if (isLoading) return <p className="text-muted">Loading…</p>;
-  if (data.length === 0) return <Notice>Training guides will appear here.</Notice>;
-  const embed = (url: string) => {
-    const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{6,})/);
-    return m ? `https://www.youtube.com/embed/${m[1]}` : null;
-  };
-  return (
-    <div className="border-t border-line">
-      {data.map((t) => (
-        <div key={t._id} className="border-b border-line">
-          <button onClick={() => setOpen(open === t._id ? null : t._id)} className="w-full flex items-center justify-between gap-4 py-5 text-left">
-            <span>
-              {t.category && <span className="block text-[0.75rem] uppercase tracking-[0.08em] text-muted">{t.category}</span>}
-              <span className="text-[1.1rem] font-light">{t.title}</span>
-              {t.summary && <span className="block text-[0.9rem] text-gray-600 font-light">{t.summary}</span>}
-            </span>
-            <span className="text-[1.4rem] font-light">{open === t._id ? '−' : '+'}</span>
-          </button>
-          {open === t._id && (
-            <div className="pb-6 space-y-4">
-              {t.videoUrl && embed(t.videoUrl) && (
-                <div className="aspect-video max-w-2xl">
-                  <iframe src={embed(t.videoUrl)!} title={t.title} className="w-full h-full" allowFullScreen />
-                </div>
-              )}
-              {t.videoUrl && !embed(t.videoUrl) && (
-                <a href={t.videoUrl} target="_blank" rel="noopener noreferrer" className="underline">Watch the video</a>
-              )}
-              {t.body && <div className="text-gray-700 font-light leading-relaxed whitespace-pre-line max-w-2xl">{t.body}</div>}
-            </div>
-          )}
-        </div>
-      ))}
     </div>
   );
 }

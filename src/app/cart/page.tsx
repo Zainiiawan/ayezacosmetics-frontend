@@ -12,6 +12,7 @@ import { removeItem, updateQuantity, setCartItems, setCouponCode as setCartCoupo
 import { cartApi } from '@/lib/api/cartApi';
 import { couponApi } from '@/lib/api/couponApi';
 import { mapApiCartToReduxItems } from '@/lib/cartUtils';
+import QuickOrder from '@/components/member/QuickOrder';
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -128,6 +129,9 @@ export default function CartPage() {
           <Link href="/shop">
             <Button>Start Shopping</Button>
           </Link>
+          <div className="mt-10 max-w-md mx-auto text-left">
+            <QuickOrder />
+          </div>
         </div>
       </div>
     );
@@ -147,6 +151,7 @@ export default function CartPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
+            <QuickOrder />
             {cartItems.map((item, index) => (
               <motion.div
                 key={`${item.product._id}-${item.variant}`}

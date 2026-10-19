@@ -88,6 +88,7 @@ export default function OrderTrackingPage() {
             <div>
               <h1 className="text-2xl font-serif font-bold text-black">Order {order.orderNumber}</h1>
               <a href={`/invoice/${order._id}`} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">View invoice</a>
+              {order.status === 'delivered' && <a href="/account/claims" className="text-sm underline underline-offset-4">Report a problem</a>}
               <p className="text-gray-500 text-sm mt-1">
                 Placed {order.createdAt ? formatDate(order.createdAt) : ''}
               </p>

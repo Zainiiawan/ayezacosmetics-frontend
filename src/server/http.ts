@@ -70,6 +70,8 @@ export const json = (data: unknown, status = 200) => NextResponse.json(data, { s
 
 const SENSITIVE_USER_FIELDS = [
   'password',
+  'activationToken',
+  'activationExpiry',
   'refreshTokens',
   'emailVerificationToken',
   'emailVerificationExpiry',

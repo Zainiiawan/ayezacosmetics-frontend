@@ -256,24 +256,6 @@ async function buildQuote(input: {
     if (couponError) coupon = null;
   }
 
-  // Loyalty points
-  const pointsBalance = Number(buyer?.loyaltyPoints ?? 0);
-  let pointsRedeemed = 0;
-  let pointsValue = 0;
-  const wanted = Math.floor(Number(input.pointsToRedeem ?? 0));
-  if (buyer && wanted > 0) {
-    if (wanted < ms.minRedeemPoints) throw new BadRequestError(`You can redeem from ${ms.minRedeemPoints} points`);
-    pointsRedeemed = Math.min(wanted, pointsBalance);
-    pointsValue = Math.min(pointsRedeemed * ms.pointValueRs, Math.max(0, subtotal - discount));
-    pointsRedeemed = Math.ceil(pointsValue / Math.max(0.0001, ms.pointValueRs));
-  }
-
-  const total = Math.max(0, subtotal + (shippingCost ?? 0) - discount - pointsValue);
-
-  // Wallet
-  const wallet = buyer ? await walletSummary(buyer._id) : { available: 0, pending: 0, earned: 0, withdrawn: 0 };
-  const walletUsed = buyer ? Math.max(0, Math.min(Number(input.walletAmount ?? 0) || 0, wallet.available, total)) : 0;
-
   // Who earns the referral commission
   let sponsor: Doc | null = null;
   if (buyerType !== 'business') {
@@ -289,8 +271,41 @@ async function buildQuote(input: {
       if (sameEmail || samePhone) sponsor = null;
     }
   }
-  const commissionBase = Math.max(0, subtotal - discount - pointsValue);
+  // Welcome discount: first order of a customer who came through a partner (not with a coupon)
+  let welcomeDiscount = 0;
+  if (sponsor && buyerType === 'customer' && !coupon && ms.welcomeDiscountPct > 0) {
+    const sql = getSql();
+    const email = (buyer?.email ?? input.guestEmail ?? '').toLowerCase().trim();
+    const prior = buyer
+      ? await sql`select count(*)::int as n from orders where user_id = ${buyer._id} and status not in ('cancelled')`
+      : email
+        ? await sql`select count(*)::int as n from orders where lower(customer_email) = ${email} and status not in ('cancelled')`
+        : [{ n: 1 }];
+    if (Number((prior[0] as any).n) === 0) welcomeDiscount = round(((subtotal - discount) * ms.welcomeDiscountPct) / 100);
+  }
+
+  // Loyalty points
+  const pointsBalance = Number(buyer?.loyaltyPoints ?? 0);
+  let pointsRedeemed = 0;
+  let pointsValue = 0;
+  const wanted = Math.floor(Number(input.pointsToRedeem ?? 0));
+  if (buyer && wanted > 0) {
+    if (wanted < ms.minRedeemPoints) throw new BadRequestError(`You can redeem from ${ms.minRedeemPoints} points`);
+    pointsRedeemed = Math.min(wanted, pointsBalance);
+    pointsValue = Math.min(pointsRedeemed * ms.pointValueRs, Math.max(0, subtotal - discount - welcomeDiscount));
+    pointsRedeemed = Math.ceil(pointsValue / Math.max(0.0001, ms.pointValueRs));
+  }
+
+  const total = Math.max(0, subtotal + (shippingCost ?? 0) - discount - welcomeDiscount - pointsValue);
+
+  // Wallet
+  const wallet = buyer ? await walletSummary(buyer._id) : { available: 0, pending: 0, earned: 0, withdrawn: 0 };
+  const walletUsed = buyer ? Math.max(0, Math.min(Number(input.walletAmount ?? 0) || 0, wallet.available, total)) : 0;
+
+  const commissionBase = Math.max(0, subtotal - discount - welcomeDiscount - pointsValue);
   const commission = sponsor ? round((commissionBase * ms.referralCommissionPct) / 100) : 0;
+  const cashbackPct = buyer && buyerType === 'customer' ? ms.cashbackPct : 0;
+  const cashback = round((commissionBase * cashbackPct) / 100);
 
   return {
     buyer,
@@ -307,6 +322,10 @@ async function buildQuote(input: {
     couponCode: coupon ? couponCode : undefined,
     couponError,
     discount,
+    welcomeDiscount,
+    welcomeDiscountPct: welcomeDiscount > 0 ? ms.welcomeDiscountPct : 0,
+    cashback,
+    cashbackPct,
     pointsRedeemed,
     pointsValue,
     pointsBalance,
@@ -361,6 +380,10 @@ orders.post('/quote', optionalAuthenticate, validate(quoteSchema), async ({ body
       couponCode: q.couponCode,
       couponError: q.couponError,
       discount: q.discount,
+      welcomeDiscount: q.welcomeDiscount,
+      welcomeDiscountPct: q.welcomeDiscountPct,
+      cashback: q.cashback,
+      cashbackPct: q.cashbackPct,
       pointsBalance: q.pointsBalance,
       pointsRedeemed: q.pointsRedeemed,
       pointsValue: q.pointsValue,
@@ -404,7 +427,8 @@ orders.post('/', optionalAuthenticate, validate(checkoutSchema), async ({ body, 
   });
   if (q.couponError && body.couponCode) throw new BadRequestError(q.couponError);
   const finalItems = q.items;
-  const { subtotal, discount, coupon, total } = q;
+  const { subtotal, coupon, total } = q;
+  const discount = q.discount + q.welcomeDiscount;
   const shippingCost = q.shippingCost ?? 0;
   const productDiscountTotal = q.productDiscount;
   const couponCode = q.couponCode;
@@ -501,7 +525,8 @@ orders.post('/', optionalAuthenticate, validate(checkoutSchema), async ({ body, 
     tax,
     total,
     couponCode: couponCode ? String(couponCode).toUpperCase() : undefined,
-    couponDiscount: discount,
+    couponDiscount: q.discount,
+    welcomeDiscount: q.welcomeDiscount || undefined,
     orderType: q.buyerType === 'business' ? 'b2b' : q.buyerType === 'partner' ? 'partner' : 'b2c',
     member: {
       buyerType: q.buyerType,
@@ -512,6 +537,8 @@ orders.post('/', optionalAuthenticate, validate(checkoutSchema), async ({ body, 
       sponsorCode: q.sponsor?.memberCode,
       commission: q.commission,
       commissionPct: q.sponsor ? q.commissionPct : 0,
+      cashback: q.cashback,
+      cashbackPct: q.cashbackPct,
       pointsRedeemed: q.pointsRedeemed,
       pointsEarned: q.pointsEarned,
       walletUsed: q.walletUsed,
@@ -811,6 +838,7 @@ export async function applyOrderStatus(orderId: string, body: z.infer<typeof upd
   if (estimatedDelivery) order.estimatedDelivery = new Date(estimatedDelivery).toISOString();
   if (dispatchedAt) order.dispatchedAt = new Date(dispatchedAt).toISOString();
   if (status === 'shipped' && !order.dispatchedAt) order.dispatchedAt = now;
+  if (status === 'delivered' && !order.deliveredAt) order.deliveredAt = now;
 
   const isClosing = status === 'cancelled' || status === 'refunded';
   const wasClosed = previousStatus === 'cancelled' || previousStatus === 'refunded';

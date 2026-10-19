@@ -38,9 +38,18 @@ export interface Training {
   summary?: string;
   body?: string;
   videoUrl?: string;
+  track?: 'onboarding' | 'academy' | 'beauty' | 'tips';
+  completed?: boolean;
   order?: number;
   isActive: boolean;
 }
+
+export const TRAINING_TRACKS: [NonNullable<Training['track']>, string][] = [
+  ['onboarding', 'Getting started'],
+  ['academy', 'Business academy'],
+  ['beauty', 'Beauty academy'],
+  ['tips', 'Tips'],
+];
 
 export interface PickupPoint {
   _id: string;

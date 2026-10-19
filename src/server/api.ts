@@ -6,6 +6,7 @@ import { orders, payments } from './routes/orders';
 import { reviews, coupons, users, notifications, contact, analytics, shipping, settings } from './routes/admin';
 import { media } from './routes/media';
 import { members } from './routes/members';
+import { claims, tickets, news, lists, quickOrder } from './routes/memberTools';
 import { campaigns, incentives, trainings, pickupPoints, warehouse, reports } from './routes/extras';
 
 /** Every endpoint of the old Express API, mounted under /api. */
@@ -34,3 +35,8 @@ api.use('/trainings', trainings);
 api.use('/pickup-points', pickupPoints);
 api.use('/warehouse', warehouse);
 api.use('/reports', reports);
+api.use('/claims', claims);
+api.use('/tickets', tickets);
+api.use('/news', news);
+api.use('/lists', lists);
+api.use('/quick-order', quickOrder);

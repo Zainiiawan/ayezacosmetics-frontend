@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
 import { memberApi, apiError, AdminMember, MemberSettings } from '@/lib/api/memberApi';
+import ReallocateButton from '@/components/member/ReallocateButton';
 import { formatDate, formatPrice } from '@/lib/utils';
 
 const TABS = [
@@ -223,6 +224,7 @@ function Applications({ kind }: { kind: 'partner' | 'business' | 'kyc' }) {
                         <button onClick={() => act(m._id, 'reinstate')} className="px-3 py-1.5 rounded-lg border text-xs">Reinstate</button>
                       )}
                       {kind === 'partner' && r.status === 'approved' && <AdjustButton member={m} />}
+                      {kind !== 'kyc' && <ReallocateButton userId={m._id} name={`${m.firstName} ${m.lastName}`} invalidate={['members-list']} />}
                     </td>
                   </tr>
                 );
@@ -479,6 +481,59 @@ function Settings() {
         <L label="Minimum withdrawal (Rs)">
           <input {...num('minWithdrawal')} />
         </L>
+
+        <h3 className="font-semibold pt-4 border-t">Customer perks</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <L label="Welcome discount (%)" hint="First order of a customer who came through a partner. 0 turns it off.">
+            <input {...num('welcomeDiscountPct')} step="0.5" />
+          </L>
+          <L label="Cashback (%)" hint="Added to a signed-in customer's wallet when the order is delivered. 0 turns it off.">
+            <input {...num('cashbackPct')} step="0.5" />
+          </L>
+        </div>
+        <L label="Claim window (days after delivery)">
+          <input {...num('claimWindowDays')} />
+        </L>
+
+        <h3 className="font-semibold pt-4 border-t">Titles</h3>
+        <p className="text-xs text-gray-500 -mt-3">Worked out each month. Group points are the partner&apos;s own points plus points from people they introduced.</p>
+        <div className="space-y-2">
+          <div className="grid grid-cols-[1.4fr_1fr_1fr_1fr_auto] gap-2 text-xs text-gray-500">
+            <span>Title</span>
+            <span>Own BV</span>
+            <span>Group BV</span>
+            <span>Partners introduced</span>
+            <span />
+          </div>
+          {form.titles.map((t, i) => {
+            const set = (patch: Partial<typeof t>) => setForm({ ...form, titles: form.titles.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+            return (
+              <div key={i} className="grid grid-cols-[1.4fr_1fr_1fr_1fr_auto] gap-2 items-center text-sm">
+                <input value={t.name} onChange={(e) => set({ name: e.target.value })} className="border border-gray-300 rounded-lg px-2 py-1.5" />
+                <input type="number" value={t.minPersonalBV} onChange={(e) => set({ minPersonalBV: Number(e.target.value) })} className="border border-gray-300 rounded-lg px-2 py-1.5" />
+                <input type="number" value={t.minGroupBV} onChange={(e) => set({ minGroupBV: Number(e.target.value) })} className="border border-gray-300 rounded-lg px-2 py-1.5" />
+                <input type="number" value={t.minRecruits} onChange={(e) => set({ minRecruits: Number(e.target.value) })} className="border border-gray-300 rounded-lg px-2 py-1.5" />
+                {form.titles.length > 1 ? (
+                  <button type="button" onClick={() => setForm({ ...form, titles: form.titles.filter((_, j) => j !== i) })} className="text-red-500 text-xs">
+                    Remove
+                  </button>
+                ) : (
+                  <span />
+                )}
+              </div>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() => {
+              const last = form.titles[form.titles.length - 1];
+              setForm({ ...form, titles: [...form.titles, { name: 'New title', minPersonalBV: last?.minPersonalBV ?? 0, minGroupBV: (last?.minGroupBV ?? 0) + 1000, minRecruits: (last?.minRecruits ?? 0) + 2 }] });
+            }}
+            className="text-sm underline"
+          >
+            Add a title
+          </button>
+        </div>
 
         <h3 className="font-semibold pt-4 border-t">Wholesale</h3>
         <L label="Default wholesale discount (%)" hint="For products without their own wholesale price.">

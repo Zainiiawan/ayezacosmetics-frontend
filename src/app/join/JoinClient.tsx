@@ -53,7 +53,7 @@ export default function JoinClient() {
   const { data: sponsor } = useQuery({
     queryKey: ['ref', refCode],
     queryFn: () => memberApi.checkRef(refCode!),
-    enabled: !!refCode && /^AZ-\d{6}$/i.test(refCode.trim()),
+    enabled: !!refCode && /^[A-Z0-9][A-Z0-9-]{2,18}[A-Z0-9]$/i.test(refCode.trim()),
   });
 
   const apply = useMutation({

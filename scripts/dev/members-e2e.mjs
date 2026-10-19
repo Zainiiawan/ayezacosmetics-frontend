@@ -42,7 +42,7 @@ const biz = await mk('Biz');
 ok(admin.token && alice.token && bob.token && biz.token, 'test users can log in');
 
 // reset programme settings to defaults for a predictable run
-await call('PUT', '/members/admin/settings', { referralCommissionPct: 10, partnerDiscountTiers: [{ minBV: 0, pct: 20 }, { minBV: 100, pct: 25 }], wholesaleDefaultDiscountPct: 30, wholesaleDefaultMinQty: 6, minWithdrawal: 1000, loyaltyRsPerPoint: 100, pointValueRs: 1, minRedeemPoints: 100, rsPerBV: 100, couponsForMembers: false }, admin.token);
+await call('PUT', '/members/admin/settings', { referralCommissionPct: 10, partnerDiscountTiers: [{ minBV: 0, pct: 20 }, { minBV: 100, pct: 25 }], wholesaleDefaultDiscountPct: 30, wholesaleDefaultMinQty: 6, minWithdrawal: 1000, loyaltyRsPerPoint: 100, pointValueRs: 1, minRedeemPoints: 100, rsPerBV: 100, couponsForMembers: false, welcomeDiscountPct: 0, cashbackPct: 0 }, admin.token);
 
 const products = (await call('GET', '/products?limit=5')).data.products;
 const P = products[0];
@@ -157,7 +157,7 @@ ok(r.status === 201 && r.data.kyc.accountNumber.startsWith('••••'), 'pay
 await call('POST', `/members/admin/${alice._id}/kyc`, { action: 'approve' }, admin.token);
 r = await call('POST', '/members/withdrawals', { amount: 50 }, alice.token);
 ok(r.status === 400 && /minimum/.test(r.message), 'minimum withdrawal enforced');
-await call('PUT', '/members/admin/settings', { referralCommissionPct: 10, partnerDiscountTiers: [{ minBV: 0, pct: 20 }, { minBV: 100, pct: 25 }], wholesaleDefaultDiscountPct: 30, wholesaleDefaultMinQty: 6, minWithdrawal: 10, loyaltyRsPerPoint: 100, pointValueRs: 1, minRedeemPoints: 100, rsPerBV: 100, couponsForMembers: false }, admin.token);
+await call('PUT', '/members/admin/settings', { referralCommissionPct: 10, partnerDiscountTiers: [{ minBV: 0, pct: 20 }, { minBV: 100, pct: 25 }], wholesaleDefaultDiscountPct: 30, wholesaleDefaultMinQty: 6, minWithdrawal: 10, loyaltyRsPerPoint: 100, pointValueRs: 1, minRedeemPoints: 100, rsPerBV: 100, couponsForMembers: false, welcomeDiscountPct: 0, cashbackPct: 0 }, admin.token);
 const bal = (await call('GET', '/members/me', null, alice.token)).data.wallet.available;
 r = await call('POST', '/members/withdrawals', { amount: bal + 1 }, alice.token);
 ok(r.status === 400 && /Insufficient/.test(r.message), 'cannot withdraw more than the balance', r);

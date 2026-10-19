@@ -322,6 +322,10 @@ export const db = {
   trainings: new Collection('trainings'),
   pickupPoints: new Collection('pickup_points'),
   stockMovements: new Collection('stock_movements'),
+  claims: new Collection('claims'),
+  tickets: new Collection('tickets'),
+  news: new Collection('news'),
+  favouriteLists: new Collection('favourite_lists'),
 };
 
 /**

@@ -1,11 +1,11 @@
-/** Partner referral codes from ?ref=AZ-123456 links, remembered for 30 days on this device. */
+/** Partner referral codes (AZ-123456 or a personal code) from ?ref= links, remembered for 30 days on this device. */
 const KEY = 'azr_ref';
 const DAYS = 30;
 
 export function rememberRef(code: string | null | undefined) {
   if (!code || typeof window === 'undefined') return;
   const clean = code.trim().toUpperCase();
-  if (!/^AZ-\d{6}$/.test(clean)) return;
+  if (!/^[A-Z0-9][A-Z0-9-]{2,18}[A-Z0-9]$/.test(clean)) return;
   try {
     localStorage.setItem(KEY, JSON.stringify({ code: clean, until: Date.now() + DAYS * 86400000 }));
   } catch {

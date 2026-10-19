@@ -548,6 +548,9 @@ function CheckoutContent() {
                   <div className="flex justify-between text-rose-gold font-medium"><span>Discount</span><span>-{formatPrice(productDiscount + (quote ? quote.discount : couponDiscountAmount))}</span></div>
                 )}
                 {quote?.couponError && <p className="text-xs text-sale">{quote.couponError}</p>}
+                {quote && quote.welcomeDiscount > 0 && (
+                  <div className="flex justify-between text-rose-gold font-medium"><span>Welcome discount ({quote.welcomeDiscountPct}%)</span><span>-{formatPrice(quote.welcomeDiscount)}</span></div>
+                )}
                 {quote && quote.pointsValue > 0 && (
                   <div className="flex justify-between text-gray-600"><span>Loyalty points ({quote.pointsRedeemed})</span><span>-{formatPrice(quote.pointsValue)}</span></div>
                 )}
@@ -563,6 +566,7 @@ function CheckoutContent() {
                 )}
                 {quote?.notices.map((n) => <p key={n} className="text-xs text-gray-500">{n}</p>)}
                 {quote && quote.pointsEarned > 0 && <p className="text-xs text-gray-500">You will earn {quote.pointsEarned} loyalty points when this order is delivered.</p>}
+                {quote && quote.cashback > 0 && <p className="text-xs text-gray-500">You get {formatPrice(quote.cashback)} cashback in your wallet when this order is delivered.</p>}
                 {quote?.referredBy && <p className="text-xs text-gray-500">Shopping with {quote.referredBy}, Azeeora Brand Partner.</p>}
               </div>
               

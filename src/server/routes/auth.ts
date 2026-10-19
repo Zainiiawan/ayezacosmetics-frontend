@@ -321,6 +321,31 @@ router.post('/reset-password', validate(resetPasswordSchema), async ({ body }) =
   return json({ success: true, message: 'Password reset successful. Please log in.' });
 });
 
+// A member registered by their Brand Partner sets a password from the private link
+const activateSchema = z.object({ token: z.string().min(20).max(100), password: registerSchema.innerType().shape.password });
+const activateLimiter = rateLimit('activate', 15 * 60 * 1000, 20, 'Too many attempts. Please try again later.');
+
+router.get('/activate/:token', activateLimiter, async ({ params }) => {
+  const user = await db.users.findOne({ activationToken: hashToken(params.token) });
+  if (!user || !isFuture(user.activationExpiry)) throw new UnauthorizedError('This activation link is invalid or has expired. Ask your Brand Partner for a new one.');
+  return json({ success: true, message: 'Activation link', data: { firstName: user.firstName, email: user.email } });
+});
+
+router.post('/activate', activateLimiter, validate(activateSchema), async ({ body }) => {
+  const user = await db.users.findOne({ activationToken: hashToken(body.token) });
+  if (!user || !isFuture(user.activationExpiry)) throw new UnauthorizedError('This activation link is invalid or has expired. Ask your Brand Partner for a new one.');
+  user.password = await hashPassword(body.password);
+  user.isEmailVerified = true;
+  user.activatedAt = new Date().toISOString();
+  delete user.activationToken;
+  delete user.activationExpiry;
+  const tokens = generateTokenPair({ sub: user._id, email: user.email, role: user.role });
+  user.refreshTokens = [hashToken(tokens.refreshToken)];
+  user.lastLogin = new Date().toISOString();
+  await db.users.save(user);
+  return json({ success: true, message: 'Your account is ready. Welcome to Azeeora!', data: { user: publicUser(user), tokens } });
+});
+
 router.get('/me', optionalAuthenticate, async ({ user }) => {
   if (!user) return json({ success: true, message: 'Not authenticated', data: null });
   return json({ success: true, message: 'Current user', data: user });

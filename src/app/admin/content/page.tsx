@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Download } from 'lucide-react';
-import { extrasApi, Campaign, Incentive, Training, PickupPoint, METRIC_LABEL, IncentiveMetric } from '@/lib/api/extrasApi';
+import { extrasApi, Campaign, Incentive, Training, PickupPoint, METRIC_LABEL, IncentiveMetric, TRAINING_TRACKS } from '@/lib/api/extrasApi';
+import { toolsApi, NewsItem, NEWS_CATEGORIES } from '@/lib/api/toolsApi';
 import { productApi } from '@/lib/api/productApi';
 import { apiError } from '@/lib/api/memberApi';
 import { formatDate } from '@/lib/utils';
 
 const TABS = [
+  ['news', "What's new"],
   ['campaigns', 'Catalogue campaigns'],
   ['incentives', 'Incentives'],
   ['training', 'Training'],
@@ -36,7 +38,7 @@ function F({ label, children, className }: { label: string; children: React.Reac
 function ContentAdmin() {
   const params = useSearchParams();
   const router = useRouter();
-  const tab = (TABS.find(([k]) => k === params?.get('tab'))?.[0] ?? 'campaigns') as Tab;
+  const tab = (TABS.find(([k]) => k === params?.get('tab'))?.[0] ?? 'news') as Tab;
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
@@ -45,7 +47,7 @@ function ContentAdmin() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-black">Content & reports</h1>
-          <p className="text-sm text-gray-500">Catalogue, partner incentives and training, pickup points, exports</p>
+          <p className="text-sm text-gray-500">News for members, catalogue, partner incentives and training, pickup points, exports</p>
         </div>
       </div>
       <div className="p-6 space-y-6">
@@ -56,11 +58,81 @@ function ContentAdmin() {
             </button>
           ))}
         </div>
+        {tab === 'news' && <News />}
         {tab === 'campaigns' && <Campaigns />}
         {tab === 'incentives' && <Incentives />}
         {tab === 'training' && <Trainings />}
         {tab === 'pickup' && <Pickup />}
         {tab === 'reports' && <Reports />}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+function News() {
+  const qc = useQueryClient();
+  const { data = [] } = useQuery({ queryKey: ['admin-news'], queryFn: toolsApi.news.all });
+  const [form, setForm] = useState<Partial<NewsItem> | null>(null);
+  const refresh = () => qc.invalidateQueries({ queryKey: ['admin-news'] });
+  const save = useMutation({
+    mutationFn: (n: Partial<NewsItem>) => {
+      const body = { title: n.title, category: n.category ?? 'news', audience: n.audience ?? 'all', summary: n.summary || undefined, body: n.body || undefined, image: n.image || undefined, link: n.link || undefined, pinned: Boolean(n.pinned), isPublished: n.isPublished ?? true };
+      return n._id ? toolsApi.news.update(n._id, body) : toolsApi.news.create(body);
+    },
+    onSuccess: () => {
+      setForm(null);
+      refresh();
+    },
+  });
+  const remove = useMutation({ mutationFn: toolsApi.news.remove, onSuccess: refresh });
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-gray-600">Announcements on the member dashboard: launches, offers, events. Choose who sees each one.</p>
+        {!form && <button onClick={() => setForm({ title: '', category: 'news', audience: 'all', isPublished: true })} className={btn}>New article</button>}
+      </div>
+      {form && (
+        <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="bg-white rounded-xl p-6 shadow-sm grid md:grid-cols-2 gap-4">
+          <F label="Title" className="md:col-span-2"><input className={input} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></F>
+          <F label="Category">
+            <select className={input} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value as NewsItem['category'] })}>
+              {NEWS_CATEGORIES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+            </select>
+          </F>
+          <F label="Who sees it">
+            <select className={input} value={form.audience} onChange={(e) => setForm({ ...form, audience: e.target.value as NewsItem['audience'] })}>
+              <option value="all">All signed-in members</option>
+              <option value="partners">Brand Partners only</option>
+            </select>
+          </F>
+          <F label="Summary" className="md:col-span-2"><input className={input} value={form.summary ?? ''} onChange={(e) => setForm({ ...form, summary: e.target.value })} maxLength={400} /></F>
+          <F label="Image link (optional)"><input className={input} value={form.image ?? ''} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." /></F>
+          <F label="Button link (optional)"><input className={input} value={form.link ?? ''} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="/offers or https://..." /></F>
+          <F label="Full text (optional)" className="md:col-span-2"><textarea className={input} rows={6} value={form.body ?? ''} onChange={(e) => setForm({ ...form, body: e.target.value })} /></F>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={Boolean(form.pinned)} onChange={(e) => setForm({ ...form, pinned: e.target.checked })} /> Feature at the top</label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.isPublished ?? true} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} /> Published</label>
+          {save.isError && <p className="md:col-span-2 text-sm text-red-600">{apiError(save.error)}</p>}
+          <div className="md:col-span-2 flex gap-2">
+            <button type="submit" disabled={save.isPending} className={btn}>Save</button>
+            <button type="button" onClick={() => setForm(null)} className={btnLine}>Cancel</button>
+          </div>
+        </form>
+      )}
+      <div className="bg-white rounded-xl shadow-sm divide-y">
+        {data.length === 0 && <p className="p-6 text-gray-500 text-sm">No articles yet.</p>}
+        {data.map((n) => (
+          <div key={n._id} className="p-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="font-medium">{n.title}{!n.isPublished && <span className="text-gray-500 font-normal"> · draft</span>}{n.pinned && <span className="text-gray-500 font-normal"> · featured</span>}</p>
+              <p className="text-sm text-gray-500">{n.category} · {n.audience === 'partners' ? 'Partners only' : 'Everyone'} · {formatDate(n.createdAt)}</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setForm(n)} className={btnLine}>Edit</button>
+              <button onClick={() => window.confirm('Delete this article?') && remove.mutate(n._id)} className={`${btnLine} text-red-600`}>Delete</button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -238,7 +310,7 @@ function Trainings() {
   const [form, setForm] = useState<Partial<Training> | null>(null);
   const save = useMutation({
     mutationFn: (t: Partial<Training>) => {
-      const body = { title: t.title, category: t.category || undefined, summary: t.summary || undefined, body: t.body || undefined, videoUrl: t.videoUrl || undefined, order: t.order ? Number(t.order) : undefined, isActive: t.isActive ?? true };
+      const body = { title: t.title, track: t.track ?? 'academy', category: t.category || undefined, summary: t.summary || undefined, body: t.body || undefined, videoUrl: t.videoUrl || undefined, order: t.order ? Number(t.order) : undefined, isActive: t.isActive ?? true };
       return t._id ? extrasApi.trainings.update(t._id, body) : extrasApi.trainings.create(body);
     },
     onSuccess: () => {
@@ -256,7 +328,14 @@ function Trainings() {
       {form && (
         <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="bg-white rounded-xl p-6 shadow-sm grid md:grid-cols-2 gap-4">
           <F label="Title"><input className={input} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></F>
-          <F label="Category"><input className={input} value={form.category ?? ''} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Getting started" /></F>
+          <F label="Section">
+            <select className={input} value={form.track ?? 'academy'} onChange={(e) => setForm({ ...form, track: e.target.value as Training['track'] })}>
+              {TRAINING_TRACKS.map(([k, l]) => (
+                <option key={k} value={k}>{l}</option>
+              ))}
+            </select>
+          </F>
+          <F label="Label (optional)"><input className={input} value={form.category ?? ''} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Step 1" /></F>
           <F label="Summary" className="md:col-span-2"><input className={input} value={form.summary ?? ''} onChange={(e) => setForm({ ...form, summary: e.target.value })} /></F>
           <F label="Video link (YouTube or other, optional)" className="md:col-span-2"><input className={input} value={form.videoUrl ?? ''} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} /></F>
           <F label="Text" className="md:col-span-2"><textarea className={input} rows={8} value={form.body ?? ''} onChange={(e) => setForm({ ...form, body: e.target.value })} /></F>
@@ -275,7 +354,7 @@ function Trainings() {
           <div key={t._id} className="p-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="font-medium">{t.title}{!t.isActive && <span className="text-gray-500 font-normal"> · hidden</span>}</p>
-              <p className="text-sm text-gray-500">{t.category}{t.videoUrl ? ' · video' : ''}</p>
+              <p className="text-sm text-gray-500">{TRAINING_TRACKS.find(([k]) => k === (t.track ?? 'academy'))?.[1]}{t.category ? ` · ${t.category}` : ''}{t.videoUrl ? ' · video' : ''}</p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => setForm(t)} className={btnLine}>Edit</button>

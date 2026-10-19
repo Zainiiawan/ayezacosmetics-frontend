@@ -29,7 +29,16 @@ export type MemberSettings = {
   minRedeemPoints: number;
   rsPerBV: number;
   couponsForMembers: boolean;
+  /** First order of a customer who came through a partner's link */
+  welcomeDiscountPct: number;
+  /** Credited to a registered customer's wallet when their order is delivered */
+  cashbackPct: number;
+  claimWindowDays: number;
+  /** Partner titles, lowest first. Group BV = own points plus points from people they referred, this month. */
+  titles: Title[];
 };
+
+export type Title = { name: string; minPersonalBV: number; minGroupBV: number; minRecruits: number };
 
 export const MEMBER_DEFAULTS: MemberSettings = {
   referralCommissionPct: 10,
@@ -46,12 +55,23 @@ export const MEMBER_DEFAULTS: MemberSettings = {
   minRedeemPoints: 100,
   rsPerBV: 100,
   couponsForMembers: false,
+  welcomeDiscountPct: 0,
+  cashbackPct: 0,
+  claimWindowDays: 14,
+  titles: [
+    { name: 'Brand Partner', minPersonalBV: 0, minGroupBV: 0, minRecruits: 0 },
+    { name: 'Senior Partner', minPersonalBV: 50, minGroupBV: 200, minRecruits: 1 },
+    { name: 'Team Leader', minPersonalBV: 100, minGroupBV: 600, minRecruits: 3 },
+    { name: 'Manager', minPersonalBV: 100, minGroupBV: 1500, minRecruits: 5 },
+    { name: 'Director', minPersonalBV: 150, minGroupBV: 4000, minRecruits: 10 },
+  ],
 };
 
 export async function getMemberSettings(): Promise<MemberSettings> {
   const s = await getSettings();
   const m = { ...MEMBER_DEFAULTS, ...(s.members ?? {}) };
   m.partnerDiscountTiers = [...(m.partnerDiscountTiers ?? MEMBER_DEFAULTS.partnerDiscountTiers)].sort((a, b) => a.minBV - b.minBV);
+  m.titles = [...(m.titles?.length ? m.titles : MEMBER_DEFAULTS.titles)].sort((a, b) => a.minGroupBV - b.minGroupBV);
   return m;
 }
 
@@ -105,12 +125,15 @@ export async function uniqueMemberCode(): Promise<string> {
   throw new Error('Could not generate a member code');
 }
 
-/** An approved, active partner with this code (case-insensitive), or null. */
+/** Personal invite codes: letters, digits and dashes. */
+export const INVITE_CODE_RE = /^[A-Z0-9][A-Z0-9-]{2,18}[A-Z0-9]$/;
+
+/** An approved, active partner with this member code or personal invite code (case-insensitive), or null. */
 export async function findSponsor(code?: string | null): Promise<Doc | null> {
   if (!code) return null;
   const clean = String(code).trim().toUpperCase();
-  if (!/^AZ-\d{6}$/.test(clean)) return null;
-  const u = await db.users.findOne({ memberCode: clean });
+  if (!INVITE_CODE_RE.test(clean)) return null;
+  const u = /^AZ-\d{6}$/.test(clean) ? await db.users.findOne({ memberCode: clean }) : await db.users.findOne({ inviteAlias: clean });
   if (!u || !isPartner(u) || u.isActive === false) return null;
   return u;
 }
@@ -120,7 +143,7 @@ export async function findSponsor(code?: string | null): Promise<Doc | null> {
 // ---------------------------------------------------------------------------
 type EntryInput = {
   user: string;
-  type: 'commission' | 'withdrawal' | 'withdrawal_reversal' | 'order_payment' | 'order_refund' | 'adjustment' | 'commission_reversal';
+  type: 'commission' | 'cashback' | 'claim_refund' | 'withdrawal' | 'withdrawal_reversal' | 'order_payment' | 'order_refund' | 'adjustment' | 'commission_reversal' | 'cashback_reversal';
   amount: number; // signed: + credit, - debit
   status: 'pending' | 'available' | 'cancelled';
   order?: string;
@@ -216,6 +239,11 @@ export async function onOrderPlaced(order: Doc) {
       await bumpUserCounter(order.user, 'monthlyBV', m.bv);
       await bumpUserCounter(order.user, 'totalBV', m.bv);
     }
+    if (order.user && m.cashback > 0) {
+      await postEntries([
+        { user: order.user, type: 'cashback', amount: m.cashback, status: 'pending', order: order._id, orderNumber: order.orderNumber, note: `${m.cashbackPct}% cashback on order ${order.orderNumber}` },
+      ]);
+    }
     if (m.sponsor && m.commission > 0) {
       await postEntries([
         {
@@ -255,6 +283,8 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
   try {
     const commissionRows = await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'commission' limit 1`;
     const commission = commissionRows[0] as any;
+    const cashbackRows = await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'cashback' limit 1`;
+    const cashback = cashbackRows[0] as any;
 
     if (status === 'delivered' && !CLOSED.includes(previousStatus)) {
       // Commission becomes spendable; loyalty points are earned
@@ -266,6 +296,16 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
           title: 'Commission added to your wallet',
           message: `Rs. ${Number(commission.data.amount).toLocaleString()} from order ${order.orderNumber} is now available.`,
           link: '/account/partner?tab=wallet',
+        });
+      }
+      if (cashback && cashback.data.status === 'pending') {
+        await setEntryStatus(cashback._id, 'available', { releasedAt: new Date().toISOString() });
+        await createNotification({
+          userId: cashback.data.user,
+          type: 'general',
+          title: 'Cashback added to your wallet',
+          message: `Rs. ${Number(cashback.data.amount).toLocaleString()} cashback from order ${order.orderNumber} is ready to spend.`,
+          link: '/account/earnings',
         });
       }
       if (order.user && m.pointsEarned > 0 && !m.pointsCredited) {
@@ -291,6 +331,11 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
             note: `Order ${order.orderNumber} was ${status}`,
           });
         }
+      }
+      if (cashback) {
+        if (cashback.data.status === 'pending') await setEntryStatus(cashback._id, 'cancelled', { cancelledAt: new Date().toISOString() });
+        else if (cashback.data.status === 'available')
+          entries.push({ user: cashback.data.user, type: 'cashback_reversal', amount: -Number(cashback.data.amount), status: 'available', order: order._id, orderNumber: order.orderNumber, note: `Cashback taken back: order ${order.orderNumber} was ${status}` });
       }
       // Give back wallet money and redeemed points to the buyer
       if (order.user && m.walletUsed > 0) {
@@ -351,3 +396,30 @@ export async function recalcPendingCommission(order: Doc) {
 }
 
 export { postCredits };
+
+// ---------------------------------------------------------------------------
+// Titles (rank qualification), worked out live for the current month
+// ---------------------------------------------------------------------------
+export async function titleProgress(u: Doc, ms?: MemberSettings) {
+  const settings = ms ?? (await getMemberSettings());
+  const sql = getSql();
+  const month = new Date().toISOString().slice(0, 7);
+  const personalBV = Number(u.monthlyBV ?? 0);
+  const team = await sql`
+    select coalesce(sum((data#>>'{member,bv}')::numeric), 0) as bv
+      from orders
+     where data#>>'{member,sponsor}' = ${u._id}
+       and status not in ('cancelled', 'refunded', 'returned')
+       and to_char(created_at, 'YYYY-MM') = ${month}`;
+  const recruits = await sql`
+    select count(*)::int as n from users
+     where referred_by = ${u._id} and data#>>'{partner,status}' = 'approved'`;
+  const groupBV = personalBV + Number((team[0] as any).bv);
+  const recruitCount = Number((recruits[0] as any).n);
+  const meets = (t: Title) => personalBV >= t.minPersonalBV && groupBV >= t.minGroupBV && recruitCount >= t.minRecruits;
+  let current = settings.titles[0];
+  for (const t of settings.titles) if (meets(t)) current = t;
+  const idx = settings.titles.indexOf(current);
+  const next = settings.titles[idx + 1] ?? null;
+  return { title: current.name, personalBV, groupBV, recruits: recruitCount, next, titles: settings.titles };
+}
