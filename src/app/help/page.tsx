@@ -6,8 +6,8 @@ import {
 import Button from '@/components/ui/Button';
 
 export const metadata: Metadata = {
-  title: 'Help Center | AYEZA COSMETICS',
-  description: 'FAQs, shipping, returns, refunds, and customer support for AYEZA COSMETICS.',
+  title: 'Help Center | AZEEORA',
+  description: 'FAQs, shipping, returns, refunds, and customer support for AZEEORA.',
 };
 
 const CONTACT = {
@@ -36,7 +36,7 @@ const faqs = [
   },
   {
     q: 'Are your products authentic?',
-    a: 'Yes. AYEZA COSMETICS sells 100% genuine luxury beauty products sourced from trusted suppliers.',
+    a: 'Yes. AZEEORA sells 100% genuine luxury beauty products sourced from trusted suppliers.',
   },
   {
     q: 'How do I verify my account?',

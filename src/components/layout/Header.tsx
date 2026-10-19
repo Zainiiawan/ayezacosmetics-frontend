@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, Heart, User, Menu, X, LogOut, Shield } from 'lucide-react';
+import { Search, ShoppingBag, Heart, User, Menu, X, LogOut, Shield } from 'lucide-react';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { logout } from '@/store/slices/authSlice';
 import Button from '@/components/ui/Button';
+import Wordmark from '@/components/brand/Wordmark';
+import { useQuery } from '@tanstack/react-query';
+import { settingsApi } from '@/lib/api/settingsApi';
 
 const Header = () => {
   const router = useRouter();
@@ -38,15 +41,24 @@ const Header = () => {
   );
 
   const navigation = [
-    { name: 'Home', href: '/' },
     { name: 'Shop', href: '/shop' },
     { name: 'Categories', href: '/categories' },
     { name: 'Offers', href: '/offers' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Journal', href: '/blog' },
+    { name: 'Our Story', href: '/about' },
+  ];
+  const moreLinks = [
     { name: 'Track Order', href: '/track-order' },
-    { name: 'Help', href: '/help' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Help & FAQ', href: '/help' },
+  ];
+
+  const { data: storeSettings } = useQuery({ queryKey: ['store-settings'], queryFn: settingsApi.getSettings, staleTime: 10 * 60_000 });
+  const announcements = [
+    'Cash on Delivery all over Pakistan',
+    storeSettings?.freeShippingThreshold ? `Free delivery on orders over Rs ${storeSettings.freeShippingThreshold.toLocaleString()}` : 'Fast delivery across Pakistan',
+    'Easy 14-day returns',
+    'Made for Pakistani skin and weather',
   ];
 
   const handleLogout = async () => {
@@ -62,53 +74,60 @@ const Header = () => {
     }
   };
 
+  const iconBtn = 'w-11 h-11 flex items-center justify-center text-emerald hover:bg-sand hover:text-gold rounded-full transition-colors relative shrink-0';
+  const badge = 'absolute -top-0.5 -right-0.5 bg-rani text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center';
+
   return (
-    <header className="bg-white border-b border-gray-100 fixed top-0 left-0 right-0 w-full z-50">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <h1 className="text-xl sm:text-2xl font-serif font-bold text-black tracking-tight">
-              AYEZA <span className="text-rose-gold">COSMETICS</span>
-            </h1>
+    <header className="fixed top-0 left-0 right-0 w-full z-50">
+      <div className="bg-emerald text-gold-soft overflow-hidden h-[34px] flex items-center" aria-label="Store announcements">
+        <div className="marquee-track flex whitespace-nowrap w-max">
+          {[0, 1].map((copy) => (
+            <div key={copy} className="flex" aria-hidden={copy === 1}>
+              {announcements.map((t) => (
+                <span key={t} className="eyebrow !text-[0.66rem] !tracking-[0.28em] px-8 flex items-center gap-8">
+                  {t}
+                  <span className="text-gold/60">✦</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-ivory/95 backdrop-blur-md border-b border-gold/25">
+        <div className="max-w-[1440px] mx-auto px-4 lg:px-10 h-16 lg:h-[76px] grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`${iconBtn} lg:hidden`}
+              aria-label="Menu"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+            <nav className="hidden lg:flex items-center gap-7">
+              {navigation.map((item) => (
+                <Link key={item.name} href={item.href} className="group relative text-[0.82rem] uppercase tracking-[0.14em] font-semibold text-emerald hover:text-gold transition-colors">
+                  {item.name}
+                  <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          <Link href="/" className="justify-self-center text-[26px] lg:text-[34px]" aria-label="AZEEORA home">
+            <Wordmark priority />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-700 hover:text-rose-gold transition-colors font-medium"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors shrink-0"
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5" />
+          <div className="flex items-center justify-end gap-0.5 sm:gap-1">
+            <button onClick={() => setIsSearchOpen(!isSearchOpen)} className={iconBtn} aria-label="Search">
+              <Search className="w-5 h-5" strokeWidth={1.6} />
             </button>
 
-            <Link href="/wishlist" className="hidden lg:flex w-12 h-12 items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative shrink-0" aria-label="Wishlist">
-              <Heart className="w-5 h-5" />
-              {wishlistItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {wishlistItemCount > 99 ? '99+' : wishlistItemCount}
-                </span>
-              )}
-            </Link>
-
-            <Link href="/cart" className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors relative shrink-0" aria-label="Cart">
-              <ShoppingCart className="w-5 h-5" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartItemCount > 99 ? '99+' : cartItemCount}
-                </span>
-              )}
+            <Link href="/wishlist" className={`${iconBtn} hidden lg:flex`} aria-label="Wishlist">
+              <Heart className="w-5 h-5" strokeWidth={1.6} />
+              {wishlistItemCount > 0 && <span className={badge}>{wishlistItemCount > 99 ? '99+' : wishlistItemCount}</span>}
             </Link>
 
             <div className="hidden lg:flex shrink-0 items-center">
@@ -116,50 +135,38 @@ const Header = () => {
             </div>
 
             {isAuthenticated && user ? (
-              <div className="hidden lg:flex items-center gap-2">
-                <Link
-                  href="/account"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 hover:bg-rose-gold/10 transition-colors"
-                >
-                  <User className="w-4 h-4 text-rose-gold" />
-                  <span className="text-sm font-medium text-gray-800 max-w-[100px] truncate">
-                    {user.firstName}
+              <div className="hidden lg:flex items-center gap-1">
+                <Link href="/account" className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-gold/30 hover:bg-sand transition-colors">
+                  <span className="w-7 h-7 rounded-full bg-emerald text-gold-soft flex items-center justify-center text-[0.8rem] font-semibold">
+                    {user.firstName?.[0]?.toUpperCase() ?? <User className="w-4 h-4" />}
                   </span>
+                  <span className="text-sm font-semibold text-emerald max-w-[90px] truncate">{user.firstName}</span>
                 </Link>
                 {user.role === 'admin' && (
-                  <Link
-                    href="/admin"
-                    className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors shrink-0"
-                    aria-label="Admin Panel"
-                    title="Admin Panel"
-                  >
-                    <Shield className="w-5 h-5" />
+                  <Link href="/admin" className={iconBtn} aria-label="Admin Panel" title="Admin Panel">
+                    <Shield className="w-5 h-5" strokeWidth={1.6} />
                   </Link>
                 )}
                 <button
                   onClick={() => void handleLogout()}
                   disabled={isLoggingOut}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 shrink-0"
+                  className={`${iconBtn} hover:!text-rani disabled:opacity-50`}
+                  aria-label={isLoggingOut ? 'Logging out' : 'Logout'}
+                  title="Logout"
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span className="hidden xl:inline">{isLoggingOut ? 'Logging out…' : 'Logout'}</span>
+                  <LogOut className="w-5 h-5" strokeWidth={1.6} />
                 </button>
               </div>
             ) : (
-              <Link href="/login" className="hidden lg:flex w-12 h-12 items-center justify-center text-gray-800 hover:bg-gray-100 hover:text-rose-gold rounded-full transition-colors shrink-0" aria-label="Account">
-                <User className="w-5 h-5" />
+              <Link href="/login" className={`${iconBtn} hidden lg:flex`} aria-label="Account">
+                <User className="w-5 h-5" strokeWidth={1.6} />
               </Link>
             )}
 
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="w-12 h-12 flex items-center justify-center text-gray-800 hover:bg-gray-100 rounded-full transition-colors shrink-0"
-              aria-label="Menu"
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-menu"
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            <Link href="/cart" className={iconBtn} aria-label="Cart">
+              <ShoppingBag className="w-5 h-5" strokeWidth={1.6} />
+              {cartItemCount > 0 && <span className={badge}>{cartItemCount > 99 ? '99+' : cartItemCount}</span>}
+            </Link>
           </div>
         </div>
       </div>
@@ -170,16 +177,16 @@ const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="border-t border-gray-100 bg-gray-50"
+            className="bg-sand border-b border-gold/25 overflow-hidden"
           >
-            <div className="container mx-auto px-4 py-4">
+            <div className="max-w-3xl mx-auto px-4 py-5">
               <form action="/shop" method="get" className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                 <input
                   type="text"
                   name="search"
-                  placeholder="Search for products, brands, categories..."
-                  className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:border-rose-gold focus:ring-2 focus:ring-rose-gold/30 focus:outline-none"
+                  placeholder="Search face wash, cream, glow..."
+                  className="w-full pl-12 pr-4 py-3.5 rounded-full border border-gold/40 bg-white text-gray-900 placeholder:text-gray-500 focus:border-gold focus:ring-2 focus:ring-gold/25 focus:outline-none"
                   autoFocus
                 />
               </form>
@@ -195,7 +202,7 @@ const Header = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 top-[65px] sm:top-[73px] bg-black/50 z-40 lg:hidden"
+              className="fixed inset-0 top-[98px] bg-emerald/60 backdrop-blur-sm z-40 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.div
@@ -203,15 +210,15 @@ const Header = () => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="absolute top-full left-0 w-full bg-white overflow-hidden overflow-y-auto overscroll-contain max-h-[calc(100dvh-65px)] sm:max-h-[calc(100dvh-73px)] lg:h-auto lg:max-h-[calc(100vh-100px)] lg:right-0 lg:left-auto lg:w-80 lg:shadow-xl lg:rounded-bl-xl lg:border-l lg:border-b z-50 shadow-lg"
+              className="absolute top-full left-0 w-full bg-ivory jaali-light overflow-hidden overflow-y-auto overscroll-contain max-h-[calc(100dvh-98px)] z-50 shadow-xl lg:hidden"
             >
-              <nav className="container mx-auto px-4 py-4">
-                <div className="flex flex-col gap-4">
-                  {navigation.map((item) => (
+              <nav className="px-6 py-6">
+                <div className="flex flex-col gap-1">
+                  {[...navigation, ...moreLinks].map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="text-gray-700 hover:text-rose-gold transition-colors font-medium py-2"
+                      className="font-serif text-[1.35rem] text-emerald hover:text-gold transition-colors py-2 border-b border-gold/15"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.name}
@@ -220,23 +227,23 @@ const Header = () => {
                   
                   <Link
                     href="/wishlist"
-                    className="text-gray-700 hover:text-rose-gold transition-colors font-medium py-2 flex items-center gap-2"
+                    className="font-serif text-[1.35rem] text-emerald hover:text-gold transition-colors py-2 border-b border-gold/15 flex items-center gap-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Wishlist
                     {wishlistItemCount > 0 && (
-                      <span className="bg-rose-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                      <span className="bg-rani text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
                         {wishlistItemCount > 99 ? '99+' : wishlistItemCount}
                       </span>
                     )}
                   </Link>
                   {isAuthenticated && user ? (
                     <>
-                      <Link href="/account" className="text-gray-700 hover:text-rose-gold font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link href="/account" className="text-emerald hover:text-gold font-semibold py-3" onClick={() => setIsMobileMenuOpen(false)}>
                         My Account ({user.firstName})
                       </Link>
                       {user.role === 'admin' && (
-                        <Link href="/admin" className="text-gray-700 hover:text-rose-gold font-medium py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Link href="/admin" className="text-emerald hover:text-gold font-semibold py-3" onClick={() => setIsMobileMenuOpen(false)}>
                           Admin Panel
                         </Link>
                       )}
@@ -246,7 +253,7 @@ const Header = () => {
                       </Button>
                     </>
                   ) : (
-                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="mt-4">
                       <Button className="w-full">Sign In</Button>
                     </Link>
                   )}

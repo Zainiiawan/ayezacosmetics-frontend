@@ -97,7 +97,7 @@ export default function ContactPage() {
           <div className="bg-white rounded-xl overflow-hidden shadow-sm h-64 flex items-center justify-center border border-gray-200">
             <div className="text-center text-gray-500 p-6">
               <MapPin className="w-10 h-10 text-rose-gold mx-auto mb-3" />
-              <p className="font-medium text-gray-700">AYEZA COSMETICS</p>
+              <p className="font-medium text-gray-700">AZEEORA</p>
               <p className="text-sm">{CONTACT.city}, {CONTACT.country}</p>
               <p className="text-xs mt-2 text-gray-400">Google Maps embed ready for production</p>
             </div>

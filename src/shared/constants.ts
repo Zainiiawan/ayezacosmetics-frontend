@@ -2,7 +2,7 @@
 // Application Constants
 // ==========================================
 
-export const APP_NAME = 'AYEZA COSMETICS';
+export const APP_NAME = 'AZEEORA';
 export const APP_TAGLINE = 'Luxury Beauty, Redefined.';
 export const APP_DESCRIPTION = 'Premium luxury cosmetics and beauty products. Discover our curated collection of skincare, makeup, and fragrances.';
 
@@ -74,7 +74,7 @@ export const FREE_SHIPPING_THRESHOLD = 5000; // PKR
 export const SHIPPING_COST = 200; // PKR
 
 export const STORE_CONTACT = {
-  name: 'AYEZA COSMETICS',
+  name: 'AZEEORA',
   phone: '+92 306 0466911',
   whatsapp: '923060466911',
   email: 'ayezacosmtics@gmail.com',

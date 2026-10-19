@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { m as motion } from 'framer-motion';
-import { ShoppingCart, Eye, Heart, Star } from 'lucide-react';
+import { ShoppingBag, Heart, Star } from 'lucide-react';
 import { cn, formatPrice, optimizeCloudinaryUrl, getCloudinarySrcSet } from '@/lib/utils';
 import { getDiscountPercentage, getEffectivePrice, getDiscountDisplay } from '@/lib/productUtils';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,7 +26,7 @@ interface ProductCardProps {
 }
 
 const PLACEHOLDER =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23f9f0f3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23c29375'%3EAYEZA%3C/text%3E%3C/svg%3E";
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23f3ead8'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23b8892b'%3EAZEEORA%3C/text%3E%3C/svg%3E";
 
 const ProductCard = ({ product, className, priority = false }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -106,65 +106,43 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
       className={cn('group h-full flex flex-col', className)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <div className="relative bg-white rounded-xl overflow-hidden luxury-border hover:shadow-xl transition-all duration-500 hover:border-rose-gold/40 flex-1">
+      <div className="relative rounded-t-[999px] rounded-b-[22px] overflow-hidden bg-white border border-gold/25 group-hover:border-gold/60 shadow-[0_24px_44px_-34px_rgba(15,59,46,0.9)] transition-colors duration-500">
         {product.isComingSoon ? (
-          <div className="absolute top-3 left-3 bg-orange-500/90 backdrop-blur text-white text-[10px] font-bold px-3 py-1.5 rounded-md z-10 shadow-lg border border-orange-400/50 uppercase tracking-wider">
-            Coming Soon
+          <div className="absolute top-[18%] left-3 bg-gold text-emerald text-[10px] font-bold px-3 py-1.5 rounded-full z-10 uppercase tracking-[0.14em]">
+            Coming soon
           </div>
         ) : discountDisplay ? (
-          <div className="absolute top-3 left-3 bg-rose-gold-dark text-white text-xs font-bold px-2 py-1 rounded-md z-10">
+          <div className="absolute top-[18%] left-3 bg-rani text-white text-[11px] font-bold px-3 py-1.5 rounded-full z-10 tracking-wide">
             {discountDisplay}
+          </div>
+        ) : product.isFeatured ? (
+          <div className="absolute top-[18%] left-3 bg-emerald text-gold-soft text-[10px] font-bold px-3 py-1.5 rounded-full z-10 uppercase tracking-[0.14em]">
+            Featured
           </div>
         ) : null}
 
-        {product.isFeatured && (
-          <div className="absolute top-3 right-3 bg-black text-white text-xs font-bold px-2 py-1 rounded-md z-10">
-            Featured
-          </div>
-        )}
+        <button
+          type="button"
+          onClick={handleWishlistToggle}
+          className={cn(
+            'absolute top-[18%] right-3 z-10 w-10 h-10 flex items-center justify-center rounded-full border backdrop-blur transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold',
+            isWishlisted ? 'bg-rani border-rani text-white' : 'bg-white/90 border-gold/30 text-emerald hover:text-rani'
+          )}
+          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          aria-pressed={isWishlisted}
+        >
+          <Heart className={cn('w-[18px] h-[18px] transition-transform duration-200', isWishlisted ? 'fill-current scale-110' : 'fill-none')} />
+        </button>
 
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-10 transition-all duration-300 opacity-100 translate-x-0">
-          <button
-            type="button"
-            onClick={handleWishlistToggle}
-            className={cn(
-              'w-12 h-12 flex items-center justify-center rounded-full shadow-lg border transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold',
-              isWishlisted
-                ? 'bg-rose-gold-dark border-rose-gold-dark text-white hover:bg-black'
-                : 'bg-white border-gray-200 text-gray-800 hover:border-rose-gold-dark hover:text-rose-gold-dark'
-            )}
-            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-            aria-pressed={isWishlisted}
-          >
-            <Heart
-              className={cn(
-                'w-5 h-5 transition-transform duration-200',
-                isWishlisted ? 'fill-current scale-110' : 'fill-none'
-              )}
-            />
-          </button>
-          <Link
-            href={`/products/${product.slug}`}
-            className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-800 rounded-full shadow-lg hover:border-rose-gold hover:text-rose-gold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-gold"
-            aria-label="View product details"
-          >
-            <Eye className="w-5 h-5" />
-          </Link>
-        </div>
-
-        <Link href={`/products/${product.slug}`} className="block aspect-square overflow-hidden bg-gray-100">
+        <Link href={`/products/${product.slug}`} className="block aspect-[4/5] overflow-hidden bg-sand" aria-label={product.name}>
           <img
             src={imageSrc}
-            {...(imageSrcSet ? { srcSet: imageSrcSet, sizes: "(max-width: 768px) 50vw, 33vw" } : {})}
+            {...(imageSrcSet ? { srcSet: imageSrcSet, sizes: '(max-width: 768px) 50vw, 25vw' } : {})}
             alt={mainImage?.alt || product.name}
-            className={cn(
-              'w-full h-full object-cover transition-transform duration-500',
-              isHovered ? 'scale-110' : 'scale-100'
-            )}
+            className={cn('w-full h-full object-cover transition-transform duration-[1.1s]', isHovered ? 'scale-105' : 'scale-100')}
             loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : 'auto'}
             onError={(e) => {
@@ -173,24 +151,21 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
           />
         </Link>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent pt-12 flex gap-2">
+        <div className="p-2.5 sm:p-3 flex gap-2 bg-white">
           {product.isComingSoon ? (
-            <button
-              type="button"
-              disabled
-              className="w-full bg-white/50 backdrop-blur-md text-white border border-white/20 shadow-lg py-3 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-not-allowed uppercase tracking-wider text-sm"
-            >
-              Coming Soon
+            <button type="button" disabled className="w-full bg-sand text-gray-500 py-2.5 rounded-full text-[0.78rem] font-semibold uppercase tracking-[0.12em] cursor-not-allowed">
+              Coming soon
             </button>
           ) : (
             <>
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                title="Add to Cart"
+                className="w-11 shrink-0 border border-emerald/25 text-emerald hover:bg-emerald hover:text-ivory py-2.5 rounded-full transition-colors flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                title="Add to bag"
+                aria-label={`Add ${product.name} to bag`}
               >
-                <ShoppingCart className="w-5 h-5" />
+                <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.6} />
               </button>
               <button
                 type="button"
@@ -198,44 +173,28 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
                   e.preventDefault();
                   router.push(`/checkout?buyNow=true&productId=${product._id}`);
                 }}
-                className="flex-[2] bg-rose-gold-dark hover:bg-black text-white shadow-lg py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="flex-1 bg-emerald hover:bg-jade text-ivory py-2.5 rounded-full text-[0.78rem] font-semibold uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
               >
-                Buy Now
+                Buy now
               </button>
             </>
           )}
         </div>
       </div>
 
-      <div className="mt-4">
-        <Link href={`/products/${product.slug}`}>
-          <h3 className="font-medium text-gray-900 hover:text-rose-gold transition-colors line-clamp-2">
-            {product.name}
-          </h3>
-        </Link>
-
-        <div className="flex items-center gap-1 mt-1">
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={cn(
-                  'w-4 h-4',
-                  i < Math.floor(product.rating) ? 'fill-rose-gold text-rose-gold' : 'text-gray-300'
-                )}
-              />
-            ))}
-          </div>
-          <span className="text-sm text-gray-500">({product.reviewCount})</span>
+      <div className="mt-4 px-1 text-center">
+        <div className="flex items-center justify-center gap-1">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className={cn('w-3.5 h-3.5', i < Math.floor(product.rating) ? 'fill-gold text-gold' : 'text-gray-300')} />
+          ))}
+          <span className="text-[0.75rem] text-gray-500 ml-1">({product.reviewCount})</span>
         </div>
-
-        <div className="flex items-center gap-2 mt-2">
-          <span className="text-lg font-bold text-gray-900">{formatPrice(effectivePrice)}</span>
-          {product.basePrice > effectivePrice && (
-            <span className="text-sm text-gray-500 line-through">
-              {formatPrice(product.basePrice)}
-            </span>
-          )}
+        <Link href={`/products/${product.slug}`}>
+          <h3 className="mt-1.5 font-serif text-[1.08rem] sm:text-[1.15rem] text-emerald hover:text-gold transition-colors line-clamp-2 leading-snug">{product.name}</h3>
+        </Link>
+        <div className="flex items-center justify-center gap-2 mt-1.5">
+          <span className="font-semibold text-emerald">{formatPrice(effectivePrice)}</span>
+          {product.basePrice > effectivePrice && <span className="text-sm text-gray-500 line-through">{formatPrice(product.basePrice)}</span>}
         </div>
       </div>
     </motion.div>

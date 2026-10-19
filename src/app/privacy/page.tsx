@@ -3,14 +3,14 @@ import { config } from '@/lib/config';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | AYEZA COSMETICS',
-  description: 'Our Privacy Policy explains how we collect, use, and protect your personal information at AYEZA COSMETICS.',
+  title: 'Privacy Policy | AZEEORA',
+  description: 'Our Privacy Policy explains how we collect, use, and protect your personal information at AZEEORA.',
   alternates: {
     canonical: '/privacy',
   },
   openGraph: {
-    title: 'Privacy Policy | AYEZA COSMETICS',
-    description: 'Our Privacy Policy explains how we collect, use, and protect your personal information at AYEZA COSMETICS.',
+    title: 'Privacy Policy | AZEEORA',
+    description: 'Our Privacy Policy explains how we collect, use, and protect your personal information at AZEEORA.',
     url: '/privacy',
     type: 'website',
   },
@@ -20,8 +20,8 @@ export default function PrivacyPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'Privacy Policy - AYEZA COSMETICS',
-    description: 'Our Privacy Policy explains how we collect, use, and protect your personal information at AYEZA COSMETICS.',
+    name: 'Privacy Policy - AZEEORA',
+    description: 'Our Privacy Policy explains how we collect, use, and protect your personal information at AZEEORA.',
     url: `${config.getBaseUrl()}/privacy`,
   };
 
@@ -33,7 +33,7 @@ export default function PrivacyPage() {
       />
       <h1 className="text-3xl font-serif font-bold mb-8">Privacy Policy</h1>
       <div className="prose prose-gray space-y-4 text-gray-600">
-        <p>AYEZA COSMETICS (&quot;we&quot;, &quot;us&quot;) respects your privacy. This policy explains how we collect, use, and protect your personal information.</p>
+        <p>AZEEORA (&quot;we&quot;, &quot;us&quot;) respects your privacy. This policy explains how we collect, use, and protect your personal information.</p>
         <h2 className="text-xl font-semibold text-black mt-8">Information We Collect</h2>
         <p>Name, email, phone, shipping address, order history, and payment-related information necessary to fulfil orders.</p>
         <h2 className="text-xl font-semibold text-black mt-8">How We Use It</h2>

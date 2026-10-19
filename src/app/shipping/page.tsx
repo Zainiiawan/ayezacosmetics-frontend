@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { Truck, Clock, ShieldCheck, MapPin } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Shipping Policy | AYEZA COSMETICS',
+  title: 'Shipping Policy | AZEEORA',
   description: 'Learn about our shipping and delivery processes across Pakistan.',
   alternates: {
     canonical: '/shipping',
   },
   openGraph: {
-    title: 'Shipping Policy | AYEZA COSMETICS',
+    title: 'Shipping Policy | AZEEORA',
     description: 'Learn about our shipping and delivery processes across Pakistan.',
     url: '/shipping',
     type: 'website',
@@ -21,7 +21,7 @@ export default function ShippingPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'Shipping Policy - AYEZA COSMETICS',
+    name: 'Shipping Policy - AZEEORA',
     description: 'Learn about our shipping and delivery processes across Pakistan.',
     url: `${config.getBaseUrl()}/shipping`,
   };

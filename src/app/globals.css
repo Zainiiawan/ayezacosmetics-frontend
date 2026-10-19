@@ -1,29 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  /* Luxury Rose Gold, Black, and White Theme — light storefront */
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --rose-gold: #b76e79;
-  --rose-gold-light: #e8c4c4;
-  --rose-gold-dark: #8b4d5b;
-  --black: #0a0a0a;
+  /* AZEEORA: emerald, antique gold, ivory and rani pink, drawn from
+     Mughal tilework and Pakistani bridal palettes. Legacy token names
+     (rose-gold, black) are kept so every existing page picks up the theme. */
+  --background: #fbf7ef;
+  --foreground: #13261f;
+  --rose-gold: #b8892b;
+  --rose-gold-light: #ead7a6;
+  --rose-gold-dark: #0f3b2e;
+  --black: #10231c;
   --white: #ffffff;
-  --gray-50: #faf9f9;
-  --gray-100: #f5f5f5;
-  --gray-200: #e5e5e5;
-  --gray-300: #d4d4d4;
-  --gray-400: #a3a3a3;
-  --gray-500: #737373;
-  --gray-600: #525252;
-  --gray-700: #404040;
-  --gray-800: #262626;
-  --gray-900: #171717;
+  --emerald: #0f3b2e;
+  --jade: #1e5b49;
+  --gold: #b8892b;
+  --gold-soft: #d9b25c;
+  --ivory: #fbf7ef;
+  --sand: #f3ead8;
+  --rani: #b3245b;
+  --gray-50: #f8f2e6;
+  --gray-100: #f1e9da;
+  --gray-200: #e4d9c4;
+  --gray-300: #d2c5ac;
+  --gray-400: #a89c86;
+  --gray-500: #7c7262;
+  --gray-600: #5c5446;
+  --gray-700: #423c32;
+  --gray-800: #2a2620;
+  --gray-900: #1a1814;
   --input-bg: #ffffff;
-  --input-text: #0a0a0a;
-  --input-placeholder: #737373;
-  --input-border: #d4d4d4;
-  --input-border-focus: #b76e79;
+  --input-text: #13261f;
+  --input-placeholder: #8a806f;
+  --input-border: #d2c5ac;
+  --input-border-focus: #b8892b;
 }
 
 @theme inline {
@@ -34,6 +43,13 @@
   --color-rose-gold-dark: var(--rose-gold-dark);
   --color-black: var(--black);
   --color-white: var(--white);
+  --color-emerald: var(--emerald);
+  --color-jade: var(--jade);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-ivory: var(--ivory);
+  --color-sand: var(--sand);
+  --color-rani: var(--rani);
   --color-gray-50: var(--gray-50);
   --color-gray-100: var(--gray-100);
   --color-gray-200: var(--gray-200);
@@ -45,9 +61,9 @@
   --color-gray-800: var(--gray-800);
   --color-gray-900: var(--gray-900);
 
-  /* Luxury Typography */
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: var(--font-display), "Marcellus", Georgia, serif;
+  --font-sans: var(--font-body), "Manrope", system-ui, sans-serif;
+  --font-urdu: var(--font-nastaliq), "Noto Nastaliq Urdu", serif;
 }
 
 /*
@@ -57,7 +73,7 @@
 */
 html {
   color-scheme: light;
-  background-color: #0a0a0a;
+  background-color: #10231c;
 }
 
 body {
@@ -81,24 +97,102 @@ body {
 }
 
 /* Luxury Design System */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--foreground);
+/* in the base layer so colour utilities on a heading (text-ivory, text-gold...) win */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    color: var(--foreground);
+  }
+}
+
+/* Marcellus has a single weight; keep "bold" headings crisp instead of faux-bold */
+.font-serif.font-bold,
+.font-serif.font-semibold {
+  font-weight: 400;
 }
 
 .rose-gold-gradient {
-  background: linear-gradient(135deg, var(--rose-gold) 0%, var(--rose-gold-light) 100%);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 55%, var(--rose-gold-light) 100%);
 }
 
 .luxury-shadow {
-  box-shadow: 0 4px 20px rgba(183, 110, 121, 0.15);
+  box-shadow: 0 10px 30px -12px rgba(15, 59, 46, 0.25);
 }
 
 .luxury-border {
-  border: 2px solid rgba(183, 110, 121, 0.4);
-  box-shadow: 0 8px 25px rgba(183, 110, 121, 0.15);
+  border: 1px solid rgba(184, 137, 43, 0.35);
+  box-shadow: 0 14px 34px -18px rgba(15, 59, 46, 0.35);
+}
+
+/* ---- AZEEORA ornaments ------------------------------------------------ */
+.font-urdu {
+  font-family: var(--font-urdu);
+  line-height: 2.1;
+}
+
+.gold-text {
+  background: linear-gradient(100deg, #8a6420 0%, #d9b25c 40%, #f3dc9b 55%, #a9792a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Mughal arch frame for images */
+.arch {
+  border-radius: 999px 999px 18px 18px;
+  overflow: hidden;
+}
+
+/* Jaali (lattice) pattern, used as a quiet background texture */
+.jaali {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23d9b25c' stroke-opacity='.22' stroke-width='1'%3E%3Cpath d='M28 4 L52 28 L28 52 L4 28 Z'/%3E%3Ccircle cx='28' cy='28' r='9'/%3E%3Cpath d='M28 19 Q34 28 28 37 Q22 28 28 19 Z'/%3E%3Cpath d='M19 28 Q28 34 37 28 Q28 22 19 28 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.jaali-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23b8892b' stroke-opacity='.14' stroke-width='1'%3E%3Cpath d='M28 4 L52 28 L28 52 L4 28 Z'/%3E%3Ccircle cx='28' cy='28' r='9'/%3E%3Cpath d='M28 19 Q34 28 28 37 Q22 28 28 19 Z'/%3E%3Cpath d='M19 28 Q28 34 37 28 Q28 22 19 28 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Gold divider with a small diamond in the middle */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--gold);
+}
+.ornament::before,
+.ornament::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.floaty {
+  animation: floaty 7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .floaty { animation: none; }
 }
 
 /* High-contrast form controls site-wide */

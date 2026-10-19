@@ -28,7 +28,7 @@ export async function generateMetadata(
 
   if (!post) {
     return {
-      title: 'Post Not Found | Ayeza Cosmetics',
+      title: 'Post Not Found | AZEEORA',
     };
   }
 
@@ -36,7 +36,7 @@ export async function generateMetadata(
   const canonicalUrl = `${config.getBaseUrl()}/blog/${post.slug}`;
 
   return {
-    title: `${post.title} | Ayeza Cosmetics Blog`,
+    title: `${post.title} | AZEEORA Blog`,
     description: post.excerpt,
     alternates: {
       canonical: canonicalUrl,
@@ -134,7 +134,7 @@ export default async function BlogPostPage({ params }: Props) {
     ],
     publisher: {
       '@type': 'Organization',
-      name: 'Ayeza Cosmetics',
+      name: 'AZEEORA',
       logo: {
         '@type': 'ImageObject',
         url: `${config.getBaseUrl()}/icon.png`,
@@ -165,7 +165,7 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       {/* Hero Section */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-sand jaali-light border-b border-gold/25">
         <div className="container mx-auto px-4 py-4">
           <nav className="text-sm text-gray-500 flex items-center gap-2 flex-wrap">
             <Link href="/" className="hover:text-rose-gold transition-colors">Home</Link>

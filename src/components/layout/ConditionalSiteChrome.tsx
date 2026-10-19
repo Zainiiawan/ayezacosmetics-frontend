@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import WhatsAppButton from '@/components/layout/WhatsAppButton';
 
 export function ConditionalSiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -21,8 +22,9 @@ export function ConditionalSiteChrome({ children }: { children: React.ReactNode 
   return (
     <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen flex flex-col w-full">
       <Header />
-      <main className="flex-1 pt-[73px]">{children}</main>
+      <main className="flex-1 pt-[98px] lg:pt-[110px]">{children}</main>
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }

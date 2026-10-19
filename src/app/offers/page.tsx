@@ -3,9 +3,10 @@ import ProductCard from '@/components/products/ProductCard';
 import { getEffectivePrice } from '@/lib/productUtils';
 import { config } from '@/lib/config';
 import { Product } from '@/lib/api/productApi';
+import { rebrand } from '@/lib/rebrand';
 
 export const metadata: Metadata = {
-  title: 'Special Offers | AYEZA COSMETICS',
+  title: 'Special Offers | AZEEORA',
   description: 'Exclusive deals on luxury beauty — limited time only.',
   alternates: {
     canonical: '/offers',
@@ -21,7 +22,7 @@ export default async function OffersPage() {
     });
     
     if (res.ok) {
-      const data = await res.json();
+      const data = rebrand(await res.json());
       const allProducts: Product[] = data.data?.products || [];
       
       // Filter for active offers

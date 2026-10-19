@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Cookie Policy | AYEZA COSMETICS',
+  title: 'Cookie Policy | AZEEORA',
 };
 
 export default function CookiesPage() {
@@ -10,7 +10,7 @@ export default function CookiesPage() {
     <div className="container mx-auto px-4 py-16 max-w-3xl">
       <h1 className="text-3xl font-serif font-bold mb-8">Cookie Policy</h1>
       <div className="prose prose-gray space-y-4 text-gray-600">
-        <p>This Cookie Policy explains how AYEZA COSMETICS uses cookies and similar technologies to recognize you when you visit our website.</p>
+        <p>This Cookie Policy explains how AZEEORA uses cookies and similar technologies to recognize you when you visit our website.</p>
         
         <h2 className="text-xl font-semibold text-black mt-8">What are cookies?</h2>
         <p>Cookies are small data files that are placed on your computer or mobile device when you visit a website. They are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.</p>

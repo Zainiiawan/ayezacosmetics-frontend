@@ -81,10 +81,10 @@ export default function ShopPage({ initialProductsData }: ShopPageClientProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-sand jaali-light border-b border-gold/25">
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-4xl font-serif font-bold text-black mb-2">Shop All Products</h1>
-          <p className="text-gray-600">Discover our complete collection of luxury cosmetics</p>
+          <p className="text-gray-600">Every AZEEORA essential, made for Pakistani skin</p>
         </div>
       </div>
 

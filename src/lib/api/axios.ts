@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { config } from '@/lib/config';
+import { rebrand } from '@/lib/rebrand';
 
 const AUTH_NO_REFRESH_PATHS = [
   '/auth/login',
@@ -35,7 +36,12 @@ const createAxiosInstance = (): AxiosInstance => {
   );
 
   instance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      // storefront shows the AZEEORA name on catalogue text; admin keeps the stored text
+      const onAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+      if (!onAdmin && response.data && typeof response.data === 'object') response.data = rebrand(response.data);
+      return response;
+    },
     async (error: AxiosError) => {
       const originalRequest = error.config as (typeof error.config & { _retry?: boolean }) | undefined;
       if (!originalRequest) return Promise.reject(error);

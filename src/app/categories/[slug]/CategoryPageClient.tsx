@@ -82,7 +82,7 @@ export default function CategoryPageClient({ initialCategoryData, initialProduct
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-sand jaali-light border-b border-gold/25">
         <div className="container mx-auto px-4 py-3">
           <nav className="text-sm text-gray-500 flex items-center gap-2">
             <Link href="/" className="hover:text-rose-gold transition-colors">Home</Link>
@@ -94,7 +94,7 @@ export default function CategoryPageClient({ initialCategoryData, initialProduct
         </div>
       </div>
 
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-sand jaali-light border-b border-gold/25">
         <div className="container mx-auto px-4 py-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-black mb-2">

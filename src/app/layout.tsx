@@ -1,20 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Marcellus, Manrope, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 
-const playfair = Playfair_Display({
-  variable: "--font-serif",
+const display = Marcellus({
+  variable: "--font-display",
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-sans",
+const body = Manrope({
+  variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
+});
+
+// Urdu accents (a few words on the homepage), loaded only where used
+const nastaliq = Noto_Nastaliq_Urdu({
+  variable: "--font-nastaliq",
+  weight: ["400", "600"],
+  subsets: ["arabic"],
+  display: "swap",
+  preload: false,
 });
 
 import { getBaseUrl } from "@/lib/config";
@@ -30,27 +40,29 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "AYEZA COSMETICS | Luxury Beauty Products",
-    template: "%s | AYEZA COSMETICS",
+    default: "AZEEORA | Beauty for Pakistani Skin",
+    template: "%s | AZEEORA",
   },
-  description: "Discover premium luxury cosmetics curated for the modern woman. Shop skincare, makeup, fragrances, and more.",
+  description: "AZEEORA skincare and beauty, made for Pakistani skin and weather. Cash on delivery across Pakistan.",
   keywords: ["cosmetics", "beauty", "skincare", "makeup", "luxury", "Pakistan"],
-  authors: [{ name: "AYEZA COSMETICS" }],
+  authors: [{ name: "AZEEORA" }],
   manifest: "/manifest.webmanifest",
+  // preview deployments stay out of search results so they never compete with the real domain
+  robots: process.env.NEXT_PUBLIC_NOINDEX === "true" ? { index: false, follow: false } : undefined,
 
   openGraph: {
-    title: "AYEZA COSMETICS | Luxury Beauty Products",
-    description: "Discover premium luxury cosmetics curated for the modern woman.",
+    title: "AZEEORA | Beauty for Pakistani Skin",
+    description: "AZEEORA skincare and beauty, made for Pakistani skin and weather.",
     type: "website",
     url: APP_URL,
-    siteName: "AYEZA COSMETICS",
-    images: [{ url: "/logo.png", width: 512, height: 512, alt: "AYEZA COSMETICS" }],
+    siteName: "AZEEORA",
+    images: [{ url: "/brand/og.png", width: 1200, height: 630, alt: "AZEEORA" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AYEZA COSMETICS | Luxury Beauty Products",
-    description: "Discover premium luxury cosmetics curated for the modern woman.",
-    images: ["/logo.png"],
+    title: "AZEEORA | Beauty for Pakistani Skin",
+    description: "AZEEORA skincare and beauty, made for Pakistani skin and weather.",
+    images: ["/brand/og.png"],
   },
   verification: {
     google: "hJhcaTPMOXI5_KbIDYvh6rf99bjD9SSs-CrFGEcwtAo",
@@ -69,7 +81,7 @@ export default function RootLayout({
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "AYEZA COSMETICS",
+    name: "AZEEORA",
     url: APP_URL,
     logo: `${APP_URL}/logo.png`,
     sameAs: [
@@ -99,7 +111,7 @@ export default function RootLayout({
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "AYEZA COSMETICS",
+    name: "AZEEORA",
     url: APP_URL,
     potentialAction: {
       "@type": "SearchAction",
@@ -112,7 +124,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${display.variable} ${body.variable} ${nastaliq.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -123,7 +135,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col overflow-x-hidden bg-[#0a0a0a]">
+      <body className="min-h-full flex flex-col overflow-x-hidden bg-[#10231c]">
         <ScrollToTop />
         <Providers>
           <ConditionalSiteChrome>{children}</ConditionalSiteChrome>

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import ProductPageClient from './ProductPageClient';
 import { config } from '@/lib/config';
 import { getEffectivePrice } from '@/lib/productUtils';
+import { rebrand } from '@/lib/rebrand';
 
 async function getProductBySlug(slug: string) {
   try {
@@ -10,7 +11,7 @@ async function getProductBySlug(slug: string) {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
-    const json = await res.json();
+    const json = rebrand(await res.json());
     return json.data;
   } catch (error) {
     console.error('Error fetching product for SEO:', error);
@@ -57,21 +58,21 @@ export async function generateMetadata({
   if (!product) {
     const fallbackName = slug ? slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Product';
     return {
-      title: `${fallbackName} | AYEZA COSMETICS`,
-      description: `Shop ${fallbackName} at AYEZA COSMETICS. Premium luxury cosmetics curated for the modern woman.`,
+      title: `${fallbackName} | AZEEORA`,
+      description: `Shop ${fallbackName} at AZEEORA. Premium luxury cosmetics curated for the modern woman.`,
     };
   }
 
-  let title = product.seo?.metaTitle || `${product.name} | AYEZA COSMETICS`;
+  let title = product.seo?.metaTitle || `${product.name} | AZEEORA`;
   let description =
     product.seo?.metaDescription ||
     product.shortDescription ||
     product.description?.slice(0, 155) ||
     'Premium luxury cosmetics curated for the modern woman.';
   
-  if (product.name === 'Ayeza Beauty Cream' || product.slug === 'ayeza-beauty-cream') {
-    title = 'Ayeza Beauty Cream - Whitening Cream in Pakistan | Ayeza Cosmetics';
-    description = 'Buy Ayeza Beauty Cream online in Pakistan. Premium skincare designed for brighter, healthier-looking skin with fast nationwide delivery from Ayeza Cosmetics.';
+  if (product.name === 'Azeeora Beauty Cream' || product.slug === 'ayeza-beauty-cream') {
+    title = 'Azeeora Beauty Cream - Whitening Cream in Pakistan | AZEEORA';
+    description = 'Buy Azeeora Beauty Cream online in Pakistan. Premium skincare designed for brighter, healthier-looking skin with fast nationwide delivery from AZEEORA.';
   }
   
   const images = product.images?.map((img: any) => img.url) || ['/logo.png'];
@@ -129,7 +130,7 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
       sku: product.sku,
       brand: {
         '@type': 'Brand',
-        name: typeof product.brand === 'object' ? product.brand?.name : (product.brand || 'AYEZA COSMETICS'),
+        name: typeof product.brand === 'object' ? product.brand?.name : (product.brand || 'AZEEORA'),
       },
       offers: {
         '@type': 'Offer',

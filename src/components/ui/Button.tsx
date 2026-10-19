@@ -12,13 +12,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', loading, disabled, children, ...props }, ref) => {
     const baseStyles =
-      'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-gold focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] hover:scale-[1.02]';
+      'inline-flex items-center justify-center rounded-full font-semibold tracking-[0.04em] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]';
 
     const variants = {
-      primary: 'bg-rose-gold-dark text-white hover:bg-black shadow-md',
-      secondary: 'bg-black text-white hover:bg-gray-800',
-      outline: 'border-2 border-rose-gold-dark text-rose-gold-dark hover:bg-rose-gold-dark hover:text-white',
-      ghost: 'text-gray-700 hover:bg-gray-100',
+      primary: 'bg-emerald text-ivory hover:bg-jade shadow-[0_10px_24px_-12px_rgba(15,59,46,0.7)] hover:shadow-[0_14px_30px_-12px_rgba(15,59,46,0.8)]',
+      secondary: 'bg-gold text-emerald hover:bg-gold-soft',
+      outline: 'border border-emerald text-emerald hover:bg-emerald hover:text-ivory',
+      ghost: 'text-gray-700 hover:bg-sand',
     };
 
     const sizes = {

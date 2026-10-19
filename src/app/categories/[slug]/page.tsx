@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import CategoryPageClient from './CategoryPageClient';
 import { config } from '@/lib/config';
+import { rebrand } from '@/lib/rebrand';
 
 async function getCategoryBySlug(slug: string) {
   try {
@@ -8,7 +9,7 @@ async function getCategoryBySlug(slug: string) {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
-    const json = await res.json();
+    const json = rebrand(await res.json());
     return json.data;
   } catch (error) {
     console.error('Error fetching category for SEO:', error);
@@ -28,13 +29,13 @@ export async function generateMetadata({
   if (!category) {
     const fallbackName = slug ? slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Category';
     return {
-      title: `${fallbackName} | AYEZA COSMETICS`,
-      description: `Browse our premium collection of ${fallbackName} at AYEZA COSMETICS.`,
+      title: `${fallbackName} | AZEEORA`,
+      description: `Browse our premium collection of ${fallbackName} at AZEEORA.`,
     };
   }
 
-  const title = `${category.name} | AYEZA COSMETICS`;
-  const description = category.description || `Browse our premium collection of ${category.name} at AYEZA COSMETICS.`;
+  const title = `${category.name} | AZEEORA`;
+  const description = category.description || `Browse our premium collection of ${category.name} at AZEEORA.`;
   const canonicalPath = `/categories/${category.slug}`;
   const canonicalUrl = new URL(canonicalPath, config.getBaseUrl()).toString();
 
@@ -115,7 +116,7 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
         }
       );
       if (productsRes.ok) {
-        const productsJson = await productsRes.json();
+        const productsJson = rebrand(await productsRes.json());
         initialProductsData = productsJson.data;
       }
     } catch (error) {

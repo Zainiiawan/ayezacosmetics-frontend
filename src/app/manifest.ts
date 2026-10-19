@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'AYEZA COSMETICS',
-    short_name: 'AYEZA',
+    name: 'AZEEORA',
+    short_name: 'AZEEORA',
     description: 'Premium luxury cosmetics curated for the modern woman.',
     start_url: '/',
     display: 'standalone',

@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { RefreshCcw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Refund & Returns | AYEZA COSMETICS',
+  title: 'Refund & Returns | AZEEORA',
   description: 'Our hassle-free 14-day refund and return policy.',
   alternates: {
     canonical: '/refunds',
   },
   openGraph: {
-    title: 'Refund & Returns | AYEZA COSMETICS',
+    title: 'Refund & Returns | AZEEORA',
     description: 'Our hassle-free 14-day refund and return policy.',
     url: '/refunds',
     type: 'website',
@@ -21,7 +21,7 @@ export default function RefundsPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'Refund & Returns - AYEZA COSMETICS',
+    name: 'Refund & Returns - AZEEORA',
     description: 'Our hassle-free 14-day refund and return policy.',
     url: `${config.getBaseUrl()}/refunds`,
   };

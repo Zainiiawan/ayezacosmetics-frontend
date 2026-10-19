@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import Wordmark from '@/components/brand/Wordmark';
 
 const Footer = ({ className }: { className?: string }) => {
   const currentYear = new Date().getFullYear();
@@ -53,177 +54,130 @@ const Footer = ({ className }: { className?: string }) => {
     ],
   };
 
+  const columns: [string, { name: string; href: string }[]][] = [
+    ['Shop', footerLinks.shop],
+    ['Explore', footerLinks.information],
+    [
+      'Client care',
+      [
+        { name: 'Track your order', href: '/track-order' },
+        { name: 'Help & FAQ', href: '/help' },
+        { name: 'Shipping', href: '/shipping' },
+        { name: 'Returns & refunds', href: '/refunds' },
+      ],
+    ],
+  ];
+  const social = [
+    { label: 'Instagram', href: 'https://www.instagram.com/ayezacosmetics.store?igsh=eTF3dnZkbHUwZmph', Icon: InstagramIcon },
+    { label: 'Facebook', href: 'https://www.facebook.com/share/1JMakEmR81/', Icon: FacebookIcon },
+    { label: 'TikTok', href: 'https://www.tiktok.com/@ayezacosmetics.store?_r=1&_t=ZN-98aOm1iZDQF', Icon: TikTokIcon },
+    { label: 'WhatsApp', href: 'https://wa.me/923060466911', Icon: WhatsAppIcon },
+  ];
+
   return (
-    <footer className={`bg-[#0a0a0a] text-white ${className || ''}`}>
-      {/* Newsletter Section */}
-      <div className="relative bg-[#8b4d5b] py-5 overflow-hidden">
-        {/* Subtle Decorative Rose Graphics */}
-        <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/4 opacity-10 pointer-events-none">
-          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
-            <path d="M50 50 Q 50 10, 90 10 T 50 50 Z" />
-            <path d="M50 50 Q 90 50, 90 90 T 50 50 Z" />
-            <path d="M50 50 Q 50 90, 10 90 T 50 50 Z" />
-            <path d="M50 50 Q 10 50, 10 10 T 50 50 Z" />
-            <circle cx="50" cy="50" r="15" />
-            <circle cx="50" cy="50" r="5" />
-          </svg>
-        </div>
-        <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 opacity-10 pointer-events-none">
-          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
-            <path d="M50 50 Q 50 10, 90 10 T 50 50 Z" />
-            <path d="M50 50 Q 90 50, 90 90 T 50 50 Z" />
-            <path d="M50 50 Q 50 90, 10 90 T 50 50 Z" />
-            <path d="M50 50 Q 10 50, 10 10 T 50 50 Z" />
-            <circle cx="50" cy="50" r="15" />
-            <circle cx="50" cy="50" r="5" />
-          </svg>
-        </div>
+    <footer className={`relative bg-emerald text-ivory overflow-hidden ${className || ''}`}>
+      <div className="absolute inset-0 jaali opacity-60 pointer-events-none" aria-hidden />
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-xl mx-auto text-center">
-            <Mail className="w-5 h-5 mx-auto mb-1 text-[#1A1A1A]/80" strokeWidth={1.5} />
-            <h3 className="text-xl md:text-2xl font-serif font-bold mb-1" style={{ color: '#1A1A1A' }}>Subscribe to Our Newsletter</h3>
-            <p className="text-white/70 mb-4 text-xs md:text-sm">Get exclusive offers, beauty tips, and new arrivals.</p>
-            <form className="flex flex-col sm:flex-row gap-2 justify-center">
-              <div className="relative flex-1 max-w-sm mx-auto sm:mx-0 w-full">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full pl-9 pr-3 py-2 rounded-md bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:border-white/50 transition-colors text-sm"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-[#111] text-white px-5 py-2 rounded-md font-medium hover:bg-black transition-colors flex items-center justify-center gap-2 text-sm border border-[#111] mx-auto sm:mx-0"
+      {/* Newsletter */}
+      <div className="relative border-b border-gold/20">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-14 grid lg:grid-cols-2 gap-8 items-center">
+          <div>
+            <p className="eyebrow text-gold-soft">The AZEEORA circle</p>
+            <h3 className="mt-3 font-serif text-[2rem] md:text-[2.6rem] leading-tight !text-ivory">
+              Glow notes, first looks <span className="gold-text">&amp; Eid offers</span>
+            </h3>
+            <p className="mt-3 text-ivory/70 max-w-md">New launches, skin tips for Pakistani weather and members-only offers. A few emails a season, never spam.</p>
+          </div>
+          <form className="flex flex-col sm:flex-row gap-3 lg:justify-end">
+            <label className="relative flex-1 max-w-md">
+              <span className="sr-only">Email address</span>
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald/50" />
+              <input
+                type="email"
+                placeholder="Your email address"
+                className="w-full pl-11 pr-4 py-3.5 rounded-full bg-ivory border border-gold/40 text-emerald placeholder:text-gray-500 focus:outline-none focus:border-gold text-sm"
+              />
+            </label>
+            <button type="submit" className="bg-gold text-emerald px-7 py-3.5 rounded-full font-semibold tracking-[0.06em] hover:bg-gold-soft transition-colors flex items-center justify-center gap-2 text-sm">
+              Join the circle
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Main footer */}
+      <div className="relative max-w-[1440px] mx-auto px-6 lg:px-10 py-14 grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.3fr]">
+        <div className="max-w-sm">
+          <Link href="/" className="text-[34px] inline-block" aria-label="AZEEORA home">
+            <Wordmark light />
+          </Link>
+          <p className="mt-5 text-ivory/70 leading-relaxed">
+            Thoughtful skincare made for Pakistani skin, sun and seasons. Gentle formulas, honest prices, delivered to your door.
+          </p>
+          <p className="mt-4 font-urdu text-[1.35rem] text-gold-soft" lang="ur" dir="rtl">
+            آپ کی خوبصورتی، ہماری پہچان
+          </p>
+          <div className="flex gap-3 mt-6">
+            {social.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="w-10 h-10 rounded-full border border-gold/40 text-gold-soft flex items-center justify-center hover:bg-gold hover:text-emerald transition-all"
               >
-                Subscribe
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
+                <Icon className="w-[18px] h-[18px]" />
+              </a>
+            ))}
           </div>
+        </div>
+
+        {columns.map(([title, links]) => (
+          <div key={title}>
+            <h5 className="eyebrow text-gold-soft !font-semibold">{title}</h5>
+            <ul className="mt-5 space-y-3">
+              {links.map((link) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="text-ivory/75 hover:text-gold-soft transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+
+        <div>
+          <h5 className="eyebrow text-gold-soft !font-semibold">Contact us</h5>
+          <ul className="mt-5 space-y-4 text-ivory/75">
+            <li className="flex items-start gap-3">
+              <MapPin className="w-5 h-5 text-gold-soft shrink-0 mt-0.5" strokeWidth={1.5} />
+              <span>Sahiwal, Punjab, Pakistan</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <Phone className="w-5 h-5 text-gold-soft shrink-0 mt-0.5" strokeWidth={1.5} />
+              <a href="tel:+923060466911" className="hover:text-gold-soft transition-colors">+92 306 0466911</a>
+            </li>
+            <li className="flex items-start gap-3">
+              <Mail className="w-5 h-5 text-gold-soft shrink-0 mt-0.5" strokeWidth={1.5} />
+              <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-gold-soft transition-colors break-all">ayezacosmtics@gmail.com</a>
+            </li>
+          </ul>
         </div>
       </div>
 
-      {/* Main Footer */}
-      <div className="w-full bg-[#0a0a0a]">
-        <div className="max-w-[1600px] mx-auto w-full px-6 md:px-10 py-10">
-          <div className="flex flex-col lg:flex-row justify-center items-start w-full gap-10 lg:gap-14 xl:gap-[80px]">
-            
-            {/* Brand & About */}
-            <div className="flex flex-col w-full lg:w-auto max-w-[320px]">
-              <div>
-                <h4 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">
-                  AYEZA COSMETICS
-                </h4>
-                <div style={{ backgroundColor: '#B56A82' }} className="w-12 h-[2px] mb-3"></div>
-              </div>
-              <p className="text-gray-300 mb-4 text-base leading-snug">
-                Luxury beauty products curated for the modern woman. Experience the difference with premium cosmetics.
-              </p>
-              <div className="flex gap-4 mt-1">
-                <a href="https://www.instagram.com/ayezacosmetics.store?igsh=eTF3dnZkbHUwZmph" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><InstagramIcon className="w-5 h-5" /></a>
-                <a href="https://www.facebook.com/share/1JMakEmR81/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><FacebookIcon className="w-5 h-5" /></a>
-                <a href="https://www.tiktok.com/@ayezacosmetics.store?_r=1&_t=ZN-98aOm1iZDQF" target="_blank" rel="noopener noreferrer" aria-label="TikTok" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><TikTokIcon className="w-5 h-5" /></a>
-                <a href="#" aria-label="WhatsApp" style={{ color: '#B56A82', borderColor: '#374151' }} className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-[#B56A82] hover:text-white transition-all"><WhatsAppIcon className="w-5 h-5" /></a>
-              </div>
-            </div>
-
-            {/* Shop */}
-            <div className="flex flex-col w-full lg:w-auto">
-              <div>
-                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Shop</h5>
-                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
-              </div>
-              <ul className="space-y-1.5">
-                {footerLinks.shop.map(link => (
-                  <li key={link.name}>
-                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-base block">
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Categories */}
-            <div className="flex flex-col w-full lg:w-auto">
-              <div>
-                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Categories</h5>
-                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
-              </div>
-              <ul className="space-y-1.5">
-                {footerLinks.categories.map(link => (
-                  <li key={link.name}>
-                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-base block">
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Information */}
-            <div className="flex flex-col w-full lg:w-auto">
-              <div>
-                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Information</h5>
-                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
-              </div>
-              <ul className="space-y-1.5">
-                {footerLinks.information.map(link => (
-                  <li key={link.name}>
-                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-base block">
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact */}
-            <div className="flex flex-col w-full lg:w-auto">
-              <div>
-                <h5 style={{ color: '#B56A82' }} className="text-lg font-bold mb-1 tracking-wide uppercase">Contact Us</h5>
-                <div style={{ backgroundColor: '#B56A82' }} className="w-8 h-[2px] mb-3"></div>
-              </div>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-3 text-gray-300 text-base whitespace-nowrap">
-                  <MapPin style={{ color: '#B56A82' }} className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                  <span>Sahiwal, Punjab, Pakistan</span>
-                </li>
-                <li className="flex items-center gap-3 text-gray-300 text-base whitespace-nowrap">
-                  <Phone style={{ color: '#B56A82' }} className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                  <a href="tel:+923060466911" className="hover:text-white transition-colors">+92 306 0466911</a>
-                </li>
-                <li className="flex items-center gap-3 text-gray-300 text-base whitespace-nowrap">
-                  <Mail style={{ color: '#B56A82' }} className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                  <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-white transition-colors">ayezacosmtics@gmail.com</a>
-                </li>
-              </ul>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-800 pb-[env(safe-area-inset-bottom)]">
-        <div className="max-w-[1600px] mx-auto w-full px-6 md:px-10 py-4">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-base">
-              © {currentYear} AYEZA COSMETICS. All rights reserved.
-            </p>
-            <div className="flex flex-wrap justify-center lg:justify-end gap-x-5 gap-y-2 text-base text-gray-400">
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-              <span className="text-gray-700 hidden lg:inline">|</span>
-              <Link href="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
-              <span className="text-gray-700 hidden lg:inline">|</span>
-              <Link href="/shipping" className="hover:text-white transition-colors">Shipping Policy</Link>
-              <span className="text-gray-700 hidden lg:inline">|</span>
-              <Link href="/refunds" className="hover:text-white transition-colors">Refund & Returns</Link>
-              <span className="text-gray-700 hidden lg:inline">|</span>
-              <Link href="/cookies" className="hover:text-white transition-colors">Cookies Policy</Link>
-            </div>
+      {/* Bottom bar */}
+      <div className="relative border-t border-gold/20 pb-[env(safe-area-inset-bottom)]">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-5 flex flex-col lg:flex-row justify-between items-center gap-4 text-sm text-ivory/55">
+          <p>© {currentYear} AZEEORA. All rights reserved.</p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            <Link href="/privacy" className="hover:text-gold-soft transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-gold-soft transition-colors">Terms</Link>
+            <Link href="/shipping" className="hover:text-gold-soft transition-colors">Shipping</Link>
+            <Link href="/refunds" className="hover:text-gold-soft transition-colors">Refunds</Link>
+            <Link href="/cookies" className="hover:text-gold-soft transition-colors">Cookies</Link>
           </div>
         </div>
       </div>
