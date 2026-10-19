@@ -183,6 +183,7 @@ export default function ShopPage({ initialProductsData }: ShopPageClientProps) {
                 <h3 className="text-sm font-medium text-gray-700 mb-3">Price Range</h3>
                 <input
                   type="range"
+                  aria-label="Maximum price"
                   min="0"
                   max="50000"
                   step="500"
@@ -223,6 +224,7 @@ export default function ShopPage({ initialProductsData }: ShopPageClientProps) {
                 <div className="flex items-center gap-2">
                   <label className="text-sm text-gray-600">Sort by:</label>
                   <select
+                    aria-label="Sort by"
                     value={sortBy}
                     onChange={(e) => {
                       setSortBy(e.target.value);

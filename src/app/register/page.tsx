@@ -76,7 +76,7 @@ export default function RegisterPage() {
         className="max-w-md w-full space-y-8"
       >
         <div className="text-center">
-          <h2 className="text-3xl font-serif font-bold text-black">Create Account</h2>
+          <h1 className="text-3xl font-serif font-bold text-black">Create Account</h1>
           <p className="mt-2 text-gray-600">Join us and discover your true beauty</p>
         </div>
 

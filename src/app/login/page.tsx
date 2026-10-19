@@ -61,7 +61,7 @@ function LoginForm() {
         className="max-w-md w-full space-y-8"
       >
         <div className="text-center">
-          <h2 className="text-3xl font-serif font-bold text-black">Welcome Back</h2>
+          <h1 className="text-3xl font-serif font-bold text-black">Welcome Back</h1>
           <p className="mt-2 text-gray-600">Sign in to your account to continue</p>
         </div>
 

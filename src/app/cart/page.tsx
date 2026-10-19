@@ -128,7 +128,7 @@ export default function CartPage() {
           <div className="w-24 h-24 bg-rose-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShoppingBag className="w-12 h-12 text-rose-gold" />
           </div>
-          <h2 className="text-2xl font-serif font-bold text-black mb-2">Your cart is empty</h2>
+          <h1 className="text-2xl font-serif font-bold text-black mb-2">Your cart is empty</h1>
           <p className="text-gray-600 mb-6">Add some products to get started</p>
           <Link href="/shop">
             <Button>Start Shopping</Button>

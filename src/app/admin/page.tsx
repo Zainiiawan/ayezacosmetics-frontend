@@ -147,7 +147,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="font-medium text-black">{user?.firstName ?? 'Admin'}</p>
-                  <p className="text-sm text-gray-500">{user?.email ?? 'admin@ayeza.com'}</p>
+                  <p className="text-sm text-gray-500">{user?.email ?? 'azeeoracosmetics@gmail.com'}</p>
                 </div>
               </div>
               <button

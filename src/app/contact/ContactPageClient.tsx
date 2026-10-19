@@ -111,8 +111,9 @@ export default function ContactPage() {
           <Input label="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           <Input label="Subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required />
           <div>
-            <label className="block text-sm font-medium mb-1">Message</label>
+            <label htmlFor="contact-message" className="block text-sm font-medium mb-1">Message</label>
             <textarea
+              id="contact-message"
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
               rows={5}

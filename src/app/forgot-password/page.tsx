@@ -51,9 +51,9 @@ export default function ForgotPasswordPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Login
           </Link>
-          <h2 className="text-3xl font-serif font-bold text-black">
+          <h1 className="text-3xl font-serif font-bold text-black">
             Forgot Password?
-          </h2>
+          </h1>
           <p className="mt-2 text-gray-600">
             Enter your email address and we'll send you a 6-digit verification code to reset your password.
           </p>

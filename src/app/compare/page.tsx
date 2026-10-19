@@ -50,7 +50,7 @@ export default function ComparePage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Scale className="w-12 h-12 text-rose-gold mx-auto mb-4" />
-          <h2 className="text-2xl font-serif font-bold mb-2">No products to compare</h2>
+          <h1 className="text-2xl font-serif font-bold mb-2">No products to compare</h1>
           <p className="text-gray-600 mb-6">Add products from the shop to compare them side by side.</p>
           <Link href="/shop"><Button>Browse Products</Button></Link>
         </div>

@@ -104,7 +104,10 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
     <div className="flex flex-col bg-white">
       {/* ---------------- Hero: one slide per product ---------------- */}
       {products.length > 0 ? (
-        <HeroSlider products={live.length ? live : products} />
+        <>
+          <h1 className="sr-only">AZEEORA skincare and beauty, made for Pakistani skin</h1>
+          <HeroSlider products={live.length ? live : products} />
+        </>
       ) : (
         <>
         <section className="bg-blush relative overflow-hidden">
