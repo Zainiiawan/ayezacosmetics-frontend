@@ -179,6 +179,7 @@ export default function AdminCatalogPage() {
               </button>
             </div>
           ) : (
+            <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
@@ -227,6 +228,7 @@ export default function AdminCatalogPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>

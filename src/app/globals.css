@@ -246,3 +246,29 @@ select:-webkit-autofill {
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
 }
+
+/* Admin tables on phones: scroll sideways, keep the actions column pinned in view */
+@media (max-width: 1023px) {
+  .admin-scope .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .admin-scope table {
+    min-width: 680px;
+  }
+  .admin-scope th,
+  .admin-scope td {
+    white-space: nowrap;
+  }
+  .admin-scope th:last-child,
+  .admin-scope td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: #fff;
+    box-shadow: -10px 0 10px -10px rgba(35, 31, 32, 0.25);
+  }
+  .admin-scope thead th:last-child {
+    background: var(--gray-50);
+  }
+}
