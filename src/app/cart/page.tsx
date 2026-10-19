@@ -2,6 +2,7 @@
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { m as motion } from 'framer-motion';
 import Link from 'next/link';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
@@ -11,6 +12,7 @@ import Button from '@/components/ui/Button';
 import { removeItem, updateQuantity, setCartItems, setCouponCode as setCartCouponCode, setDiscount } from '@/store/slices/cartSlice';
 import { cartApi } from '@/lib/api/cartApi';
 import { couponApi } from '@/lib/api/couponApi';
+import { settingsApi } from '@/lib/api/settingsApi';
 import { mapApiCartToReduxItems } from '@/lib/cartUtils';
 
 export default function CartPage() {
@@ -24,7 +26,10 @@ export default function CartPage() {
   const originalSubtotal = cartItems.reduce((sum, item) => sum + (item.product.basePrice || item.price) * item.quantity, 0);
   const effectiveSubtotal = cartItems.reduce((sum, item) => sum + item.total, 0);
   const productDiscount = originalSubtotal - effectiveSubtotal;
-  const shipping = effectiveSubtotal > 5000 ? 0 : effectiveSubtotal > 0 ? 300 : 0;
+  // delivery as the store is set up (checkout applies city rates where they exist)
+  const { data: storeSettings } = useQuery({ queryKey: ['store-settings'], queryFn: settingsApi.getSettings, staleTime: 10 * 60_000 });
+  const freeShippingThreshold = storeSettings?.freeShippingThreshold ?? 6000;
+  const shipping = effectiveSubtotal > freeShippingThreshold ? 0 : effectiveSubtotal > 0 ? storeSettings?.defaultShippingCost ?? 200 : 0;
   const couponDiscountAmount = useSelector((state: RootState) => state.cart.discount);
   const totalDiscount = productDiscount + couponDiscountAmount;
   const total = effectiveSubtotal + shipping - couponDiscountAmount;
@@ -230,8 +235,8 @@ export default function CartPage() {
                   <span>{formatPrice(originalSubtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
+                  <span>Delivery</span>
+                  <span>{shipping === 0 ? 'Free' : `from ${formatPrice(shipping)}`}</span>
                 </div>
                 {totalDiscount > 0 && (
                   <div className="flex justify-between text-green-600">
@@ -276,7 +281,7 @@ export default function CartPage() {
               {shipping > 0 && effectiveSubtotal > 0 && (
                 <div className="mt-6 p-4 bg-rose-gold/10 rounded-lg">
                   <p className="text-sm text-rose-gold">
-                    Add {formatPrice(5000 - effectiveSubtotal)} more for free shipping!
+                    Free delivery on orders over {formatPrice(freeShippingThreshold)}. You are {formatPrice(freeShippingThreshold - effectiveSubtotal)} away.
                   </p>
                 </div>
               )}

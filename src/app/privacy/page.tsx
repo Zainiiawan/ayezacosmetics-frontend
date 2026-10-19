@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import LegalFooter from '@/components/legal/LegalFooter';
 import { config } from '@/lib/config';
 import Link from 'next/link';
 
@@ -41,7 +42,8 @@ export default function PrivacyPage() {
         <h2 className="text-xl font-semibold text-black mt-8">Data Security</h2>
         <p>We use industry-standard encryption, secure passwords, and JWT authentication. Payment proofs are stored securely.</p>
         <h2 className="text-xl font-semibold text-black mt-8">Contact</h2>
-        <p>Questions? Email <a href="mailto:ayezacosmtics@gmail.com" className="text-rose-gold">ayezacosmtics@gmail.com</a> or visit our <Link href="/contact" className="text-rose-gold">Contact page</Link>.</p>
+        <p>Questions? Email <a href="mailto:azeeoracosmetics@gmail.com" className="text-rose-gold">azeeoracosmetics@gmail.com</a> or visit our <Link href="/contact" className="text-rose-gold">Contact page</Link>.</p>
+        <LegalFooter />
       </div>
     </div>
   );

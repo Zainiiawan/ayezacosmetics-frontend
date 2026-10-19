@@ -67,7 +67,7 @@ export default function BlogListingPage() {
             The <span className="text-rose-gold">Beauty</span> Edit
           </h1>
           <p className="text-gray-600 text-lg">
-            Expert advice, skincare routines, and makeup tips to help you achieve your most radiant self.
+            Skincare advice and simple routines for healthy, glowing skin in Pakistani weather.
           </p>
         </div>
       </div>

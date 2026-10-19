@@ -9,10 +9,10 @@ import { contactApi } from '@/lib/api/contactApi';
 const CONTACT = {
   phone: '+92 306 0466911',
   whatsapp: '923060466911',
-  email: 'ayezacosmtics@gmail.com',
-  city: 'Sahiwal',
+  email: 'azeeoracosmetics@gmail.com',
+  city: 'Vehari',
   country: 'Pakistan',
-  address: 'Sahiwal, Punjab, Pakistan',
+  address: 'Sharqi Colony, Vehari, Punjab, Pakistan',
   hours: 'Mon – Sat: 10:00 AM – 8:00 PM (PKT)',
 };
 

@@ -15,7 +15,7 @@ export default function PressPage() {
         <h2 className="text-xl font-semibold text-black mt-8">Media Inquiries</h2>
         <p>For all press and media related inquiries, interviews, or product samples for review, please reach out to our PR team.</p>
         <p>
-          <strong>Email:</strong> <a href="mailto:ayezacosmtics@gmail.com" className="text-rose-gold">ayezacosmtics@gmail.com</a>
+          <strong>Email:</strong> <a href="mailto:azeeoracosmetics@gmail.com" className="text-rose-gold">azeeoracosmetics@gmail.com</a>
         </p>
 
         <h2 className="text-xl font-semibold text-black mt-8">Brand Assets</h2>

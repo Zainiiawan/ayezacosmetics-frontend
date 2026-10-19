@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import LegalFooter from '@/components/legal/LegalFooter';
 import { config } from '@/lib/config';
 import Link from 'next/link';
 import { Truck, Clock, ShieldCheck, MapPin } from 'lucide-react';
@@ -50,7 +51,7 @@ export default function ShippingPage() {
                 <div>
                   <h3 className="text-xl font-bold text-black mb-2">Standard Delivery</h3>
                   <p className="text-gray-600 mb-2">Our standard delivery takes <strong className="text-black">3-5 business days</strong> depending on your city.</p>
-                  <p className="text-rose-gold font-medium">Free on orders over PKR 5,000</p>
+                  <p className="text-rose-gold font-medium">Free on orders over PKR 6,000 (PKR 200 below that)</p>
                 </div>
               </div>
 
@@ -100,10 +101,11 @@ export default function ShippingPage() {
           </ul>
 
           <div className="mt-8 pt-8 border-t border-gray-100">
-            <p>Need help with your delivery? Contact our support team at <a href="mailto:ayezacosmtics@gmail.com" className="text-rose-gold font-medium">ayezacosmtics@gmail.com</a> or call <a href="tel:+923060466911" className="text-rose-gold font-medium">+92 306 0466911</a>.</p>
+            <p>Need help with your delivery? Contact our support team at <a href="mailto:azeeoracosmetics@gmail.com" className="text-rose-gold font-medium">azeeoracosmetics@gmail.com</a> or call <a href="tel:+923060466911" className="text-rose-gold font-medium">+92 306 0466911</a>.</p>
           </div>
         </div>
 
+        <LegalFooter />
       </div>
     </div>
   );

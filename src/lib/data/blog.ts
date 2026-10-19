@@ -17,171 +17,172 @@ export interface BlogPost {
   faqs?: FAQ[];
 }
 
+// Posts only recommend and link products AZEEORA actually sells.
 export const blogPosts: BlogPost[] = [
   {
-    slug: 'ultimate-skincare-routine-for-glowing-skin',
-    title: 'The Ultimate Skincare Routine for Glowing Skin',
-    excerpt: 'Discover the secrets to achieving a radiant, glowing complexion with our step-by-step skincare guide featuring AZEEORA essentials.',
+    slug: "ultimate-skincare-routine-for-glowing-skin",
+    title: "A Simple Skincare Routine for Glowing Skin",
+    excerpt: "Glowing skin is less about a long shelf of products and more about a few steps done every day. Here is a routine that works for Pakistani weather.",
     content: `
-      <h2>The Foundation of Glowing Skin</h2>
-      <p>Achieving a radiant complexion starts with a solid foundation. Glowing skin is a reflection of overall skin health, which requires consistency, the right ingredients, and premium formulations. At <a href="/" className="text-rose-gold hover:underline">AZEEORA</a>, we believe that true luxury lies in the efficacy of your skincare routine.</p>
-      
-      <h2>Step 1: Gentle Cleansing</h2>
-      <p>Never underestimate the power of a clean canvas. A gentle, hydrating cleanser removes impurities without stripping your skin's natural moisture barrier. Start your morning and evening routine with our <a href="/products/ayeza-face-wash" className="text-rose-gold font-medium hover:underline">Azeeora Face Wash</a> to dissolve makeup, pollution, and excess oils.</p>
-      
-      <h2>Step 2: Potent Serums</h2>
-      <p>Serums are the heavy lifters of any skincare regimen. To achieve that coveted glow, incorporate the <a href="/products/ayeza-vitamin-c-serum" className="text-rose-gold font-medium hover:underline">Azeeora Vitamin C Serum</a> in the morning to protect against environmental stressors and brighten the skin. In the evening, the <a href="/products/ayeza-hyaluronic-acid-serum" className="text-rose-gold font-medium hover:underline">Azeeora Hyaluronic Acid Serum</a> will provide deep hydration, plumping the skin from within.</p>
-      
-      <h2>Step 3: Luxurious Hydration</h2>
-      <p>Lock in all the active ingredients with a rich, nourishing moisturizer. The <a href="/products/ayeza-moisturizer" className="text-rose-gold font-medium hover:underline">Azeeora Moisturizer</a> is formulated with botanical extracts to repair the skin barrier and leave your face feeling velvety soft and deeply hydrated.</p>
-      
-      <h2>Step 4: Sun Protection</h2>
-      <p>No skincare routine is complete without broad-spectrum SPF. Protecting your skin from UV damage prevents premature aging and dark spots. Always finish your morning routine with our <a href="/products/ayeza-sunscreen-spf-50" className="text-rose-gold font-medium hover:underline">Azeeora Sunscreen SPF 50</a>.</p>
+      <h2>Start with the basics</h2>
+      <p>Healthy, glowing skin comes from consistency: cleansing, moisturising and protecting from the sun, every single day. A short routine you actually follow beats a long one you skip.</p>
+
+      <h2>Step 1: Cleanse, morning and night</h2>
+      <p>Heat, sweat and city dust settle on the skin through the day. A gentle cleanser removes them without stripping the skin's natural moisture. Our <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, so it cleans thoroughly while staying gentle.</p>
+
+      <h2>Step 2: Moisturise</h2>
+      <p>Every skin type needs moisture, oily skin included. Skipping it can leave skin feeling tight and looking dull. Smooth a small amount of <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> over clean skin to keep it soft and comfortable.</p>
+
+      <h2>Step 3: Sunscreen, every morning</h2>
+      <p>Pakistan's sun is strong for most of the year. Finish your morning routine with a broad-spectrum sunscreen of SPF 30 or higher, and reapply if you are outdoors for long.</p>
+
+      <h2>Give it time</h2>
+      <p>Skin renews itself over about four weeks, so give any routine at least a month before judging the results. Always patch-test a new product on your inner arm first.</p>
     `,
-    featuredImage: { url: '/blog/vitamin-c.jpg', alt: 'Azeeora Vitamin C Serum' },
-    author: 'Azeeora Beauty Expert',
-    publishDate: '2026-08-01',
-    readingTime: '5 min read',
-    categories: ['Skincare Routine'],
-    tags: ['Glowing Skin', 'Vitamin C', 'Serums'],
-    faqs: [
-      { question: 'How often should I use the Azeeora Face Wash?', answer: 'We recommend using the Azeeora Face Wash twice daily—once in the morning and once at night.' },
-      { question: 'Can I use Azeeora Vitamin C and Hyaluronic Acid together?', answer: 'Yes! They work beautifully together. Apply the Azeeora Vitamin C Serum first, followed by the Azeeora Hyaluronic Acid Serum for maximum absorption.' }
-    ]
+    featuredImage: { url: "/blog/cover-routine.jpg", alt: "A simple daily skincare routine" },
+    author: "AZEEORA Skincare Team",
+    publishDate: "2026-08-01",
+    readingTime: "4 min read",
+    categories: ["Skincare Routine"],
+    tags: ["Glowing Skin", "Routine", "Daily Care"],
+    faqs: [{ question: "How often should I use AZEEORA Radiance Face Wash?", answer: "Twice a day, once in the morning and once at night, is ideal for most skin types." }, { question: "Do I need sunscreen if I stay indoors?", answer: "Daylight through windows still reaches your skin, so a light sunscreen is a good habit on most days." }],
   },
   {
-    slug: 'benefits-of-niacinamide-for-clear-skin',
-    title: 'The Unmatched Benefits of Niacinamide for Clear Skin',
-    excerpt: 'Learn why Niacinamide is the ultimate powerhouse ingredient for minimizing pores, clearing acne, and achieving flawless skin with AZEEORA.',
+    slug: "benefits-of-niacinamide-for-clear-skin",
+    title: "Niacinamide: Why This Ingredient Is Everywhere",
+    excerpt: "Niacinamide (vitamin B3) is one of the most popular skincare ingredients today. Here is what it does and how to use it in your routine.",
     content: `
-      <h2>Understanding Niacinamide</h2>
-      <p>Niacinamide, also known as Vitamin B3, has taken the skincare world by storm, and for good reason. It is one of the most versatile and well-tolerated ingredients available for all skin types, especially for those prone to breakouts or uneven texture.</p>
-      
-      <h2>Minimizing Pores and Controlling Oil</h2>
-      <p>One of the most celebrated benefits of niacinamide is its ability to regulate sebum production. By keeping oil in check, it prevents pores from stretching and appearing larger. Regular use of the <a href="/products/ayeza-niacinamide-serum" className="text-rose-gold font-medium hover:underline">Azeeora Niacinamide Serum</a> visibly refines pore size and keeps your T-zone matte throughout the day.</p>
-      
-      <h2>Clearing Acne and Blemishes</h2>
-      <p>Niacinamide is naturally anti-inflammatory, making it incredibly effective at calming the redness and irritation associated with breakouts. Pair it with the <a href="/products/ayeza-acne-control-face-wash" className="text-rose-gold font-medium hover:underline">Azeeora Acne Control Face Wash</a> to create the ultimate acne-fighting duo.</p>
-      
-      <h2>Strengthening the Skin Barrier</h2>
-      <p>By stimulating the production of ceramides, niacinamide helps fortify the skin's protective barrier. This means your skin retains moisture better and is less susceptible to environmental damage. Follow up your serum application with the <a href="/products/ayeza-beauty-cream" className="text-rose-gold font-medium hover:underline">Azeeora Beauty Cream</a> to lock in that essential hydration.</p>
+      <h2>What is niacinamide?</h2>
+      <p>Niacinamide, also called vitamin B3, is a well-tolerated skincare ingredient that suits most skin types. It is popular because it is gentle and pairs easily with other products.</p>
+
+      <h2>Why people love it</h2>
+      <ul>
+        <li><strong>Balance:</strong> it is often used in routines for oily and combination skin.</li>
+        <li><strong>Even-looking tone:</strong> regular use is associated with a brighter, more even-looking complexion.</li>
+        <li><strong>Comfort:</strong> it is generally gentle, which makes it a good everyday ingredient.</li>
+      </ul>
+
+      <h2>An easy way to use it</h2>
+      <p>The simplest way to bring niacinamide into your routine is through your cleanser. <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> includes niacinamide alongside aloe vera and vitamin B5, so it fits into the step you already do twice a day. Follow with a moisturiser such as <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a>.</p>
+
+      <h2>A note on patience</h2>
+      <p>Skincare results build slowly. Use your routine consistently for several weeks, and patch-test any new product before using it on your face.</p>
     `,
-    featuredImage: { url: '/blog/niacinamide.jpg', alt: 'Azeeora Niacinamide Serum' },
-    author: 'Azeeora R&D Team',
-    publishDate: '2026-07-28',
-    readingTime: '4 min read',
-    categories: ['Ingredients'],
-    tags: ['Niacinamide', 'Acne Control', 'Clear Skin'],
-    faqs: [
-      { question: 'Is the Azeeora Niacinamide Serum safe for sensitive skin?', answer: 'Yes! Niacinamide is known for being extremely gentle and soothing, making our serum perfectly safe for sensitive and rosacea-prone skin.' }
-    ]
+    featuredImage: { url: "/blog/cover-niacinamide.jpg", alt: "Niacinamide in skincare" },
+    author: "AZEEORA Skincare Team",
+    publishDate: "2026-07-28",
+    readingTime: "4 min read",
+    categories: ["Ingredients"],
+    tags: ["Niacinamide", "Ingredients", "Clear Skin"],
+    faqs: [{ question: "Is niacinamide suitable for sensitive skin?", answer: "Niacinamide is generally well tolerated, but everyone is different. Patch-test first and stop if you notice irritation." }],
   },
   {
-    slug: 'how-to-choose-the-right-moisturizer',
-    title: 'How to Choose the Right Moisturizer for Your Skin Type',
-    excerpt: 'Hydration is key to healthy skin. Discover how to select the perfect AZEEORA moisturizer tailored to your unique skin concerns.',
+    slug: "how-to-choose-the-right-moisturizer",
+    title: "How to Choose the Right Moisturiser for Your Skin Type",
+    excerpt: "Dry, oily or combination, every skin type needs moisture. Here is how to choose the right texture for you and for the season.",
     content: `
-      <h2>Why Moisturizing is Non-Negotiable</h2>
-      <p>Regardless of whether your skin is dry, oily, or combination, moisturizing is an essential step. A good moisturizer acts as a protective seal, preventing transepidermal water loss and keeping the skin barrier intact. <a href="/categories/skincare" className="text-rose-gold hover:underline">Explore our skincare category</a> for a variety of options.</p>
-      
-      <h2>For Dry and Dehydrated Skin</h2>
-      <p>If your skin often feels tight, flaky, or dull, you need a rich, emollient formula. Look for ingredients like ceramides and shea butter. The <a href="/products/ayeza-moisturizer" className="text-rose-gold font-medium hover:underline">Azeeora Moisturizer</a> provides deep, long-lasting hydration without feeling heavy or greasy on the skin.</p>
-      
-      <h2>For Oily and Acne-Prone Skin</h2>
-      <p>It's a common myth that oily skin doesn't need moisturizer. Skipping this step actually causes your skin to produce *more* oil to compensate! Instead, opt for a lightweight, water-based gel. The <a href="/products/ayeza-aloe-vera-gel" className="text-rose-gold font-medium hover:underline">Azeeora Aloe Vera Gel</a> is incredibly soothing, non-comedogenic, and absorbs instantly, leaving a matte finish.</p>
-      
-      <h2>For Dull and Uneven Skin</h2>
-      <p>If your goal is to achieve a brighter, more radiant complexion, you need a moisturizer packed with antioxidants and brightening agents. The <a href="/products/ayeza-brightening-cream" className="text-rose-gold font-medium hover:underline">Azeeora Brightening Cream</a> is formulated to tackle dark spots and hyperpigmentation while delivering essential moisture.</p>
+      <h2>Why moisturising matters</h2>
+      <p>A moisturiser helps your skin hold on to water and keeps it feeling soft and comfortable. Whether your skin is dry, oily or combination, it is a step worth keeping.</p>
+
+      <h2>Dry skin</h2>
+      <p>If your skin feels tight or looks flaky, especially in winter, choose a richer cream and apply it on slightly damp skin after cleansing.</p>
+
+      <h2>Oily skin</h2>
+      <p>Oily skin still needs moisture. Use a thin layer of a light cream, focusing on the cheeks and areas that feel dry, and go lighter on the T-zone in summer.</p>
+
+      <h2>Dull-looking skin</h2>
+      <p>For skin that looks tired, a nourishing cream used every night is a simple place to start. <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> is made to keep skin soft and smooth with daily use.</p>
+
+      <h2>Season by season</h2>
+      <p>Pakistani weather changes a lot through the year. Use a little less in humid summer months and a little more when winter air turns dry. Explore our <a href="/shop" class="text-crimson font-medium underline underline-offset-4">full collection</a> to find your fit.</p>
     `,
-    featuredImage: { url: '/blog/moisturizer-aloe.jpg', alt: 'Azeeora Moisturizer and Aloe Vera' },
-    author: 'Azeeora Beauty Expert',
-    publishDate: '2026-07-25',
-    readingTime: '5 min read',
-    categories: ['Skincare Routine'],
-    tags: ['Moisturizer', 'Hydration', 'Aloe Vera'],
-    faqs: [
-      { question: 'Can I use the Azeeora Aloe Vera Gel under makeup?', answer: 'Absolutely. It acts as an excellent, lightweight primer that hydrates the skin without causing your makeup to slide off.' }
-    ]
+    featuredImage: { url: "/brand/products/azeeora-beauty-cream.jpg", alt: "AZEEORA Beauty Cream" },
+    author: "AZEEORA Skincare Team",
+    publishDate: "2026-07-25",
+    readingTime: "4 min read",
+    categories: ["Skincare Routine"],
+    tags: ["Moisturiser", "Hydration", "Skin Type"],
+    faqs: [{ question: "Can I use a moisturiser under makeup?", answer: "Yes. Let it absorb for a few minutes first so your makeup sits smoothly." }],
   },
   {
-    slug: 'achieve-glass-skin-with-glow-serum',
-    title: 'Achieve the Perfect Glass Skin with Azeeora Glow Serum',
-    excerpt: 'The "glass skin" trend is here to stay. Learn how to achieve that luminous, translucent, and poreless look with our signature Azeeora Glow Serum.',
+    slug: "achieve-glass-skin-with-glow-serum",
+    title: "Glass Skin: What It Means and How to Get Closer to It",
+    excerpt: "\"Glass skin\" describes a smooth, clear, well-hydrated complexion. Here is a realistic routine that helps your skin look its healthiest.",
     content: `
-      <h2>What is Glass Skin?</h2>
-      <p>Originating from K-beauty, "glass skin" refers to a complexion that is so intensely hydrated, smooth, and clear that it looks almost translucent—like a pane of glass. It’s the ultimate sign of healthy, well-nourished skin.</p>
-      
-      <h2>The Secret Weapon: Azeeora Glow Serum</h2>
-      <p>The path to glass skin requires intense hydration and a flawless texture. That’s where the <a href="/products/ayeza-glow-serum" className="text-rose-gold font-medium hover:underline">Azeeora Glow Serum</a> comes in. Infused with potent botanical extracts and light-reflecting properties, this serum instantly transforms dull skin into a luminous masterpiece.</p>
-      
-      <h2>The Step-by-Step Glass Skin Routine</h2>
+      <h2>What is glass skin?</h2>
+      <p>The term comes from Korean beauty and describes skin that looks smooth, clear and well hydrated, almost reflective. Nobody's skin is literally poreless, but a steady routine can help your skin look its healthiest.</p>
+
+      <h2>A realistic glass skin routine</h2>
       <ol>
-        <li><strong>Double Cleanse:</strong> Start with an oil-based cleanser, followed by the <a href="/products/ayeza-rice-face-wash" className="text-rose-gold font-medium hover:underline">Azeeora Rice Face Wash</a> to gently polish the skin and remove impurities.</li>
-        <li><strong>Tone and Prep:</strong> Apply a hydrating toner to balance the skin's pH.</li>
-        <li><strong>The Glow Step:</strong> Apply 3-4 drops of the <a href="/products/ayeza-glow-serum" className="text-rose-gold font-medium hover:underline">Azeeora Glow Serum</a>. Press it gently into the skin until fully absorbed.</li>
-        <li><strong>Seal it in:</strong> Lock in that dewy finish with the <a href="/products/ayeza-beauty-cream" className="text-rose-gold font-medium hover:underline">Azeeora Beauty Cream</a>.</li>
+        <li><strong>Cleanse gently:</strong> wash with <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> to remove sweat, dust and makeup without stripping moisture.</li>
+        <li><strong>Hydrate:</strong> pat on a hydrating toner or essence if you use one.</li>
+        <li><strong>Moisturise:</strong> lock in moisture with <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a>.</li>
+        <li><strong>Protect:</strong> in the morning, finish with a broad-spectrum sunscreen.</li>
       </ol>
-      <p>Consistency is key. Use this routine morning and night, and watch your skin transform into a radiant, glass-like canvas.</p>
+
+      <h2>Habits that help</h2>
+      <p>Drink enough water, sleep well and avoid over-scrubbing. Healthy-looking skin is the result of small habits repeated every day.</p>
     `,
-    featuredImage: { url: '/blog/glow-serum.jpg', alt: 'Azeeora Glow Serum' },
-    author: 'Azeeora Makeup Artist',
-    publishDate: '2026-07-20',
-    readingTime: '4 min read',
-    categories: ['Beauty Trends'],
-    tags: ['Glass Skin', 'Glow Serum', 'Radiance'],
-    faqs: []
+    featuredImage: { url: "/blog/cover-glass-skin.jpg", alt: "Glass skin routine" },
+    author: "AZEEORA Skincare Team",
+    publishDate: "2026-07-20",
+    readingTime: "3 min read",
+    categories: ["Beauty Trends"],
+    tags: ["Glass Skin", "Radiance", "Routine"],
+    faqs: [],
   },
   {
-    slug: 'night-vs-day-skincare-routine',
-    title: 'Night vs. Day Skincare: Why You Need Both',
-    excerpt: 'Your skin has different needs during the day compared to the night. Discover how to optimize your AM and PM routines with AZEEORA.',
+    slug: "night-vs-day-skincare-routine",
+    title: "Day vs Night Skincare: Why You Need Both",
+    excerpt: "Your skin needs protection during the day and care at night. Here is how to build simple morning and evening routines.",
     content: `
-      <h2>The Circadian Rhythm of Your Skin</h2>
-      <p>Just like your body, your skin operates on a circadian rhythm. During the day, it’s in "defense mode," fighting off environmental aggressors like UV rays and pollution. At night, it switches to "repair mode," focusing on cellular regeneration and healing. Your skincare routine should reflect these changing needs.</p>
-      
-      <h2>Your AM Routine: Protect and Defend</h2>
-      <p>Your morning routine should be lightweight and focused on protection. After cleansing with the <a href="/products/ayeza-charcoal-face-wash" className="text-rose-gold font-medium hover:underline">Azeeora Charcoal Face Wash</a> to remove overnight oils, apply a potent antioxidant.</p>
-      <p>Follow this with the <a href="/products/ayeza-day-cream" className="text-rose-gold font-medium hover:underline">Azeeora Day Cream</a>. This lightweight formula provides all-day moisture without feeling greasy under makeup. Finally, never leave the house without a generous layer of <a href="/products/ayeza-sunscreen-spf-50" className="text-rose-gold font-medium hover:underline">Azeeora Sunscreen SPF 50</a>.</p>
-      
-      <h2>Your PM Routine: Repair and Rejuvenate</h2>
-      <p>Nighttime is when you can bring out the heavy-hitting treatment products. After a thorough cleanse, apply your active serums (like Retinol or AHA/BHAs) to encourage cell turnover.</p>
-      <p>Finish your evening routine with the <a href="/products/ayeza-night-cream" className="text-rose-gold font-medium hover:underline">Azeeora Night Cream</a>. Formulated to be richer and deeply nourishing, this cream supports your skin's natural repair process while you sleep, ensuring you wake up with a plump, refreshed complexion.</p>
+      <h2>Day: protect</h2>
+      <p>During the day your skin faces sun, heat, dust and pollution. Keep the morning routine light and protective:</p>
+      <ol>
+        <li>Cleanse with <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a>.</li>
+        <li>Moisturise lightly.</li>
+        <li>Finish with a broad-spectrum sunscreen, SPF 30 or higher.</li>
+      </ol>
+
+      <h2>Night: nourish</h2>
+      <p>At night your skin rests. Wash away the day's sweat, sunscreen and makeup with <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a>, then apply <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> so your skin stays soft and comfortable through the night.</p>
+
+      <h2>Keep it consistent</h2>
+      <p>The best routine is the one you follow every day. Two minutes in the morning and two at night is all it takes.</p>
     `,
-    featuredImage: { url: '/blog/day-night-cream.jpg', alt: 'Azeeora Day and Night Creams' },
-    author: 'Azeeora Beauty Expert',
-    publishDate: '2026-07-15',
-    readingTime: '5 min read',
-    categories: ['Skincare Routine'],
-    tags: ['Day Cream', 'Night Cream', 'Skin Repair'],
-    faqs: [
-      { question: 'Can I use my day cream at night?', answer: 'While you can, it’s not optimal. Day creams are lighter and often lack the intense reparative ingredients found in the Azeeora Night Cream.' }
-    ]
+    featuredImage: { url: "/blog/cover-day-night.jpg", alt: "Day and night skincare" },
+    author: "AZEEORA Skincare Team",
+    publishDate: "2026-07-15",
+    readingTime: "3 min read",
+    categories: ["Skincare Routine"],
+    tags: ["Day Routine", "Night Routine", "Skin Care"],
+    faqs: [{ question: "Can I use the same products day and night?", answer: "Yes. A gentle cleanser and a moisturiser work at both times. The main difference is adding sunscreen in the morning." }],
   },
   {
-    slug: 'best-face-wash-for-oily-acne-prone-skin',
-    title: 'How to Choose the Best Face Wash for Oily & Acne-Prone Skin',
-    excerpt: 'Struggling with breakouts and excess oil? Discover the science behind choosing the perfect cleanser and how Azeeora Radiance Face Wash can transform your skincare routine.',
+    slug: "best-face-wash-for-oily-acne-prone-skin",
+    title: "How to Choose a Face Wash for Oily Skin",
+    excerpt: "Oily skin needs a cleanser that cleans well without stripping. Here is what to look for and how to wash your face properly.",
     content: `
-      <h2>The Importance of the Right Cleanser</h2>
-      <p>If you have oily or acne-prone skin, your face wash is arguably the most important step in your routine. Using a cleanser that is too harsh will strip your skin of its natural oils, triggering a rebound effect where your skin produces even more oil to compensate. On the other hand, a cleanser that is too mild won't effectively remove the sebum, dirt, and dead skin cells that clog pores.</p>
-      
-      <h2>What to Look For</h2>
-      <p>When shopping in our <a href="/categories/face-wash" className="text-rose-gold hover:underline">Face Wash category</a>, you should look for formulas that are sulfate-free and non-comedogenic. Ingredients that gently exfoliate and soothe inflammation are key to managing breakouts without causing redness.</p>
-      
-      <h2>The Solution: Azeeora Radiance Face Wash</h2>
-      <p>Our top recommendation for oily skin types is the <a href="/products/ayeza-radiance-face-wash" className="text-rose-gold font-medium hover:underline">Azeeora Radiance Face Wash</a>. It strikes the perfect balance—deeply purifying your pores while maintaining your skin's delicate moisture barrier. Regular use helps to keep your T-zone matte and significantly reduces the frequency of breakouts.</p>
-      
-      <h2>How to Use It Effectively</h2>
-      <p>For best results, wash your face twice daily. Lather a small amount of the face wash in your hands, gently massage it over your face in circular motions for at least 60 seconds (this gives the active ingredients time to work), and rinse with lukewarm—never hot—water.</p>
+      <h2>Why the right cleanser matters</h2>
+      <p>For oily skin, a cleanser that is too harsh can leave the skin feeling tight and uncomfortable, while one that is too mild may not remove sweat and excess oil. You want something in between.</p>
+
+      <h2>What to look for</h2>
+      <ul>
+        <li><strong>Sulfate-free:</strong> cleans without a squeaky, stripped feel.</li>
+        <li><strong>Gentle ingredients:</strong> such as aloe vera and vitamin B5.</li>
+        <li><strong>Suitable for daily use:</strong> you will wash your face twice a day, every day.</li>
+      </ul>
+      <p><a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, and is suitable for all skin types. Browse our <a href="/categories/face-wash" class="text-crimson font-medium underline underline-offset-4">face wash collection</a>.</p>
+
+      <h2>How to wash your face</h2>
+      <p>Wet your face with lukewarm water, lather a small amount between your palms, massage gently for about 30 to 60 seconds and rinse well. Pat dry with a clean towel and follow with a moisturiser. If you have persistent acne, please consult a dermatologist.</p>
     `,
-    featuredImage: { url: '/blog/face-wash.jpg', alt: 'Azeeora Radiance Face Wash' },
-    author: 'Azeeora Skincare Specialist',
-    publishDate: '2026-08-15',
-    readingTime: '6 min read',
-    categories: ['Acne Control'],
-    tags: ['Face Wash', 'Oily Skin', 'Acne'],
-    faqs: [
-      { question: 'Will this face wash dry out my skin?', answer: 'No, the Azeeora Radiance Face Wash is formulated to balance oil production without stripping your skin of essential moisture.' }
-    ]
-  }
+    featuredImage: { url: "/brand/products/azeeora-radiance-face-wash.jpg", alt: "AZEEORA Radiance Face Wash" },
+    author: "AZEEORA Skincare Team",
+    publishDate: "2026-08-15",
+    readingTime: "4 min read",
+    categories: ["Cleansing"],
+    tags: ["Face Wash", "Oily Skin", "Cleansing"],
+    faqs: [{ question: "Will this face wash dry out my skin?", answer: "AZEEORA Radiance Face Wash is sulfate-free and gentle. If your skin ever feels tight, follow with a moisturiser and wash once a day until it settles." }],
+  },
 ];

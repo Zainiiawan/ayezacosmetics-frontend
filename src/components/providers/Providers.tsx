@@ -14,12 +14,43 @@ import { mapApiCartToReduxItems } from '@/lib/cartUtils';
 import { Product } from '@/lib/api/productApi';
 import { LazyMotion, domAnimation } from 'framer-motion';
 
+// Guests have no server cart, so their bag and wishlist are kept on this device
+const GUEST_KEY = 'azr_guest_bag';
+
+function restoreGuestBag(dispatch: AppDispatch) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(GUEST_KEY) || 'null');
+    if (Array.isArray(saved?.cart)) dispatch(setCartItems(saved.cart));
+    if (Array.isArray(saved?.wishlist)) dispatch(setWishlistItems(saved.wishlist));
+  } catch {
+    // storage unavailable or corrupted: start with an empty bag
+  }
+}
+
 function AuthHydrator({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch<AppDispatch>();
+
+  // keep a guest's bag and wishlist across page reloads
+  useEffect(() => {
+    let last = '';
+    return store.subscribe(() => {
+      const state = store.getState();
+      if (state.auth.isAuthenticated || !state.auth.isHydrated) return;
+      const next = JSON.stringify({ cart: state.cart.items, wishlist: state.wishlist.items });
+      if (next === last) return;
+      last = next;
+      try {
+        localStorage.setItem(GUEST_KEY, next);
+      } catch {
+        // storage full or blocked
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
+      restoreGuestBag(dispatch);
       dispatch(setHydrated());
       return;
     }

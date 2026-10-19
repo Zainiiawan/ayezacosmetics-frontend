@@ -147,7 +147,7 @@ const Footer = ({ className }: { className?: string }) => {
           <ul className="mt-5 space-y-4 text-muted">
             <li className="flex items-start gap-3">
               <MapPin className="w-5 h-5 text-crimson shrink-0 mt-0.5" strokeWidth={1.5} />
-              <span>Sahiwal, Punjab, Pakistan</span>
+              <span>Sharqi Colony, Vehari, Punjab, Pakistan</span>
             </li>
             <li className="flex items-start gap-3">
               <Phone className="w-5 h-5 text-crimson shrink-0 mt-0.5" strokeWidth={1.5} />
@@ -155,7 +155,7 @@ const Footer = ({ className }: { className?: string }) => {
             </li>
             <li className="flex items-start gap-3">
               <Mail className="w-5 h-5 text-crimson shrink-0 mt-0.5" strokeWidth={1.5} />
-              <a href="mailto:ayezacosmtics@gmail.com" className="hover:text-crimson transition-colors break-all">ayezacosmtics@gmail.com</a>
+              <a href="mailto:azeeoracosmetics@gmail.com" className="hover:text-crimson transition-colors break-all">azeeoracosmetics@gmail.com</a>
             </li>
           </ul>
         </div>

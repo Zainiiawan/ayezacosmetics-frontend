@@ -24,7 +24,8 @@ export function ConditionalSiteChrome({ children }: { children: React.ReactNode 
       <Header />
       <main className="flex-1 pt-[98px] lg:pt-[110px]">{children}</main>
       <Footer />
-      <WhatsAppButton />
+      {/* keep checkout forms clear of the floating button on small screens */}
+      {!pathname?.startsWith('/checkout') && <WhatsAppButton />}
     </div>
   );
 }

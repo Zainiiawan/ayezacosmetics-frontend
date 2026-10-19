@@ -70,19 +70,19 @@ export const SORT_OPTIONS = [
 export const RATING_OPTIONS = [5, 4, 3, 2, 1] as const;
 
 export const MAX_CART_QUANTITY = 10;
-export const FREE_SHIPPING_THRESHOLD = 5000; // PKR
+export const FREE_SHIPPING_THRESHOLD = 6000; // PKR, keep in step with admin settings
 export const SHIPPING_COST = 200; // PKR
 
 export const STORE_CONTACT = {
   name: 'AZEEORA',
   phone: '+92 306 0466911',
   whatsapp: '923060466911',
-  email: 'ayezacosmtics@gmail.com',
-  city: 'Sahiwal',
+  email: 'azeeoracosmetics@gmail.com',
+  city: 'Vehari',
   country: 'Pakistan',
-  address: 'Sahiwal, Punjab, Pakistan',
+  address: 'Sharqi Colony, Vehari, Punjab, Pakistan',
   businessHours: 'Mon – Sat: 10:00 AM – 8:00 PM (PKT)',
-  supportEmail: 'ayezacosmtics@gmail.com',
+  supportEmail: 'azeeoracosmetics@gmail.com',
 } as const;
 
 export const SUPPORTED_COUNTRIES = [

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import LegalFooter from '@/components/legal/LegalFooter';
 import { config } from '@/lib/config';
 import Link from 'next/link';
 
@@ -41,6 +42,7 @@ export default function TermsPage() {
         <h2 className="text-xl font-semibold text-black mt-8">Limitation of Liability</h2>
         <p>AZEEORA is not liable for indirect damages arising from use of our products or website beyond the purchase price of affected items.</p>
         <p>See also our <Link href="/help#returns" className="text-rose-gold">Return Policy</Link> and <Link href="/privacy" className="text-rose-gold">Privacy Policy</Link>.</p>
+        <LegalFooter />
       </div>
     </div>
   );

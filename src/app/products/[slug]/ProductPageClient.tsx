@@ -355,7 +355,7 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
             <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">
               <div className="text-center">
                 <Truck className="w-6 h-6 mx-auto mb-2 text-rose-gold" />
-                <p className="text-sm text-gray-600">Free Shipping</p>
+                <p className="text-sm text-gray-600">Free delivery over Rs 6,000</p>
               </div>
               <div className="text-center">
                 <Shield className="w-6 h-6 mx-auto mb-2 text-rose-gold" />

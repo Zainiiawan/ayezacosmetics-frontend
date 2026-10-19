@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  HelpCircle, MessageCircle, Mail, Phone, Clock, Truck, RotateCcw, CreditCard, Package, ChevronDown,
+  HelpCircle, MessageCircle, Mail, Phone, Clock, Truck, RotateCcw, CreditCard, Package, ChevronDown, MapPin,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
@@ -13,7 +13,8 @@ export const metadata: Metadata = {
 const CONTACT = {
   phone: '+92 306 0466911',
   whatsapp: '923060466911',
-  email: 'ayezacosmtics@gmail.com',
+  email: 'azeeoracosmetics@gmail.com',
+  address: 'Sharqi Colony, Vehari, Punjab, Pakistan',
   hours: 'Mon – Sat: 10:00 AM – 8:00 PM (PKT)',
 };
 
@@ -107,6 +108,13 @@ export default function HelpPage() {
                 <p className="text-gray-600 text-sm">{CONTACT.hours}</p>
               </div>
             </div>
+            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+              <MapPin className="w-6 h-6 text-rose-gold" />
+              <div>
+                <p className="font-medium">Location</p>
+                <p className="text-gray-600 text-sm">{CONTACT.address}</p>
+              </div>
+            </div>
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/contact"><Button variant="outline">Contact Form</Button></Link>
@@ -140,8 +148,8 @@ export default function HelpPage() {
             <p>We deliver across Pakistan via trusted courier partners (TCS, Leopards, and others).</p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Standard delivery: 3–7 business days</li>
-              <li>Free shipping on orders over PKR 5,000</li>
-              <li>Shipping fee of PKR 200 applies below the free threshold</li>
+              <li>Free delivery on orders over PKR 6,000</li>
+              <li>Delivery fee of PKR 200 applies below that amount</li>
               <li>Tracking number shared via email once order is dispatched</li>
               <li>Orders are processed after payment verification (COD orders after admin confirmation)</li>
             </ul>

@@ -27,7 +27,7 @@ export default function CareersPage() {
         </div>
 
         <h2 className="text-xl font-semibold text-black mt-8">Speculative Applications</h2>
-        <p>If you don't see a role that fits your experience but would love to work with us, please send your resume and a cover letter to <a href="mailto:ayezacosmtics@gmail.com" className="text-rose-gold">ayezacosmtics@gmail.com</a>.</p>
+        <p>If you don't see a role that fits your experience but would love to work with us, please send your resume and a cover letter to <a href="mailto:azeeoracosmetics@gmail.com" className="text-rose-gold">azeeoracosmetics@gmail.com</a>.</p>
       </div>
     </div>
   );

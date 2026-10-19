@@ -1,13 +1,11 @@
 'use client';
 
 import { useMemo, useState, useEffect, Suspense } from 'react';
-import { m as motion } from 'framer-motion';
-import { Smartphone, Truck, Lock, Check, ShoppingBag, ArrowLeft, Mail, User, MapPin } from 'lucide-react';
+import { Smartphone, Truck, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import { formatPrice } from '@/lib/utils';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { clearCart } from '@/store/slices/cartSlice';
@@ -22,18 +20,28 @@ import ManualPaymentCard from '@/components/payments/ManualPaymentCard';
 import { getEffectivePrice } from '@/lib/productUtils';
 
 interface CheckoutFormData {
+  fullName: string;
   email: string;
-  firstName: string;
-  lastName: string;
   phone: string;
-  street: string;
   city: string;
-  state: string;
-  postalCode: string;
-  country: string;
+  street: string;
   paymentMethod: PaymentMethod;
   notes?: string;
 }
+
+// The courier needs a province; most orders come from these cities, others fall back to the city itself.
+const PROVINCE_BY_CITY: Record<string, string> = {
+  lahore: 'Punjab', faisalabad: 'Punjab', rawalpindi: 'Punjab', multan: 'Punjab', gujranwala: 'Punjab', sialkot: 'Punjab',
+  sahiwal: 'Punjab', vehari: 'Punjab', bahawalpur: 'Punjab', sargodha: 'Punjab', 'rahim yar khan': 'Punjab', okara: 'Punjab',
+  sheikhupura: 'Punjab', jhang: 'Punjab', kasur: 'Punjab', 'dera ghazi khan': 'Punjab', gujrat: 'Punjab', khanewal: 'Punjab',
+  burewala: 'Punjab', mianwali: 'Punjab', chiniot: 'Punjab', pakpattan: 'Punjab',
+  karachi: 'Sindh', hyderabad: 'Sindh', sukkur: 'Sindh', larkana: 'Sindh', nawabshah: 'Sindh', mirpurkhas: 'Sindh',
+  peshawar: 'Khyber Pakhtunkhwa', mardan: 'Khyber Pakhtunkhwa', abbottabad: 'Khyber Pakhtunkhwa', swat: 'Khyber Pakhtunkhwa',
+  mingora: 'Khyber Pakhtunkhwa', kohat: 'Khyber Pakhtunkhwa', 'dera ismail khan': 'Khyber Pakhtunkhwa',
+  quetta: 'Balochistan', gwadar: 'Balochistan', turbat: 'Balochistan',
+  islamabad: 'Islamabad Capital Territory', gilgit: 'Gilgit-Baltistan', skardu: 'Gilgit-Baltistan',
+  muzaffarabad: 'Azad Kashmir', mirpur: 'Azad Kashmir',
+};
 
 function CheckoutContent() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -44,7 +52,8 @@ function CheckoutContent() {
   
   const isBuyNow = searchParams?.get('buyNow') === 'true';
   const buyNowProductId = searchParams?.get('productId');
-  const buyNowQuantity = parseInt(searchParams?.get('quantity') || '1', 10);
+  const initialQuantity = Math.min(20, Math.max(1, parseInt(searchParams?.get('quantity') || '1', 10) || 1));
+  const [buyNowQuantity, setBuyNowQuantity] = useState(initialQuantity);
 
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -82,9 +91,8 @@ function CheckoutContent() {
   } = useForm<CheckoutFormData>({
     defaultValues: {
       email: user?.email || '',
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      country: 'Pakistan',
+      fullName: [user?.firstName, user?.lastName].filter(Boolean).join(' '),
+      phone: (user as { phone?: string } | null)?.phone || '',
       paymentMethod: 'cod',
     },
   });
@@ -95,9 +103,9 @@ function CheckoutContent() {
   const paymentMethods = useMemo(
     () =>
       [
-        { id: 'cod' as const, name: 'Cash on Delivery', icon: Truck, description: 'Pay when you receive your order' },
-        { id: 'jazzcash' as const, name: 'JazzCash', icon: Smartphone, description: 'Manual transfer + screenshot' },
-        { id: 'easypaisa' as const, name: 'Easypaisa', icon: Smartphone, description: 'Manual transfer + screenshot' },
+        { id: 'cod' as const, name: 'Cash on delivery', icon: Truck, description: 'Pay when it arrives' },
+        { id: 'jazzcash' as const, name: 'JazzCash', icon: Smartphone, description: 'Send payment, upload screenshot' },
+        { id: 'easypaisa' as const, name: 'Easypaisa', icon: Smartphone, description: 'Send payment, upload screenshot' },
       ] as const,
     []
   );
@@ -136,7 +144,7 @@ function CheckoutContent() {
     if (effectiveSubtotal === 0) return 0;
     
     // Check free shipping threshold
-    const freeThreshold = storeSettings?.freeShippingThreshold ?? 5000;
+    const freeThreshold = storeSettings?.freeShippingThreshold ?? 6000;
     if (effectiveSubtotal > freeThreshold) return 0;
 
     if (selectedCity && shippingRates) {
@@ -165,16 +173,19 @@ function CheckoutContent() {
     setIsProcessing(true);
     setError('');
     try {
+      const [firstName, ...rest] = data.fullName.trim().split(/\s+/);
+      const lastName = rest.join(' ') || firstName;
+      const city = data.city.trim();
       const payload: any = {
         shippingAddress: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phone: data.phone,
-          street: data.street,
-          city: data.city,
-          state: data.state,
-          postalCode: data.postalCode,
-          country: data.country,
+          firstName,
+          lastName,
+          phone: data.phone.trim(),
+          street: data.street.trim(),
+          city,
+          state: PROVINCE_BY_CITY[city.toLowerCase()] ?? city,
+          postalCode: '00000',
+          country: 'Pakistan',
         },
         paymentMethod: data.paymentMethod,
         notes: data.notes,
@@ -182,10 +193,10 @@ function CheckoutContent() {
 
       if (!isAuthenticated) {
         payload.guestInfo = {
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phone: data.phone,
+          email: data.email.trim(),
+          firstName,
+          lastName,
+          phone: data.phone.trim(),
         };
       }
 
@@ -247,165 +258,136 @@ function CheckoutContent() {
     );
   }
 
+  const field = 'w-full h-12 px-4 border border-line bg-white text-[0.95rem] text-ink placeholder:text-gray-400 focus:outline-none focus:border-crimson transition-colors';
+  const fieldLabel = 'block text-[0.8rem] text-gray-600 mb-1.5';
+  const errorText = 'mt-1 text-[0.78rem] text-crimson';
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <Link href={isBuyNow ? `/products/${buyNowProduct?.slug}` : "/cart"} className="inline-flex items-center gap-2 text-gray-600 hover:text-rose-gold mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back to {isBuyNow ? 'product' : 'cart'}
+    <div className="min-h-screen bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
+        <Link href={isBuyNow ? `/products/${buyNowProduct?.slug}` : '/cart'} className="inline-flex items-center gap-2 text-[0.85rem] text-gray-600 hover:text-crimson">
+          <ArrowLeft className="w-4 h-4" /> Back to {isBuyNow ? 'product' : 'bag'}
         </Link>
+        <h1 className="mt-4 font-serif text-[1.8rem] sm:text-[2.1rem] text-ink">Checkout</h1>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <motion.form
-              onSubmit={handleSubmit(onSubmit)}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
-            >
-              <div className="p-6 md:p-8 space-y-8">
-                {/* Header */}
-                <div>
-                  <h1 className="text-3xl font-serif font-bold text-black">Secure Checkout</h1>
-                  <p className="text-gray-500 mt-1 flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-green-600" /> 256-bit SSL encryption
-                  </p>
-                </div>
-
-                {/* Contact Information */}
-                <div>
-                  <h2 className="text-xl font-serif font-semibold mb-4 flex items-center gap-2 border-b pb-2">
-                    <User className="w-5 h-5 text-rose-gold" /> Contact Information
-                  </h2>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <Input label="Email address" type="email" error={errors.email?.message} {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email' } })} />
-                    </div>
-                    <Input label="First name" error={errors.firstName?.message} {...register('firstName', { required: 'Required' })} />
-                    <Input label="Last name" error={errors.lastName?.message} {...register('lastName', { required: 'Required' })} />
-                    <div className="md:col-span-2">
-                      <Input label="Phone number" error={errors.phone?.message} {...register('phone', { required: 'Required' })} />
-                    </div>
+        {/* What you are buying */}
+        <section className="mt-6 bg-blush p-4 sm:p-5 space-y-4" aria-label="Your order">
+          {checkoutItems.map((item, index) => (
+            <div key={`${item.product._id}-${(item as any).variant || index}`} className="flex items-center gap-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.product.images?.[0]?.url || '/logo.png'} alt={item.product.name} className="w-20 h-20 sm:w-24 sm:h-24 object-cover bg-white shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="font-serif text-[1rem] sm:text-[1.1rem] text-ink leading-snug">{item.product.name}</p>
+                <p className="mt-1 text-[0.9rem] text-gray-600">
+                  {formatPrice(item.price)}
+                  {item.product.basePrice > item.price && <span className="ml-2 text-gray-400 line-through">{formatPrice(item.product.basePrice)}</span>}
+                </p>
+                {isBuyNow ? (
+                  <div className="mt-2 inline-flex items-center bg-white" role="group" aria-label="Quantity">
+                    <button type="button" onClick={() => setBuyNowQuantity((q) => Math.max(1, q - 1))} className="w-9 h-9 text-ink hover:text-crimson" aria-label="Decrease quantity">−</button>
+                    <span className="w-8 text-center text-[0.9rem]">{buyNowQuantity}</span>
+                    <button type="button" onClick={() => setBuyNowQuantity((q) => Math.min(20, q + 1))} className="w-9 h-9 text-ink hover:text-crimson" aria-label="Increase quantity">+</button>
                   </div>
-                </div>
+                ) : (
+                  <p className="mt-1 text-[0.8rem] text-gray-500">Qty {item.quantity}</p>
+                )}
+              </div>
+              <p className="font-medium text-ink shrink-0">{formatPrice(item.total)}</p>
+            </div>
+          ))}
+        </section>
 
-                {/* Shipping Address */}
-                <div>
-                  <h2 className="text-xl font-serif font-semibold mb-4 flex items-center gap-2 border-b pb-2">
-                    <MapPin className="w-5 h-5 text-rose-gold" /> Shipping Address
-                  </h2>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <Input label="Country" error={errors.country?.message} {...register('country', { required: 'Required' })} readOnly className="bg-gray-50" />
-                    <Input label="City" error={errors.city?.message} {...register('city', { required: 'Required' })} />
-                    <div className="md:col-span-2">
-                      <Input label="Street address" error={errors.street?.message} {...register('street', { required: 'Required' })} />
-                    </div>
-                    <Input label="State / Province" error={errors.state?.message} {...register('state', { required: 'Required' })} />
-                    <Input label="Postal code" error={errors.postalCode?.message} {...register('postalCode', { required: 'Required' })} />
-                  </div>
-                </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 grid lg:grid-cols-[1.4fr_1fr] gap-8 lg:gap-12 items-start" noValidate>
+          <div className="space-y-8">
+            <section>
+              <h2 className="eyebrow text-crimson">Your details</h2>
+              <div className="mt-4 grid sm:grid-cols-2 gap-4">
+                <label className="sm:col-span-2">
+                  <span className={fieldLabel}>Full name</span>
+                  <input className={field} autoComplete="name" placeholder="e.g. Ayesha Khan" {...register('fullName', { required: 'Please enter your name', validate: (v) => v.trim().length >= 2 || 'Please enter your name' })} />
+                  {errors.fullName && <p className={errorText}>{errors.fullName.message}</p>}
+                </label>
+                <label>
+                  <span className={fieldLabel}>Phone</span>
+                  <input className={field} type="tel" inputMode="tel" autoComplete="tel" placeholder="03XX XXXXXXX" {...register('phone', { required: 'Please enter your phone number', pattern: { value: /^(\+92|0)?3\d{2}[\s-]?\d{7}$/, message: 'Enter a Pakistani mobile number, e.g. 0300 1234567' } })} />
+                  {errors.phone && <p className={errorText}>{errors.phone.message}</p>}
+                </label>
+                <label>
+                  <span className={fieldLabel}>Email</span>
+                  <input className={field} type="email" autoComplete="email" placeholder="you@example.com" {...register('email', { required: 'Please enter your email', pattern: { value: /^\S+@\S+\.\S+$/, message: 'Please enter a valid email' } })} />
+                  {errors.email && <p className={errorText}>{errors.email.message}</p>}
+                </label>
+                <label>
+                  <span className={fieldLabel}>City</span>
+                  <input className={field} autoComplete="address-level2" placeholder="e.g. Lahore" {...register('city', { required: 'Please enter your city' })} />
+                  {errors.city && <p className={errorText}>{errors.city.message}</p>}
+                </label>
+                <label className="sm:col-span-2">
+                  <span className={fieldLabel}>Delivery address</span>
+                  <input className={field} autoComplete="street-address" placeholder="House, street, area" {...register('street', { required: 'Please enter your delivery address', validate: (v) => v.trim().length >= 5 || 'Please enter your full address' })} />
+                  {errors.street && <p className={errorText}>{errors.street.message}</p>}
+                </label>
+                <label className="sm:col-span-2">
+                  <span className={fieldLabel}>Order note (optional)</span>
+                  <input className={field} placeholder="e.g. call before delivery" {...register('notes')} />
+                </label>
+              </div>
+            </section>
 
-                {/* Payment Method */}
-                <div>
-                  <h2 className="text-xl font-serif font-semibold mb-4 flex items-center gap-2 border-b pb-2">
-                    <Lock className="w-5 h-5 text-rose-gold" /> Payment Method
-                  </h2>
-                  <div className="space-y-3">
-                    {paymentMethods.map((method) => {
-                      const Icon = method.icon;
-                      const selected = paymentMethod === method.id;
-                      return (
-                        <label
-                          key={method.id}
-                          className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
-                            selected ? 'border-rose-gold bg-rose-gold/5 shadow-sm' : 'border-gray-200 hover:border-rose-gold/40'
-                          }`}
-                        >
-                          <input type="radio" value={method.id} className="mt-1 text-rose-gold focus:ring-rose-gold" {...register('paymentMethod')} />
-                          <Icon className={`w-5 h-5 mt-0.5 ${selected ? 'text-rose-gold' : 'text-gray-500'}`} />
-                          <div>
-                            <p className="font-medium text-gray-900">{method.name}</p>
-                            <p className="text-sm text-gray-500">{method.description}</p>
-                          </div>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {account && (
+            <section>
+              <h2 className="eyebrow text-crimson">Payment</h2>
+              <div className="mt-4 grid sm:grid-cols-3 gap-3">
+                {paymentMethods.map((method) => {
+                  const Icon = method.icon;
+                  const selected = paymentMethod === method.id;
+                  return (
+                    <label key={method.id} className={`flex items-start gap-3 p-3.5 cursor-pointer transition-colors ${selected ? 'bg-blush ring-1 ring-crimson' : 'bg-tile hover:bg-blush'}`}>
+                      <input type="radio" value={method.id} className="sr-only" {...register('paymentMethod')} />
+                      <Icon className={`w-5 h-5 shrink-0 ${selected ? 'text-crimson' : 'text-gray-500'}`} strokeWidth={1.5} />
+                      <span>
+                        <span className="block text-[0.88rem] font-medium text-ink">{method.name}</span>
+                        <span className="block text-[0.75rem] text-gray-500 leading-snug">{method.description}</span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+              {account && (
+                <div className="mt-4">
                   <ManualPaymentCard account={account} amountLabel={formatPrice(total)} />
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-800 mb-1">Order notes (optional)</label>
-                  <textarea
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-rose-gold"
-                    rows={3}
-                    placeholder="Notes about your order, e.g. special notes for delivery."
-                    {...register('notes')}
-                  />
                 </div>
-
-                {error && <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3 font-medium">{error}</p>}
-              </div>
-
-              {/* Submit Area */}
-              <div className="bg-gray-50 p-6 md:p-8 border-t border-gray-200">
-                <Button type="submit" className="w-full py-4 text-lg font-medium" loading={isProcessing} size="lg">
-                  {paymentMethod === 'cod' ? 'Complete Order (Cash on Delivery)' : 'Place Order & Pay Securely'}
-                </Button>
-                {paymentMethod === 'cod' && (
-                  <p className="text-center text-sm text-gray-500 mt-4">
-                    You will pay {formatPrice(total)} upon delivery.
-                  </p>
-                )}
-              </div>
-            </motion.form>
+              )}
+            </section>
           </div>
 
-          <aside className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-              <h2 className="font-serif text-xl font-semibold mb-6 pb-4 border-b">Order Summary</h2>
-              
-              <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-                {checkoutItems.map((item, index) => (
-                  <div key={`${item.product._id}-${(item as any).variant || index}`} className="flex gap-4">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
-                      <img src={item.product.images?.[0]?.url || '/placeholder.png'} alt={item.product.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h4 className="text-sm font-medium text-gray-900 truncate">{item.product.name}</h4>
-                      <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                    </div>
-                    <div className="flex items-center text-sm font-medium">
-                      {formatPrice(item.total)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="border-t pt-4 space-y-3 text-sm">
-                <div className="flex justify-between text-gray-600"><span>Subtotal</span><span className="font-medium text-gray-900">{formatPrice(originalSubtotal)}</span></div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span className="font-medium text-gray-900">{calculatedShipping === null ? '—' : calculatedShipping === 0 ? <span className="text-green-600">Free</span> : formatPrice(calculatedShipping)}</span>
-                </div>
-                {totalDiscount > 0 && (
-                  <div className="flex justify-between text-rose-gold font-medium"><span>Discount</span><span>-{formatPrice(totalDiscount)}</span></div>
-                )}
-                <div className="flex justify-between text-xl font-bold pt-4 border-t mt-4 text-black">
-                  <span>Total</span>
-                  <span>{formatPrice(total)}</span>
-                </div>
-              </div>
-              
-              <div className="mt-6 bg-green-50 text-green-700 p-4 rounded-xl text-sm flex items-start gap-2 border border-green-100">
-                <Check className="w-5 h-5 shrink-0 mt-0.5" />
-                <p>Buy with confidence. We offer a 100% satisfaction guarantee on all our products.</p>
-              </div>
+          <aside className="bg-tile p-6 lg:sticky lg:top-32 space-y-3 text-[0.92rem]">
+            <h2 className="eyebrow text-ink">Order summary</h2>
+            <div className="flex justify-between text-gray-600 pt-2"><span>Subtotal</span><span className="text-ink">{formatPrice(originalSubtotal)}</span></div>
+            {totalDiscount > 0 && (
+              <div className="flex justify-between text-crimson"><span>Discount</span><span>-{formatPrice(totalDiscount)}</span></div>
+            )}
+            <div className="flex justify-between text-gray-600">
+              <span>Delivery</span>
+              <span className="text-ink">{calculatedShipping === null ? 'Enter your city' : calculatedShipping === 0 ? 'Free' : formatPrice(calculatedShipping)}</span>
             </div>
+            <div className="flex justify-between text-[1.1rem] font-medium text-ink pt-3 border-t border-line">
+              <span>Total</span>
+              <span>{formatPrice(total)}</span>
+            </div>
+
+            {error && <p className="text-[0.85rem] text-crimson bg-white px-3 py-2">{error}</p>}
+
+            <Button type="submit" className="w-full h-12 mt-2" loading={isProcessing}>
+              Place order
+            </Button>
+            <p className="text-[0.75rem] text-gray-500 leading-relaxed">
+              {paymentMethod === 'cod' ? `Pay ${formatPrice(total)} in cash when your order arrives. ` : ''}
+              By placing your order you agree to our{' '}
+              <Link href="/terms" className="underline underline-offset-2 hover:text-crimson">Terms</Link> and{' '}
+              <Link href="/refunds" className="underline underline-offset-2 hover:text-crimson">Refund policy</Link>.
+            </p>
           </aside>
-        </div>
+        </form>
       </div>
     </div>
   );
