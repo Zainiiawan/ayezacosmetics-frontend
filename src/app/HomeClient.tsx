@@ -9,6 +9,7 @@ import { productApi, Product } from '@/lib/api/productApi';
 import { settingsApi } from '@/lib/api/settingsApi';
 import { blogPosts } from '@/lib/data/blog';
 import ProductCard from '@/components/products/ProductCard';
+import HeroSlider from '@/components/home/HeroSlider';
 import { optimizeCloudinaryUrl, getCloudinarySrcSet, formatPrice } from '@/lib/utils';
 import { getEffectivePrice } from '@/lib/productUtils';
 
@@ -101,62 +102,68 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
 
   return (
     <div className="flex flex-col bg-white">
-      {/* ---------------- Hero ---------------- */}
-      <section className="bg-blush relative overflow-hidden">
-        <Sprig className="absolute -left-4 top-10 w-16 text-petal rotate-[-18deg] hidden lg:block" />
-        <Sprig className="absolute right-[46%] bottom-6 w-12 text-petal rotate-[160deg] hidden lg:block" />
-        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-2 items-stretch">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }} className="relative px-6 lg:px-16 py-14 lg:py-24 flex flex-col justify-center text-center lg:text-left order-2 lg:order-1">
-            <p className="eyebrow text-crimson">Radiance · made for Pakistani skin</p>
-            <h1 className="mt-6 font-serif text-[2.4rem] leading-[1.08] sm:text-[3.4rem] lg:text-[4.1rem] text-ink">
-              Your glow,
-              <br />
-              in its <span className="text-crimson">truest</span> light.
-            </h1>
-            <p className="mt-4 font-urdu text-[1.5rem] sm:text-[1.7rem] text-crimson-deep" lang="ur" dir="rtl">
-              چمکتی جلد، ہر موسم میں
-            </p>
-            <p className="mt-3 text-[1.05rem] text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              Deep cleansing, hydrating and brightening care for heat, humidity and city dust. Honest prices, delivered to your door, pay when it arrives.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3 justify-center lg:justify-start">
-              <Link href="/shop" className="group inline-flex items-center gap-2 bg-crimson text-white px-8 py-4 rounded-full font-medium uppercase tracking-[0.12em] text-[0.8rem] hover:bg-crimson-deep transition-colors">
-                Shop the collection
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <a href="#ritual" className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-medium uppercase tracking-[0.12em] text-[0.8rem] text-ink bg-white hover:text-crimson transition-colors">
-                Find your ritual
-              </a>
-            </div>
-            <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 justify-center lg:justify-start text-[0.85rem] text-gray-600">
-              <span className="inline-flex items-center gap-2"><Banknote className="w-4 h-4 text-crimson" /> Cash on delivery</span>
-              <span className="inline-flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-crimson" /> Cruelty-free</span>
-              <span className="inline-flex items-center gap-2"><Truck className="w-4 h-4 text-crimson" /> All over Pakistan</span>
-            </div>
-          </motion.div>
+      {/* ---------------- Hero: one slide per product ---------------- */}
+      {products.length > 0 ? (
+        <HeroSlider products={live.length ? live : products} />
+      ) : (
+        <>
+        <section className="bg-blush relative overflow-hidden">
+          <Sprig className="absolute -left-4 top-10 w-16 text-petal rotate-[-18deg] hidden lg:block" />
+          <Sprig className="absolute right-[46%] bottom-6 w-12 text-petal rotate-[160deg] hidden lg:block" />
+          <div className="max-w-[1440px] mx-auto grid lg:grid-cols-2 items-stretch">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }} className="relative px-6 lg:px-16 py-14 lg:py-24 flex flex-col justify-center text-center lg:text-left order-2 lg:order-1">
+              <p className="eyebrow text-crimson">Radiance · made for Pakistani skin</p>
+              <h1 className="mt-6 font-serif text-[2.4rem] leading-[1.08] sm:text-[3.4rem] lg:text-[4.1rem] text-ink">
+                Your glow,
+                <br />
+                in its <span className="text-crimson">truest</span> light.
+              </h1>
+              <p className="mt-4 font-urdu text-[1.5rem] sm:text-[1.7rem] text-crimson-deep" lang="ur" dir="rtl">
+                چمکتی جلد، ہر موسم میں
+              </p>
+              <p className="mt-3 text-[1.05rem] text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+                Deep cleansing, hydrating and brightening care for heat, humidity and city dust. Honest prices, delivered to your door, pay when it arrives.
+              </p>
+              <div className="mt-9 flex flex-wrap gap-3 justify-center lg:justify-start">
+                <Link href="/shop" className="group inline-flex items-center gap-2 bg-crimson text-white px-8 py-4 rounded-full font-medium uppercase tracking-[0.12em] text-[0.8rem] hover:bg-crimson-deep transition-colors">
+                  Shop the collection
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <a href="#ritual" className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-medium uppercase tracking-[0.12em] text-[0.8rem] text-ink bg-white hover:text-crimson transition-colors">
+                  Find your ritual
+                </a>
+              </div>
+              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 justify-center lg:justify-start text-[0.85rem] text-gray-600">
+                <span className="inline-flex items-center gap-2"><Banknote className="w-4 h-4 text-crimson" /> Cash on delivery</span>
+                <span className="inline-flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-crimson" /> Cruelty-free</span>
+                <span className="inline-flex items-center gap-2"><Truck className="w-4 h-4 text-crimson" /> All over Pakistan</span>
+              </div>
+            </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.1 }} className="relative order-1 lg:order-2 min-h-[420px] lg:min-h-[640px]">
-            {imgOf(cleanser ?? hero) ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={optimizeCloudinaryUrl(imgOf(cleanser ?? hero)!, 1200, false)}
-                alt={(cleanser ?? hero)?.name ?? 'AZEEORA'}
-                className="absolute inset-0 w-full h-full object-cover"
-                fetchPriority="high"
-              />
-            ) : null}
-            {(cleanser ?? hero) && (
-              <Link href={`/products/${(cleanser ?? hero)!.slug}`} className="absolute left-4 right-4 bottom-4 sm:left-auto sm:right-6 sm:bottom-6 sm:w-[300px] bg-white/95 backdrop-blur p-4 flex items-center justify-between gap-4 hover:bg-white transition-colors">
-                <span className="min-w-0">
-                  <span className="eyebrow !text-[0.6rem] text-crimson">Bestseller</span>
-                  <span className="block font-serif text-[0.95rem] text-ink leading-snug mt-0.5 line-clamp-2">{(cleanser ?? hero)!.name}</span>
-                </span>
-                <span className="shrink-0 font-medium text-crimson">{formatPrice(getEffectivePrice((cleanser ?? hero)!))}</span>
-              </Link>
-            )}
-          </motion.div>
-        </div>
-      </section>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.1 }} className="relative order-1 lg:order-2 min-h-[420px] lg:min-h-[640px]">
+              {imgOf(cleanser ?? hero) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={optimizeCloudinaryUrl(imgOf(cleanser ?? hero)!, 1200, false)}
+                  alt={(cleanser ?? hero)?.name ?? 'AZEEORA'}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  fetchPriority="high"
+                />
+              ) : null}
+              {(cleanser ?? hero) && (
+                <Link href={`/products/${(cleanser ?? hero)!.slug}`} className="absolute left-4 right-4 bottom-4 sm:left-auto sm:right-6 sm:bottom-6 sm:w-[300px] bg-white/95 backdrop-blur p-4 flex items-center justify-between gap-4 hover:bg-white transition-colors">
+                  <span className="min-w-0">
+                    <span className="eyebrow !text-[0.6rem] text-crimson">Bestseller</span>
+                    <span className="block font-serif text-[0.95rem] text-ink leading-snug mt-0.5 line-clamp-2">{(cleanser ?? hero)!.name}</span>
+                  </span>
+                  <span className="shrink-0 font-medium text-crimson">{formatPrice(getEffectivePrice((cleanser ?? hero)!))}</span>
+                </Link>
+              )}
+            </motion.div>
+          </div>
+        </section>
+        </>
+      )}
 
       {/* ---------------- Perks ---------------- */}
       <section className="border-b border-line">
