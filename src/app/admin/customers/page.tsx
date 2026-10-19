@@ -52,7 +52,25 @@ export default function AdminCustomersPage() {
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6 space-y-4">
+        <details className="bg-white rounded-xl shadow-sm p-4 sm:p-5 text-sm text-gray-700" open={users.length < 2}>
+          <summary className="cursor-pointer font-medium text-black">Change the admin email or name</summary>
+          <p className="mt-3">
+            An account&apos;s email can&apos;t be edited, so a new admin email is added as a new account and then made admin:
+          </p>
+          <ol className="mt-2 ml-5 list-decimal space-y-1.5">
+            <li>
+              Open a private browser tab and sign up at <span className="font-medium">/register</span> with the new email.
+              Enter the 6-digit code sent to that inbox.
+            </li>
+            <li>Come back to this page (refresh it). The new account appears below; press <span className="font-medium">Make admin</span> next to it.</li>
+            <li>Log in with the new email, open this page again and press <span className="font-medium">Remove admin</span> next to the old account.</li>
+          </ol>
+          <p className="mt-3">
+            To change the name shown for your account, go to{' '}
+            <Link href="/account" className="text-rose-gold underline underline-offset-4">My account</Link> and edit First and Last name.
+          </p>
+        </details>
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           {isLoading ? (
             <div className="p-8 text-center text-gray-500">Loading customers...</div>
@@ -75,6 +93,7 @@ export default function AdminCustomersPage() {
                     <tr key={user._id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 font-medium flex items-center gap-2">
                         {user.firstName} {user.lastName}
+                        {currentUser?._id === user._id && <span className="text-xs font-normal text-gray-500">(you)</span>}
                         {user.isVip && <span title="VIP Customer"><Star className="w-4 h-4 text-yellow-500 fill-yellow-500" /></span>}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
@@ -109,10 +128,11 @@ export default function AdminCustomersPage() {
                                     role: user.role === 'admin' ? 'customer' : 'admin',
                                   })
                                 }
-                                className="p-1.5 text-gray-500 hover:text-rose-gold"
-                                title="Toggle role"
+                                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border border-gray-300 text-gray-700 hover:text-rose-gold hover:border-rose-gold"
+                                title={user.role === 'admin' ? 'Remove admin' : 'Make admin'}
                               >
-                                <Shield className="w-4 h-4" />
+                                <Shield className="w-3.5 h-3.5" />
+                                {user.role === 'admin' ? 'Remove admin' : 'Make admin'}
                               </button>
                               <button
                                 onClick={() =>
