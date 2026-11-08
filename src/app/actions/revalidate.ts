@@ -13,3 +13,9 @@ export async function revalidateCategoriesCache() {
   revalidateTag('categories');
   revalidatePath('/', 'layout');
 }
+
+export async function revalidateSlidesCache() {
+  // @ts-ignore
+  revalidateTag('slides');
+  revalidatePath('/', 'layout');
+}

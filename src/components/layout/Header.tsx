@@ -58,8 +58,15 @@ const Header = () => {
     'Cash on Delivery all over Pakistan',
     storeSettings?.freeShippingThreshold ? `Free delivery on orders over Rs ${storeSettings.freeShippingThreshold.toLocaleString()}` : 'Fast delivery across Pakistan',
     'Easy 14-day returns',
-    'Made for Pakistani skin and weather',
+    'Made for Pakistani skin',
   ];
+
+  // one message at a time, centred, moving to the next every few seconds
+  const [announcement, setAnnouncement] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setAnnouncement((i) => i + 1), 3500);
+    return () => window.clearInterval(id);
+  }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -79,19 +86,19 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50">
-      <div className="bg-crimson text-white overflow-hidden h-[34px] flex items-center" aria-label="Store announcements">
-        <div className="marquee-track flex whitespace-nowrap w-max">
-          {[0, 1].map((copy) => (
-            <div key={copy} className="flex" aria-hidden={copy === 1}>
-              {announcements.map((t) => (
-                <span key={t} className="eyebrow !text-[0.66rem] !tracking-[0.28em] px-8 flex items-center gap-8">
-                  {t}
-                  <span className="text-white/60">❀</span>
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
+      <div className="bg-crimson text-white overflow-hidden h-[34px] relative" aria-label="Store announcements" aria-live="polite">
+        <AnimatePresence initial={false}>
+          <motion.p
+            key={announcement}
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '-100%', opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0 flex items-center justify-center px-4 text-center eyebrow !text-[0.62rem] sm:!text-[0.66rem] !tracking-[0.2em] sm:!tracking-[0.28em] whitespace-nowrap"
+          >
+            <span className="truncate">{announcements[announcement % announcements.length]}</span>
+          </motion.p>
+        </AnimatePresence>
       </div>
 
       <div className="bg-white/95 backdrop-blur-md border-b border-line">

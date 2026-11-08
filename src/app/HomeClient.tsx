@@ -10,6 +10,8 @@ import { settingsApi } from '@/lib/api/settingsApi';
 import { blogPosts } from '@/lib/data/blog';
 import ProductCard from '@/components/products/ProductCard';
 import HeroSlider from '@/components/home/HeroSlider';
+import ProductShowcase from '@/components/home/ProductShowcase';
+import { slideApi, Slide } from '@/lib/api/slideApi';
 import { optimizeCloudinaryUrl, getCloudinarySrcSet, formatPrice } from '@/lib/utils';
 import { getEffectivePrice } from '@/lib/productUtils';
 
@@ -65,7 +67,15 @@ function Sprig({ className }: { className?: string }) {
   );
 }
 
-export default function HomeClient({ initialCategories, initialProducts }: { initialCategories: Category[]; initialProducts: Product[] }) {
+export default function HomeClient({
+  initialCategories,
+  initialProducts,
+  initialSlides,
+}: {
+  initialCategories: Category[];
+  initialProducts: Product[];
+  initialSlides: Slide[];
+}) {
   const { data: categories = initialCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: categoryApi.getAll,
@@ -75,8 +85,15 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
   });
   const { data: productData } = useQuery({
     queryKey: ['home-products'],
-    queryFn: () => productApi.getAll({ page: 1, limit: 12, sortBy: 'bestselling' }),
+    queryFn: () => productApi.getAll({ page: 1, limit: 50, sortBy: 'bestselling' }),
     initialData: initialProducts.length ? { products: initialProducts, pagination: undefined as never } : undefined,
+  });
+  const { data: slides = initialSlides } = useQuery({
+    queryKey: ['home-slides'],
+    queryFn: slideApi.getActive,
+    initialData: initialSlides,
+    staleTime: 0,
+    refetchOnMount: true,
   });
   const { data: settings } = useQuery({ queryKey: ['store-settings'], queryFn: settingsApi.getSettings, staleTime: 10 * 60_000 });
 
@@ -104,11 +121,11 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
 
   return (
     <div className="flex flex-col bg-white">
-      {/* ---------------- Hero: one slide per product ---------------- */}
-      {products.length > 0 ? (
+      {/* ---------------- Hero: admin slides, else one slide per product ---------------- */}
+      {slides.length > 0 || products.length > 0 ? (
         <>
           <h1 className="sr-only">AZEEORA skincare and beauty, made for Pakistani skin</h1>
-          <HeroSlider products={live.length ? live : products} />
+          <HeroSlider slides={slides} products={live.length ? live : products} />
         </>
       ) : (
         <>
@@ -170,20 +187,8 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
         </>
       )}
 
-      {/* ---------------- Perks ---------------- */}
-      <section className="border-b border-line">
-        <div className="max-w-[1440px] mx-auto px-5 lg:px-10 grid grid-cols-2 lg:grid-cols-4 gap-x-4 lg:gap-x-0 lg:divide-x divide-line">
-          {perks.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex items-start sm:items-center gap-2.5 sm:gap-4 py-4 sm:py-6 lg:px-6 first:lg:pl-0">
-              <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-crimson shrink-0 mt-0.5 sm:mt-0" strokeWidth={1.4} />
-              <span className="min-w-0">
-                <span className="block font-medium text-[0.8rem] sm:text-[0.92rem] text-ink leading-snug">{title}</span>
-                <span className="block text-[0.72rem] sm:text-[0.8rem] text-muted leading-snug">{text}</span>
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ---------------- Products, one slide each with uses and benefits ---------------- */}
+      <ProductShowcase products={live.length ? live : products} />
 
       {/* ---------------- Categories ---------------- */}
       <section className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-12 sm:py-16 lg:py-24">
@@ -234,9 +239,24 @@ export default function HomeClient({ initialCategories, initialProducts }: { ini
         </div>
       </section>
 
+      {/* ---------------- Perks ---------------- */}
+      <section className="border-y border-line">
+        <div className="max-w-[1440px] mx-auto px-5 lg:px-10 grid grid-cols-2 lg:grid-cols-4 gap-x-4 lg:gap-x-0 lg:divide-x divide-line">
+          {perks.map(({ icon: Icon, title, text }) => (
+            <div key={title} className="flex items-start sm:items-center gap-2.5 sm:gap-4 py-4 sm:py-6 lg:px-6 first:lg:pl-0">
+              <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-crimson shrink-0 mt-0.5 sm:mt-0" strokeWidth={1.4} />
+              <span className="min-w-0">
+                <span className="block font-medium text-[0.8rem] sm:text-[0.92rem] text-ink leading-snug">{title}</span>
+                <span className="block text-[0.72rem] sm:text-[0.8rem] text-muted leading-snug">{text}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ---------------- Bestsellers ---------------- */}
       {products.length > 0 && (
-        <section className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 pb-16 lg:pb-24">
+        <section className="max-w-[1440px] mx-auto w-full px-5 lg:px-10 py-12 sm:py-16 lg:py-24">
           <motion.div {...fadeUp} className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow text-crimson">Loved across Pakistan</p>

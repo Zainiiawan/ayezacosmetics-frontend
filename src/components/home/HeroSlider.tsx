@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, m as motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '@/lib/api/productApi';
+import { Slide } from '@/lib/api/slideApi';
 import { optimizeCloudinaryUrl } from '@/lib/utils';
 
 const INTERVAL_MS = 6000;
-const MAX_SLIDES = 8;
+const MAX_SLIDES = 10;
 
 const mainImage = (p: Product) => (p.images?.find((i) => i.isMain) || p.images?.[0])?.url;
 
@@ -20,19 +21,59 @@ const BANNERS: Record<string, string> = {
   'azeeora-beauty-cream': '/brand/banners/beauty-cream.jpg',
 };
 
+interface HeroItem {
+  key: string;
+  href?: string;
+  label: string;
+  /** shown on tablets and desktops */
+  wide: string;
+  /** shown on phones */
+  narrow: string;
+  /** the phone image was made for a phone screen, so it may fill the frame */
+  narrowFills: boolean;
+  title?: string;
+  subtitle?: string;
+  buttonText?: string;
+}
+
+const fromSlide = (s: Slide): HeroItem => ({
+  key: s._id,
+  href: s.link || undefined,
+  label: s.title || 'AZEEORA',
+  wide: optimizeCloudinaryUrl(s.image.url, 1920, false),
+  narrow: optimizeCloudinaryUrl((s.mobileImage ?? s.image).url, 1000, false),
+  narrowFills: Boolean(s.mobileImage),
+  title: s.title,
+  subtitle: s.subtitle,
+  buttonText: s.buttonText,
+});
+
+const fromProduct = (p: Product): HeroItem => {
+  const poster = optimizeCloudinaryUrl(mainImage(p)!, 1600, false);
+  return {
+    key: p._id,
+    href: `/products/${p.slug}`,
+    label: `${p.name}, view product`,
+    wide: BANNERS[p.slug] ?? poster,
+    narrow: poster,
+    narrowFills: false,
+  };
+};
+
 /**
- * Homepage hero: one slide per product in the catalogue, so anything added
- * in the admin panel shows up here on its own. Wide screens get the
- * product's banner, phones get the square poster.
+ * Homepage hero. Slides added in Admin → Slides come first; until there
+ * are any, every product gets a slide on its own, so the hero is never empty.
  */
-export default function HeroSlider({ products }: { products: Product[] }) {
-  const slides = products.filter((p) => mainImage(p)).slice(0, MAX_SLIDES);
+export default function HeroSlider({ slides: adminSlides = [], products }: { slides?: Slide[]; products: Product[] }) {
+  const items = (
+    adminSlides.length ? adminSlides.map(fromSlide) : products.filter((p) => mainImage(p)).map(fromProduct)
+  ).slice(0, MAX_SLIDES);
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
   const touchX = useRef<number | null>(null);
-  const count = slides.length;
-  const current = slides[count ? index % count : 0];
+  const count = items.length;
+  const current = items[count ? index % count : 0];
 
   const go = useCallback(
     (step: number) => {
@@ -51,11 +92,41 @@ export default function HeroSlider({ products }: { products: Product[] }) {
 
   if (!current) return null;
 
+  const hasText = Boolean(current.title || current.subtitle || current.buttonText);
+  const body = (
+    <>
+      <picture>
+        <source media="(min-width: 640px)" srcSet={current.wide} />
+        <img
+          src={current.narrow}
+          alt={current.title || current.label}
+          className={`w-full h-full ${current.narrowFills ? 'object-cover' : 'object-contain'} sm:object-cover`}
+          fetchPriority={index === 0 ? 'high' : 'auto'}
+        />
+      </picture>
+      {hasText && (
+        <div className="absolute inset-0 flex items-end sm:items-center bg-gradient-to-t sm:bg-gradient-to-r from-ink/85 via-ink/45 to-ink/5">
+          <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-16 lg:px-24 pb-14 sm:pb-0">
+            <div className="max-w-xl text-white [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
+              {current.title && <h2 className="text-white font-serif text-[1.7rem] sm:text-[2.6rem] lg:text-[3.4rem] leading-[1.08]">{current.title}</h2>}
+              {current.subtitle && <p className="mt-3 text-[0.92rem] sm:text-[1.05rem] text-white/90 leading-relaxed">{current.subtitle}</p>}
+              {current.buttonText && current.href && (
+                <span className="mt-5 inline-flex items-center gap-2 bg-white text-ink px-6 py-3 text-[0.75rem] uppercase tracking-[0.16em] font-medium">
+                  {current.buttonText} <ArrowRight className="w-4 h-4" />
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <section
       className="relative overflow-hidden bg-tile aspect-square sm:aspect-[12/5]"
       aria-roledescription="carousel"
-      aria-label="Our products"
+      aria-label="Featured"
       // pause while a mouse rests on it; taps on phones should not stop the slideshow
       onPointerEnter={(e) => e.pointerType === 'mouse' && setPaused(true)}
       onPointerLeave={(e) => e.pointerType === 'mouse' && setPaused(false)}
@@ -69,44 +140,39 @@ export default function HeroSlider({ products }: { products: Product[] }) {
     >
       <AnimatePresence initial={false}>
         <motion.div
-          key={current._id}
+          key={current.key}
           className="absolute inset-0"
           initial={{ opacity: 0, x: direction * 40 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Link href={`/products/${current.slug}`} className="absolute inset-0 block" aria-label={`${current.name}, view product`}>
-            <picture>
-              {BANNERS[current.slug] && <source media="(min-width: 640px)" srcSet={BANNERS[current.slug]} />}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={optimizeCloudinaryUrl(mainImage(current)!, 1600, false)}
-                alt={current.name}
-                className="w-full h-full object-contain"
-                fetchPriority={index === 0 ? 'high' : 'auto'}
-              />
-            </picture>
-          </Link>
+          {current.href ? (
+            <Link href={current.href} className="absolute inset-0 block" aria-label={current.label}>
+              {body}
+            </Link>
+          ) : (
+            <div className="absolute inset-0">{body}</div>
+          )}
         </motion.div>
       </AnimatePresence>
 
       {count > 1 && (
         <>
-          <button type="button" onClick={() => go(-1)} className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 text-ink hover:text-crimson flex items-center justify-center shadow-sm" aria-label="Previous product">
+          <button type="button" onClick={() => go(-1)} className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 text-ink hover:text-crimson flex items-center justify-center shadow-sm" aria-label="Previous slide">
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <button type="button" onClick={() => go(1)} className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 text-ink hover:text-crimson flex items-center justify-center shadow-sm" aria-label="Next product">
+          <button type="button" onClick={() => go(1)} className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/85 text-ink hover:text-crimson flex items-center justify-center shadow-sm" aria-label="Next slide">
             <ChevronRight className="w-5 h-5" />
           </button>
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/80 rounded-full px-3 py-2" role="tablist" aria-label="Choose a product">
-            {slides.map((p, i) => (
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/80 rounded-full px-3 py-2" role="tablist" aria-label="Choose a slide">
+            {items.map((s, i) => (
               <button
-                key={p._id}
+                key={s.key}
                 type="button"
                 role="tab"
                 aria-selected={i === index}
-                aria-label={`Show ${p.name}`}
+                aria-label={`Show slide ${i + 1}`}
                 onClick={() => {
                   setDirection(i > index ? 1 : -1);
                   setIndex(i);
