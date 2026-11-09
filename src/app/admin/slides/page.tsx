@@ -63,7 +63,7 @@ function ImagePicker({
     <div>
       <p className="text-sm font-medium text-gray-800">{label}</p>
       <p className="text-xs text-gray-500 mb-2">{hint}</p>
-      <div className={`relative bg-gray-50 border border-dashed border-gray-300 rounded-lg overflow-hidden ${wide ? 'aspect-[12/5]' : 'aspect-square max-w-[220px]'}`}>
+      <div className={`relative bg-gray-50 border border-dashed border-gray-300 rounded-lg overflow-hidden ${wide ? 'aspect-video' : 'aspect-[9/16] max-w-[180px]'}`}>
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={value.url} alt="" className="w-full h-full object-cover" />
@@ -206,8 +206,8 @@ export default function AdminSlidesPage() {
 
       <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
         <p className="text-sm text-gray-600 bg-white rounded-xl shadow-sm p-4">
-          Slides you add here show first, in this order, and change every 6 seconds. While there are none, the homepage shows a slide for each product
-          automatically. Below the slideshow, every product also gets its own slide with its photo, uses and benefits, taken from the product details.
+          Slides you add here fill the first screen of the homepage, in this order, and change every 6 seconds. While there are none, the homepage shows a
+          slide for each product automatically. Upload a wide image for laptops and a tall one for phones so each fills the screen exactly.
         </p>
 
         {editing !== null && (
@@ -222,13 +222,13 @@ export default function AdminSlidesPage() {
             <ImagePicker
               wide
               label="Slide image (required)"
-              hint="Wide banner for laptops and tablets. Best size 1920 × 800 px."
+              hint="Wide image for laptops and desktops. Best size 1920 × 1080 px; keep text away from the edges."
               value={form.image}
               onChange={(image) => setForm((f) => ({ ...f, image }))}
             />
             <ImagePicker
-              label="Phone image (optional)"
-              hint="Square image for phones, 1080 × 1080 px. Without it, phones show the slide image in full."
+              label="Phone image (recommended)"
+              hint="Tall image for phones and tablets, 1080 × 1920 px. Without it, phones show the wide image with space around it."
               value={form.mobileImage}
               onChange={(mobileImage) => setForm((f) => ({ ...f, mobileImage }))}
             />
@@ -299,7 +299,7 @@ export default function AdminSlidesPage() {
             {slides.map((s, i) => (
               <li key={s._id} className="bg-white rounded-xl shadow-sm p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.image.url} alt="" className={`w-full sm:w-56 aspect-[12/5] object-cover rounded-lg ${s.isActive ? '' : 'opacity-40'}`} />
+                <img src={s.image.url} alt="" className={`w-full sm:w-56 aspect-video object-cover rounded-lg ${s.isActive ? '' : 'opacity-40'}`} />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-black truncate">{s.title || `Slide ${i + 1}`}</p>
                   <p className="text-xs text-gray-500 truncate">{s.link ? `Opens ${s.link}` : 'Image only'}</p>

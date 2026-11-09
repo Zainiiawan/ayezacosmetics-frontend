@@ -13,7 +13,7 @@ const MAX_SLIDES = 10;
 
 const mainImage = (p: Product) => (p.images?.find((i) => i.isMain) || p.images?.[0])?.url;
 
-// wide 1920x800 banners for tablets and desktops; products without one show their poster
+// full-screen 1920x1080 banners for laptops and desktops; phones and tablets show the product's poster
 const BANNERS: Record<string, string> = {
   'ayeza-radiance-face-wash': '/brand/banners/radiance-face-wash.jpg',
   'ayeza-beauty-cream': '/brand/banners/beauty-cream.jpg',
@@ -25,9 +25,9 @@ interface HeroItem {
   key: string;
   href?: string;
   label: string;
-  /** shown on tablets and desktops */
+  /** shown on laptops and desktops */
   wide: string;
-  /** shown on phones */
+  /** shown on phones and tablets */
   narrow: string;
   /** the phone image was made for a phone screen, so it may fill the frame */
   narrowFills: boolean;
@@ -56,7 +56,7 @@ const fromProduct = (p: Product): HeroItem => {
     label: `${p.name}, view product`,
     wide: BANNERS[p.slug] ?? poster,
     narrow: poster,
-    narrowFills: false,
+    narrowFills: true,
   };
 };
 
@@ -96,11 +96,11 @@ export default function HeroSlider({ slides: adminSlides = [], products }: { sli
   const body = (
     <>
       <picture>
-        <source media="(min-width: 640px)" srcSet={current.wide} />
+        <source media="(min-width: 1024px)" srcSet={current.wide} />
         <img
           src={current.narrow}
           alt={current.title || current.label}
-          className={`w-full h-full ${current.narrowFills ? 'object-cover' : 'object-contain'} sm:object-cover`}
+          className={`w-full h-full ${current.narrowFills ? 'object-cover' : 'object-contain'} lg:object-cover`}
           fetchPriority={index === 0 ? 'high' : 'auto'}
         />
       </picture>
@@ -124,7 +124,8 @@ export default function HeroSlider({ slides: adminSlides = [], products }: { sli
 
   return (
     <section
-      className="relative overflow-hidden bg-tile aspect-square sm:aspect-[12/5]"
+      // exactly one screen tall under the fixed header, so nothing peeks in half-cut below it
+      className="relative overflow-hidden bg-tile h-[calc(100svh-98px)] lg:h-[calc(100svh-110px)] min-h-[420px]"
       aria-roledescription="carousel"
       aria-label="Featured"
       // pause while a mouse rests on it; taps on phones should not stop the slideshow
