@@ -1,7 +1,8 @@
 import React from 'react';
 
-export default function CategorySeoContent({ slug }: { slug: string }) {
-  if (slug === 'face-wash') {
+export default function CategorySeoContent({ slug, name }: { slug: string; name?: string }) {
+  // only while the category is still about face wash; a renamed one gets no stale article
+  if (slug === 'face-wash' && (!name || /face\s*wash/i.test(name))) {
     return (
       <div className="mt-16 border-t border-gray-200 pt-16 pb-8 bg-gray-50 rounded-xl px-4 md:px-8">
         <div className="container mx-auto max-w-4xl prose prose-rose">

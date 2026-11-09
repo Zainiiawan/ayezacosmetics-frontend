@@ -7,6 +7,21 @@ import Button from '@/components/ui/Button';
 import { categoryApi, brandApi, Category, Brand } from '@/lib/api/categoryApi';
 import { mediaApi } from '@/lib/api/mediaApi';
 import { revalidateCategoriesCache } from '@/app/actions/revalidate';
+import { articleFitsCategory } from '@/lib/categoryText';
+
+// plain text typed in the admin becomes simple HTML: blank lines split paragraphs, "- " lines become a list
+const articleToHtml = (text: string) => {
+  const t = text.trim();
+  if (!t || /<[a-z][\s\S]*>/i.test(t)) return t;
+  return t
+    .split(/\n\s*\n/)
+    .map((block) => {
+      const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
+      if (lines.every((l) => l.startsWith('- '))) return `<ul>${lines.map((l) => `<li>${l.slice(2)}</li>`).join('')}</ul>`;
+      return `<p>${lines.join('<br>')}</p>`;
+    })
+    .join('');
+};
 
 type Tab = 'categories' | 'brands';
 
@@ -19,6 +34,7 @@ export default function AdminCatalogPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [article, setArticle] = useState('');
   const [image, setImage] = useState<{ url: string; publicId: string; alt?: string } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -45,6 +61,7 @@ export default function AdminCatalogPage() {
     setEditingId(null);
     setName('');
     setDescription('');
+    setArticle('');
     setImage(null);
     setError('');
     setModalOpen(true);
@@ -54,6 +71,7 @@ export default function AdminCatalogPage() {
     setEditingId(item._id);
     setName(item.name);
     setDescription(item.description || '');
+    setArticle(('seoContent' in item && item.seoContent) || '');
     if ('image' in item && item.image) {
       setImage(item.image as { url: string; publicId: string; alt?: string });
     } else {
@@ -74,6 +92,9 @@ export default function AdminCatalogPage() {
       const payload: any = { name: name.trim(), description: description.trim() || undefined };
       if (tab === 'categories' && image) {
         payload.image = image;
+      }
+      if (tab === 'categories') {
+        payload.seoContent = articleToHtml(article);
       }
       if (tab === 'categories') {
         if (editingId) await categoryApi.update(editingId, payload);
@@ -265,6 +286,31 @@ export default function AdminCatalogPage() {
                   placeholder="Short description"
                 />
               </div>
+              {tab === 'categories' && (
+                <div>
+                  <div className="flex items-baseline justify-between gap-2 mb-1">
+                    <label htmlFor="category-article" className="block text-sm font-medium text-gray-700">Category page article (optional)</label>
+                    {article && (
+                      <button type="button" onClick={() => setArticle('')} className="text-xs text-red-600 hover:underline">
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <textarea
+                    id="category-article"
+                    value={article}
+                    onChange={(e) => setArticle(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:border-rose-gold focus:ring-2 focus:ring-rose-gold focus:ring-opacity-20"
+                    rows={6}
+                    placeholder={'Longer text shown at the bottom of the category page.\nLeave a blank line between paragraphs. Start lines with "- " for a list.'}
+                  />
+                  {article && name.trim() && !articleFitsCategory(name, articleToHtml(article)) && (
+                    <p className="mt-1 text-xs text-amber-700">
+                      This article does not mention &ldquo;{name.trim()}&rdquo; in its title, so the website hides it. Edit it for this category or press Clear.
+                    </p>
+                  )}
+                </div>
+              )}
               {tab === 'categories' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Image (optional)</label>

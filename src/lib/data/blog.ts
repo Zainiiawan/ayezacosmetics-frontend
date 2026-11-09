@@ -172,7 +172,7 @@ export const blogPosts: BlogPost[] = [
         <li><strong>Gentle ingredients:</strong> such as aloe vera and vitamin B5.</li>
         <li><strong>Suitable for daily use:</strong> you will wash your face twice a day, every day.</li>
       </ul>
-      <p><a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, and is suitable for all skin types. Browse our <a href="/categories/face-wash" class="text-crimson font-medium underline underline-offset-4">face wash collection</a>.</p>
+      <p><a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, and is suitable for all skin types. Browse our <a href="/shop" class="text-crimson font-medium underline underline-offset-4">full range</a>.</p>
 
       <h2>How to wash your face</h2>
       <p>Wet your face with lukewarm water, lather a small amount between your palms, massage gently for about 30 to 60 seconds and rinse well. Pat dry with a clean towel and follow with a moisturiser. If you have persistent acne, please consult a dermatologist.</p>

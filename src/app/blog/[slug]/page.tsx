@@ -1,5 +1,4 @@
 import { Metadata, ResolvingMetadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { blogPosts } from '@/lib/data/blog';
@@ -7,6 +6,11 @@ import TableOfContents from '@/components/blog/TableOfContents';
 import BlogCard from '@/components/blog/BlogCard';
 import { Calendar, Clock, User, ChevronRight } from 'lucide-react';
 import { config } from '@/lib/config';
+import { getCatalogue, sortByTopic } from '@/lib/server/catalog';
+import BlogCover from '@/components/blog/BlogCover';
+import ShopTheRange from '@/components/blog/ShopTheRange';
+
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -86,6 +90,10 @@ export default async function BlogPostPage({ params }: Props) {
       .slice(0, 2 - relatedPosts.length);
     relatedPosts.push(...additional);
   }
+
+  // the article's own topic first, then the rest of the range
+  const products = sortByTopic(await getCatalogue(), [...post.categories, ...post.tags, post.title]);
+  const postIndex = blogPosts.findIndex((p) => p.slug === post.slug);
 
   const formattedDate = new Date(post.publishDate).toLocaleDateString('en-US', {
     month: 'long',
@@ -208,15 +216,8 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Featured Image */}
       <div className="container mx-auto px-4 py-8 mb-8">
-        <div className="max-w-4xl mx-auto relative w-full aspect-square md:aspect-video bg-gray-50 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
-          <Image
-            src={post.featuredImage.url}
-            alt={post.featuredImage.alt}
-            fill
-            priority
-            className="object-contain object-center p-4"
-            sizes="(max-width: 1024px) 100vw, 1024px"
-          />
+        <div className="max-w-4xl mx-auto relative w-full aspect-[4/3] md:aspect-video bg-gray-50 rounded-2xl overflow-hidden shadow-sm">
+          <BlogCover post={post} products={products} offset={postIndex} large />
         </div>
       </div>
 
@@ -275,14 +276,21 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </div>
 
+      {/* Every product on sale, the article's topic first */}
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          <ShopTheRange products={products} />
+        </div>
+      </div>
+
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
         <div className="container mx-auto px-4 mt-20 pt-16 border-t border-gray-200">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-serif font-bold text-gray-900 mb-8 text-center">Read Next</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {relatedPosts.map(post => (
-                <BlogCard key={post.slug} post={post} />
+              {relatedPosts.map((related) => (
+                <BlogCard key={related.slug} post={related} products={products} offset={blogPosts.findIndex((p) => p.slug === related.slug)} />
               ))}
             </div>
           </div>

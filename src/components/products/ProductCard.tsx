@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { m as motion } from 'framer-motion';
 import { ShoppingBag, Heart, Star } from 'lucide-react';
 import { cn, formatPrice, optimizeCloudinaryUrl, getCloudinarySrcSet } from '@/lib/utils';
-import { getDiscountPercentage, getEffectivePrice, getDiscountDisplay } from '@/lib/productUtils';
+import { getEffectivePrice } from '@/lib/productUtils';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem as addToCart } from '@/store/slices/cartSlice';
 import { addItem as addToWishlist, removeItem as removeFromWishlist } from '@/store/slices/wishlistSlice';
@@ -40,7 +40,6 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
 
   const mainImage = product.images?.find((img) => img.isMain) || product.images?.[0];
   const effectivePrice = getEffectivePrice(product);
-  const discountDisplay = getDiscountDisplay(product);
   const imageSrc = mainImage?.url ? optimizeCloudinaryUrl(mainImage.url, 600, true) : PLACEHOLDER;
   const imageSrcSet = mainImage?.url ? getCloudinarySrcSet(mainImage.url, undefined, true) : '';
 
@@ -101,7 +100,8 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
     }
   };
 
-  const badge = product.isComingSoon ? 'Coming soon' : discountDisplay ? discountDisplay : product.isFeatured ? 'Featured' : null;
+  // the saving sits with the price, never on the photo, where it could be read as the price itself
+  const badge = product.isComingSoon ? 'Coming soon' : product.isFeatured ? 'Featured' : null;
   const onSale = product.basePrice > effectivePrice;
   const iconBtn =
     'w-10 h-10 rounded-full bg-white text-ink flex items-center justify-center hover:text-crimson transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson';
@@ -159,9 +159,16 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
         <Link href={`/products/${product.slug}`}>
           <h3 className="font-serif text-[1rem] sm:text-[1.08rem] text-ink leading-snug line-clamp-2 hover:text-crimson transition-colors">{product.name}</h3>
         </Link>
-        <p className="mt-1.5 text-[0.95rem]">
+        <p className="mt-1.5 text-[0.95rem] flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className={cn('font-medium', onSale ? 'text-crimson' : 'text-ink')}>{formatPrice(effectivePrice)}</span>
-          {onSale && <span className="ml-2 text-muted line-through text-[0.85rem]">{formatPrice(product.basePrice)}</span>}
+          {onSale && (
+            <>
+              <span className="text-muted line-through text-[0.85rem]" aria-label={`Was ${formatPrice(product.basePrice)}`}>
+                {formatPrice(product.basePrice)}
+              </span>
+              <span className="text-[0.72rem] font-medium text-crimson bg-blush px-1.5 py-0.5 rounded">Save {formatPrice(product.basePrice - effectivePrice)}</span>
+            </>
+          )}
         </p>
         {!product.isComingSoon && (
           <button

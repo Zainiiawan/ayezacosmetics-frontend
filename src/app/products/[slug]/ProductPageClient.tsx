@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { m as motion } from 'framer-motion';
 import { ShoppingCart, Heart, Star, Share2, Truck, Shield, RefreshCw, Check, Zap, Play } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
-import { getDiscountDisplay, getEffectivePrice } from '@/lib/productUtils';
+import { getEffectivePrice } from '@/lib/productUtils';
 import Button from '@/components/ui/Button';
 import ProductReviews from '@/components/products/ProductReviews';
 import { productApi } from '@/lib/api/productApi';
@@ -65,7 +65,6 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
   }
 
   const effectivePrice = getEffectivePrice(product);
-  const discountDisplay = getDiscountDisplay(product);
   const brandName = typeof product.brand === 'object' ? product.brand?.name : product.brand;
   const images = product.images?.length ? product.images : [{ url: PLACEHOLDER, alt: product.name, isMain: true }];
 
@@ -184,10 +183,6 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
                 <div className="absolute top-4 left-4 bg-orange-500/90 backdrop-blur text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg border border-orange-400/50 uppercase tracking-wider">
                   Coming Soon
                 </div>
-              ) : discountDisplay ? (
-                <div className="absolute top-4 left-4 bg-rose-gold text-white px-3 py-1 rounded-full text-sm font-bold">
-                  {discountDisplay}
-                </div>
               ) : null}
             </div>
             {(images.length > 1 || (images.length === 1 && product.video)) && (
@@ -242,7 +237,12 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
             <div className="flex items-center gap-4">
               <span className="text-3xl font-bold text-gray-900">{formatPrice(effectivePrice)}</span>
               {product.basePrice > effectivePrice && (
-                <span className="text-xl text-gray-500 line-through">{formatPrice(product.basePrice)}</span>
+                <>
+                  <span className="text-xl text-gray-500 line-through" aria-label={`Was ${formatPrice(product.basePrice)}`}>
+                    {formatPrice(product.basePrice)}
+                  </span>
+                  <span className="text-sm font-medium text-crimson bg-blush px-2 py-1 rounded">Save {formatPrice(product.basePrice - effectivePrice)}</span>
+                </>
               )}
             </div>
 

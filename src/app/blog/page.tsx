@@ -3,6 +3,10 @@ import { blogPosts } from '@/lib/data/blog';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogSidebar from '@/components/blog/BlogSidebar';
 import Link from 'next/link';
+import { getCatalogue } from '@/lib/server/catalog';
+import ShopTheRange from '@/components/blog/ShopTheRange';
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Beauty Blog & Skincare Tips | AZEEORA',
@@ -15,7 +19,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogListingPage() {
+export default async function BlogListingPage() {
+  const products = await getCatalogue();
   const featuredPost = blogPosts[0];
   const remainingPosts = blogPosts.slice(1);
   
@@ -81,7 +86,7 @@ export default function BlogListingPage() {
             {featuredPost && (
               <section>
                 <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Featured Story</h2>
-                <BlogCard post={featuredPost} featured />
+                <BlogCard post={featuredPost} featured products={products} offset={0} />
               </section>
             )}
 
@@ -89,11 +94,12 @@ export default function BlogListingPage() {
             <section>
               <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Latest Articles</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {remainingPosts.map((post) => (
-                  <BlogCard key={post.slug} post={post} />
+                {remainingPosts.map((post, i) => (
+                  <BlogCard key={post.slug} post={post} products={products} offset={i + 1} />
                 ))}
               </div>
             </section>
+            <ShopTheRange products={products} title="Shop what we write about" />
           </div>
 
           <div className="lg:w-1/3 xl:w-1/4">

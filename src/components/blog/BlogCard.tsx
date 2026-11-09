@@ -1,14 +1,19 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { BlogPost } from '@/lib/data/blog';
+import { Product } from '@/lib/api/productApi';
+import BlogCover from './BlogCover';
 import { Calendar, Clock, ChevronRight } from 'lucide-react';
 
 interface BlogCardProps {
   post: BlogPost;
   featured?: boolean;
+  /** live products for the cover; without them the article's own image shows */
+  products?: Product[];
+  /** which product the cover starts at, so neighbouring cards differ */
+  offset?: number;
 }
 
-const BlogCard = ({ post, featured = false }: BlogCardProps) => {
+const BlogCard = ({ post, featured = false, products = [], offset = 0 }: BlogCardProps) => {
   const formattedDate = new Date(post.publishDate).toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -19,15 +24,8 @@ const BlogCard = ({ post, featured = false }: BlogCardProps) => {
     return (
       <Link href={`/blog/${post.slug}`} className="group block w-full bg-tile overflow-hidden flex flex-col">
         <div className="flex flex-col md:flex-row h-full">
-          <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto overflow-hidden bg-gray-100">
-            <Image
-              src={post.featuredImage.url}
-              alt={post.featuredImage.alt}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-            />
+          <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:min-h-[360px] overflow-hidden bg-gray-100">
+            <BlogCover post={post} products={products} offset={offset} large />
           </div>
           <div className="p-8 md:p-12 md:w-1/2 flex flex-col justify-center">
             <div className="flex items-center gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
@@ -64,14 +62,8 @@ const BlogCard = ({ post, featured = false }: BlogCardProps) => {
   return (
     <Link href={`/blog/${post.slug}`} className="group flex flex-col h-full bg-tile overflow-hidden">
       <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
-        <Image
-          src={post.featuredImage.url}
-          alt={post.featuredImage.alt}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        {post.categories[0] && (
+        <BlogCover post={post} products={products} offset={offset} />
+        {products.length === 0 && post.categories[0] && (
           <div className="absolute top-4 left-4">
             <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-black text-xs font-medium uppercase tracking-wider rounded-full">
               {post.categories[0]}
