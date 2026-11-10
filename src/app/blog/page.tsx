@@ -3,6 +3,7 @@ import { blogPosts } from '@/lib/data/blog';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogSidebar from '@/components/blog/BlogSidebar';
 import Link from 'next/link';
+import { getBaseUrl } from '@/lib/config';
 import { getCatalogue } from '@/lib/server/catalog';
 import ShopTheRange from '@/components/blog/ShopTheRange';
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Beauty Blog & Skincare Tips | AZEEORA',
     description: 'Discover the latest skincare tips, makeup tutorials, and beauty secrets from AZEEORA experts.',
-    url: 'https://ayezacosmetics.com/blog',
+    url: `${getBaseUrl()}/blog`,
     type: 'website',
   },
 };
@@ -34,11 +35,11 @@ export default async function BlogListingPage() {
     '@type': 'CollectionPage',
     name: 'AZEEORA Beauty Blog',
     description: 'Expert skincare tips, makeup tutorials, and beauty news.',
-    url: 'https://ayezacosmetics.com/blog',
+    url: `${getBaseUrl()}/blog`,
     hasPart: blogPosts.map((post) => ({
       '@type': 'Article',
       headline: post.title,
-      url: `https://ayezacosmetics.com/blog/\${post.slug}`,
+      url: `${getBaseUrl()}/blog/${post.slug}`,
       author: {
         '@type': 'Person',
         name: post.author,

@@ -16,7 +16,7 @@ export const config = {
     if (process.env.NODE_ENV === 'development') {
       return 'http://localhost:3000';
     }
-    return process.env.NEXT_PUBLIC_APP_URL || 'https://ayezacosmetics.store';
+    return process.env.NEXT_PUBLIC_APP_URL || 'https://azeeoracosmetics.com';
   }
 };
 
