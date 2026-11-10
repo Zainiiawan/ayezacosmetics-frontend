@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { config, getBaseUrl } from '@/lib/config';
 import { blogPosts } from '@/lib/data/blog';
+import { rebrand } from '@/lib/rebrand';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getBaseUrl();
@@ -34,8 +35,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     sitemapEntries.push({
       url: `${base}/blog/${post.slug}`,
       lastModified: new Date(post.publishDate),
-      changeFrequency: 'monthly',
-      priority: 0.7,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      ...(post.featuredImage?.url ? { images: [`${post.featuredImage.url.startsWith('http') ? post.featuredImage.url : `${base}${post.featuredImage.url}`}`] } : {}),
     });
   });
 
@@ -46,14 +48,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     while (hasNext) {
       const productsRes = await fetch(`${config.apiUrl}/products?limit=100&page=${page}`, { next: { revalidate: 3600 } });
       if (productsRes.ok) {
-        const { data: { products, pagination } } = await productsRes.json();
+        const resJson = rebrand(await productsRes.json());
+        const { data: { products, pagination } } = resJson;
         if (Array.isArray(products)) {
           products.forEach((product: any) => {
+            const productSlug = product.slug?.replace(/^ayeza-/, 'azeeora-') || product.slug;
+            const productImages = (product.images || [])
+              .map((img: any) => (typeof img === 'string' ? img : img?.url))
+              .filter(Boolean);
+
             sitemapEntries.push({
-              url: `${base}/products/${product.slug}`,
+              url: `${base}/products/${productSlug}`,
               lastModified: new Date(product.updatedAt || now),
               changeFrequency: 'weekly',
-              priority: 0.9,
+              priority: 0.95,
+              ...(productImages.length > 0 ? { images: productImages } : {}),
             });
           });
         }
@@ -67,11 +76,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch categories
     const categoriesRes = await fetch(`${config.apiUrl}/categories`, { next: { revalidate: 3600 } });
     if (categoriesRes.ok) {
-      const { data } = await categoriesRes.json();
+      const catJson = rebrand(await categoriesRes.json());
+      const { data } = catJson;
       if (Array.isArray(data)) {
         data.forEach((category: any) => {
+          const categorySlug = category.slug?.replace(/^ayeza-/, 'azeeora-') || category.slug;
           sitemapEntries.push({
-            url: `${base}/categories/${category.slug}`,
+            url: `${base}/categories/${categorySlug}`,
             lastModified: new Date(category.updatedAt || now),
             changeFrequency: 'weekly',
             priority: 0.8,

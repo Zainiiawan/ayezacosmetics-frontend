@@ -103,6 +103,7 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
   // the saving sits with the price, never on the photo, where it could be read as the price itself
   const badge = product.isComingSoon ? 'Coming soon' : product.isFeatured ? 'Featured' : null;
   const onSale = product.basePrice > effectivePrice;
+  const safeSlug = product.slug?.replace(/^ayeza-/, 'azeeora-') || product.slug;
   const iconBtn =
     'w-10 h-10 rounded-full bg-white text-ink flex items-center justify-center hover:text-crimson transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson';
 
@@ -113,7 +114,7 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
       onHoverEnd={() => setIsHovered(false)}
     >
       <div className="relative bg-blush overflow-hidden">
-        <Link href={`/products/${product.slug}`} className="block aspect-square" aria-label={product.name}>
+        <Link href={`/products/${safeSlug}`} className="block aspect-square" aria-label={product.name}>
           <img
             src={imageSrc}
             {...(imageSrcSet ? { srcSet: imageSrcSet, sizes: '(max-width: 768px) 50vw, 25vw' } : {})}
@@ -156,7 +157,7 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
             <span className="text-[0.75rem] text-muted">({product.reviewCount})</span>
           </div>
         )}
-        <Link href={`/products/${product.slug}`}>
+        <Link href={`/products/${safeSlug}`}>
           <h3 className="font-serif text-[1rem] sm:text-[1.08rem] text-ink leading-snug line-clamp-2 hover:text-crimson transition-colors">{product.name}</h3>
         </Link>
         <p className="mt-1.5 text-[0.95rem] flex flex-wrap items-baseline gap-x-2 gap-y-0.5">

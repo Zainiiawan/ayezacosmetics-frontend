@@ -19,6 +19,22 @@ const BANNERS: Record<string, string> = {
   'ayeza-beauty-cream': '/brand/banners/beauty-cream.jpg',
   'azeeora-radiance-face-wash': '/brand/banners/radiance-face-wash.jpg',
   'azeeora-beauty-cream': '/brand/banners/beauty-cream.jpg',
+  'azeeora-hair-growth-serum-30ml': '/brand/banners/hair-serum.jpg',
+  'hair-serum': '/brand/banners/hair-serum.jpg',
+  'azeeora-hair-serum': '/brand/banners/hair-serum.jpg',
+  'azeeora-glutathione-skin-polish-kit-or-oxidizing-emulsion-and-dust-free-blonder-powder': '/brand/banners/skin-polish.jpg',
+  'azeeora-glutathione-skin-polish-kit': '/brand/banners/skin-polish.jpg',
+  'skin-polish': '/brand/banners/skin-polish.jpg',
+};
+
+const getBanner = (slug: string): string | undefined => {
+  if (BANNERS[slug]) return BANNERS[slug];
+  const s = slug.toLowerCase();
+  if (s.includes('serum') || s.includes('hair')) return '/brand/banners/hair-serum.jpg';
+  if (s.includes('polish')) return '/brand/banners/skin-polish.jpg';
+  if (s.includes('cream')) return '/brand/banners/beauty-cream.jpg';
+  if (s.includes('wash') || s.includes('cleanser')) return '/brand/banners/radiance-face-wash.jpg';
+  return undefined;
 };
 
 interface HeroItem {
@@ -38,7 +54,9 @@ interface HeroItem {
 
 const fromSlide = (s: Slide): HeroItem => ({
   key: s._id,
-  href: s.link || undefined,
+  href: s.link
+    ? s.link.replace(/\/products\/ayeza-/gi, '/products/azeeora-').replace(/^ayeza-/i, 'azeeora-')
+    : undefined,
   label: s.title || 'AZEEORA',
   wide: optimizeCloudinaryUrl(s.image.url, 1920, false),
   narrow: optimizeCloudinaryUrl((s.mobileImage ?? s.image).url, 1000, false),
@@ -50,11 +68,13 @@ const fromSlide = (s: Slide): HeroItem => ({
 
 const fromProduct = (p: Product): HeroItem => {
   const poster = optimizeCloudinaryUrl(mainImage(p)!, 1600, false);
+  const banner = getBanner(p.slug);
+  const safeSlug = p.slug.replace(/^ayeza-/, 'azeeora-');
   return {
     key: p._id,
-    href: `/products/${p.slug}`,
+    href: `/products/${safeSlug}`,
     label: `${p.name}, view product`,
-    wide: BANNERS[p.slug] ?? poster,
+    wide: banner ?? poster,
     narrow: poster,
     narrowFills: true,
   };

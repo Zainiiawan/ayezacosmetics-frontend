@@ -1,13 +1,20 @@
 import { Metadata } from 'next';
+import { notFound, permanentRedirect } from 'next/navigation';
 import CategoryPageClient from './CategoryPageClient';
 import { config } from '@/lib/config';
 import { rebrand } from '@/lib/rebrand';
 
 async function getCategoryBySlug(slug: string) {
   try {
-    const res = await fetch(`${config.apiUrl}/categories/${slug}`, {
+    let res = await fetch(`${config.apiUrl}/categories/${slug}`, {
       next: { revalidate: 3600 },
     });
+    if (!res.ok && slug.startsWith('azeeora-')) {
+      const fallbackSlug = slug.replace(/^azeeora-/, 'ayeza-');
+      res = await fetch(`${config.apiUrl}/categories/${fallbackSlug}`, {
+        next: { revalidate: 3600 },
+      });
+    }
     if (!res.ok) return null;
     const json = rebrand(await res.json());
     return json.data;
@@ -63,6 +70,10 @@ export async function generateMetadata({
 
 export default async function CategoryPageServer({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (slug.startsWith('ayeza-') || slug.startsWith('ayezabeauty')) {
+    const targetSlug = slug.replace(/^ayeza-?/, 'azeeora-');
+    permanentRedirect(`/categories/${targetSlug}`);
+  }
   const data = await getCategoryBySlug(slug);
   const category = data?.category;
 

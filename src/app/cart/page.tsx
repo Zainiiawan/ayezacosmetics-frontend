@@ -162,7 +162,7 @@ export default function CartPage() {
               >
                 <div className="flex gap-4">
                   <Link
-                    href={`/products/${item.product.slug}`}
+                    href={`/products/${item.product.slug?.replace(/^ayeza-/, 'azeeora-') || item.product.slug}`}
                     className="w-24 h-24 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden"
                   >
                     {item.product.images?.[0]?.url ? (
@@ -180,7 +180,7 @@ export default function CartPage() {
 
                   <div className="flex-1">
                     <Link
-                      href={`/products/${item.product.slug}`}
+                      href={`/products/${item.product.slug?.replace(/^ayeza-/, 'azeeora-') || item.product.slug}`}
                       className="font-semibold text-black hover:text-rose-gold transition-colors"
                     >
                       {item.product.name}

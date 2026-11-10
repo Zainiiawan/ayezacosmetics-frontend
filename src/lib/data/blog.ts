@@ -20,6 +20,73 @@ export interface BlogPost {
 // Posts only recommend and link products AZEEORA actually sells.
 export const blogPosts: BlogPost[] = [
   {
+    slug: "best-whitening-cream-in-pakistan",
+    title: "Best Whitening Cream in Pakistan: How to Choose a Safe & Effective Formula",
+    excerpt: "Looking for the best whitening cream in Pakistan for glowing, blemish-free skin? Here is what dermatologists look for and why safe, mercury-free ingredients matter.",
+    content: `
+      <h2>The Search for the Best Whitening Cream in Pakistan</h2>
+      <p>With thousands of fairness creams in the market, finding the <strong>best whitening cream in Pakistan</strong> that delivers genuine glowing skin without dangerous side effects can feel overwhelming. Many cheap night creams contain harmful steroids, mercury, or harsh bleaching agents that permanently damage your skin's protective barrier.</p>
+
+      <h2>What to Look For in a Safe Whitening & Brightening Cream</h2>
+      <ul>
+        <li><strong>100% Mercury & Steroid Free:</strong> Safe creams never promise overnight artificial bleaching. They work naturally to brighten the skin tone safely.</li>
+        <li><strong>Nourishing Active Ingredients:</strong> High-potency vitamins like Vitamin B3 (Niacinamide), Licorice Root, and natural antioxidants inhibit melanin production at the root.</li>
+        <li><strong>Deep Overnight Repair:</strong> A quality night cream delivers intense hydration and locks in essential moisture while your skin regenerates during sleep.</li>
+      </ul>
+
+      <h2>Why AZEEORA Beauty Cream Is a Top Choice</h2>
+      <p>Formulated specifically for Pakistani climate, heat, and humidity, <a href="/products/azeeora-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> is designed to target dark spots, sun pigmentation, and dullness without any harmful chemicals. It absorbs effortlessly, leaving your skin soft, velvety, and luminous by morning.</p>
+
+      <h2>The Ideal Night Whitening Routine</h2>
+      <ol>
+        <li>Wash away the day's sweat and pollution with <a href="/products/azeeora-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a>.</li>
+        <li>Smooth a small amount of <a href="/products/azeeora-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> onto clean face and neck in upward strokes.</li>
+        <li>Always apply broad-spectrum sunscreen every morning to protect your newly brightened skin.</li>
+      </ol>
+    `,
+    featuredImage: { url: "/brand/banners/beauty-cream.jpg", alt: "AZEEORA Whitening Beauty Cream" },
+    author: "AZEEORA Skincare Team",
+    publishDate: "2026-10-15",
+    readingTime: "5 min read",
+    categories: ["Skincare Routine", "Brightening"],
+    tags: ["Best Whitening Cream in Pakistan", "Glowing Skin", "Beauty Cream", "Night Cream"],
+    faqs: [
+      { question: "Which is the safest whitening cream in Pakistan?", answer: "AZEEORA Beauty Cream is 100% free from mercury and steroids, using dermatologically tested skin-brightening actives that nourish your natural skin barrier." },
+      { question: "How long does it take for whitening cream to work?", answer: "Healthy skin takes 2 to 4 weeks to naturally regenerate. With consistent nightly use, noticeable radiance and fading of spots is typically seen in 14 days." }
+    ],
+  },
+  {
+    slug: "best-hair-serum-in-pakistan",
+    title: "Best Hair Serum in Pakistan: Complete Guide to Frizz-Free, Shiny & Strong Hair",
+    excerpt: "Struggling with dry, frizzy, or thinning hair? Discover how using the best hair serum in Pakistan transforms brittle strands into silky, salon-smooth hair.",
+    content: `
+      <h2>Why You Need a Dedicated Hair Serum in Pakistan</h2>
+      <p>Extreme summer heat, hard water, and winter dryness in Pakistan take a severe toll on hair health, leading to split ends, stubborn frizz, and breakage. While conditioners provide surface moisture, a premium <strong>hair serum</strong> seals the hair cuticle, locks in vital nutrients, and creates an invisible shield against humidity.</p>
+
+      <h2>Key Benefits of AZEEORA Hair Growth Serum</h2>
+      <p>Our <a href="/products/azeeora-hair-growth-serum-30ml" class="text-crimson font-medium underline underline-offset-4">AZEEORA Hair Growth Serum (30ml)</a> is formulated with a concentrated blend of nourishing botanical oils designed to address the root causes of hair damage:</p>
+      <ul>
+        <li><strong>Frizz Control:</strong> Instantly tames flyaways and humidity puffiness for smooth, manageable locks.</li>
+        <li><strong>Follicle Stimulation:</strong> Nourishes weak roots to promote thicker, faster hair growth and reduce daily fall.</li>
+        <li><strong>Heat Protection:</strong> Protects delicate strands from hair dryers, curling irons, and straightening heat.</li>
+        <li><strong>Glass-Hair Shine:</strong> Delivers high-gloss shine without any sticky, greasy or heavy residue.</li>
+      </ul>
+
+      <h2>How to Apply Hair Serum for Maximum Shine</h2>
+      <p>For the best results, always apply 2 to 4 drops of <a href="/products/azeeora-hair-growth-serum-30ml" class="text-crimson font-medium underline underline-offset-4">AZEEORA Hair Serum</a> to damp, towel-dried hair before styling. Concentrate on mid-lengths and ends where hair is driest. For scalp therapy, massage a few drops into your scalp once or twice weekly before bed.</p>
+    `,
+    featuredImage: { url: "/brand/banners/hair-serum.jpg", alt: "AZEEORA Hair Growth Serum" },
+    author: "AZEEORA Hair Care Team",
+    publishDate: "2026-10-20",
+    readingTime: "4 min read",
+    categories: ["Hair Care"],
+    tags: ["Best Hair Serum in Pakistan", "Hair Serum", "Hair Growth", "Frizz Control"],
+    faqs: [
+      { question: "Can hair serum be used daily in Pakistan?", answer: "Yes, a lightweight serum like AZEEORA Hair Growth Serum can be used daily after washing or on dry ends to tame frizz and protect against environmental dust and heat." },
+      { question: "Does hair serum promote hair growth?", answer: "When formulated with active nourishing oils, massaging serum into the scalp stimulates blood circulation and strengthens roots, reducing breakage and encouraging healthy growth." }
+    ],
+  },
+  {
     slug: "ultimate-skincare-routine-for-glowing-skin",
     title: "A Simple Skincare Routine for Glowing Skin",
     excerpt: "Glowing skin is less about a long shelf of products and more about a few steps done every day. Here is a routine that works for Pakistani weather.",
@@ -28,10 +95,10 @@ export const blogPosts: BlogPost[] = [
       <p>Healthy, glowing skin comes from consistency: cleansing, moisturising and protecting from the sun, every single day. A short routine you actually follow beats a long one you skip.</p>
 
       <h2>Step 1: Cleanse, morning and night</h2>
-      <p>Heat, sweat and city dust settle on the skin through the day. A gentle cleanser removes them without stripping the skin's natural moisture. Our <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, so it cleans thoroughly while staying gentle.</p>
+      <p>Heat, sweat and city dust settle on the skin through the day. A gentle cleanser removes them without stripping the skin's natural moisture. Our <a href="/products/azeeora-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, so it cleans thoroughly while staying gentle.</p>
 
       <h2>Step 2: Moisturise</h2>
-      <p>Every skin type needs moisture, oily skin included. Skipping it can leave skin feeling tight and looking dull. Smooth a small amount of <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> over clean skin to keep it soft and comfortable.</p>
+      <p>Every skin type needs moisture, oily skin included. Skipping it can leave skin feeling tight and looking dull. Smooth a small amount of <a href="/products/azeeora-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> over clean skin to keep it soft and comfortable.</p>
 
       <h2>Step 3: Sunscreen, every morning</h2>
       <p>Pakistan's sun is strong for most of the year. Finish your morning routine with a broad-spectrum sunscreen of SPF 30 or higher, and reapply if you are outdoors for long.</p>
@@ -63,7 +130,7 @@ export const blogPosts: BlogPost[] = [
       </ul>
 
       <h2>An easy way to use it</h2>
-      <p>The simplest way to bring niacinamide into your routine is through your cleanser. <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> includes niacinamide alongside aloe vera and vitamin B5, so it fits into the step you already do twice a day. Follow with a moisturiser such as <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a>.</p>
+      <p>The simplest way to bring niacinamide into your routine is through your cleanser. <a href="/products/azeeora-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> includes niacinamide alongside aloe vera and vitamin B5, so it fits into the step you already do twice a day. Follow with a moisturiser such as <a href="/products/azeeora-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a>.</p>
 
       <h2>A note on patience</h2>
       <p>Skincare results build slowly. Use your routine consistently for several weeks, and patch-test any new product before using it on your face.</p>
@@ -91,7 +158,7 @@ export const blogPosts: BlogPost[] = [
       <p>Oily skin still needs moisture. Use a thin layer of a light cream, focusing on the cheeks and areas that feel dry, and go lighter on the T-zone in summer.</p>
 
       <h2>Dull-looking skin</h2>
-      <p>For skin that looks tired, a nourishing cream used every night is a simple place to start. <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> is made to keep skin soft and smooth with daily use.</p>
+      <p>For skin that looks tired, a nourishing cream used every night is a simple place to start. <a href="/products/azeeora-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> is made to keep skin soft and smooth with daily use.</p>
 
       <h2>Season by season</h2>
       <p>Pakistani weather changes a lot through the year. Use a little less in humid summer months and a little more when winter air turns dry. Explore our <a href="/shop" class="text-crimson font-medium underline underline-offset-4">full collection</a> to find your fit.</p>
@@ -114,9 +181,9 @@ export const blogPosts: BlogPost[] = [
 
       <h2>A realistic glass skin routine</h2>
       <ol>
-        <li><strong>Cleanse gently:</strong> wash with <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> to remove sweat, dust and makeup without stripping moisture.</li>
+        <li><strong>Cleanse gently:</strong> wash with <a href="/products/azeeora-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> to remove sweat, dust and makeup without stripping moisture.</li>
         <li><strong>Hydrate:</strong> pat on a hydrating toner or essence if you use one.</li>
-        <li><strong>Moisturise:</strong> lock in moisture with <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a>.</li>
+        <li><strong>Moisturise:</strong> lock in moisture with <a href="/products/azeeora-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a>.</li>
         <li><strong>Protect:</strong> in the morning, finish with a broad-spectrum sunscreen.</li>
       </ol>
 
@@ -139,13 +206,13 @@ export const blogPosts: BlogPost[] = [
       <h2>Day: protect</h2>
       <p>During the day your skin faces sun, heat, dust and pollution. Keep the morning routine light and protective:</p>
       <ol>
-        <li>Cleanse with <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a>.</li>
+        <li>Cleanse with <a href="/products/azeeora-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a>.</li>
         <li>Moisturise lightly.</li>
         <li>Finish with a broad-spectrum sunscreen, SPF 30 or higher.</li>
       </ol>
 
       <h2>Night: nourish</h2>
-      <p>At night your skin rests. Wash away the day's sweat, sunscreen and makeup with <a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a>, then apply <a href="/products/ayeza-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> so your skin stays soft and comfortable through the night.</p>
+      <p>At night your skin rests. Wash away the day's sweat, sunscreen and makeup with <a href="/products/azeeora-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a>, then apply <a href="/products/azeeora-beauty-cream" class="text-crimson font-medium underline underline-offset-4">AZEEORA Beauty Cream</a> so your skin stays soft and comfortable through the night.</p>
 
       <h2>Keep it consistent</h2>
       <p>The best routine is the one you follow every day. Two minutes in the morning and two at night is all it takes.</p>
@@ -172,7 +239,7 @@ export const blogPosts: BlogPost[] = [
         <li><strong>Gentle ingredients:</strong> such as aloe vera and vitamin B5.</li>
         <li><strong>Suitable for daily use:</strong> you will wash your face twice a day, every day.</li>
       </ul>
-      <p><a href="/products/ayeza-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, and is suitable for all skin types. Browse our <a href="/shop" class="text-crimson font-medium underline underline-offset-4">full range</a>.</p>
+      <p><a href="/products/azeeora-radiance-face-wash" class="text-crimson font-medium underline underline-offset-4">AZEEORA Radiance Face Wash</a> is sulfate-free and made with niacinamide, aloe vera and vitamin B5, and is suitable for all skin types. Browse our <a href="/shop" class="text-crimson font-medium underline underline-offset-4">full range</a>.</p>
 
       <h2>How to wash your face</h2>
       <p>Wet your face with lukewarm water, lather a small amount between your palms, massage gently for about 30 to 60 seconds and rinse well. Pat dry with a clean towel and follow with a moisturiser. If you have persistent acne, please consult a dermatologist.</p>

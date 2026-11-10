@@ -40,19 +40,36 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "AZEEORA | Beauty for Pakistani Skin",
+    default: "AZEEORA | Best Whitening Cream, Hair Serum & Skincare in Pakistan",
     template: "%s | AZEEORA",
   },
-  description: "AZEEORA skincare and beauty, made for Pakistani skin and weather. Cash on delivery across Pakistan.",
-  keywords: ["cosmetics", "beauty", "skincare", "makeup", "luxury", "Pakistan"],
+  description: "Shop AZEEORA luxury skincare and beauty in Pakistan: Best Whitening Cream for glowing skin, Hair Growth Serum, Radiance Face Wash, and Glutathione Skin Polish. Fast cash on delivery nationwide.",
+  keywords: [
+    "AZEEORA",
+    "AZEEORA cosmetics",
+    "best whitening cream in pakistan",
+    "best cream whitening",
+    "whitening cream for glowing skin",
+    "night whitening cream",
+    "best hair serum in pakistan",
+    "hair growth serum",
+    "hair serum for frizzy hair",
+    "hair oil serum",
+    "best face wash in pakistan",
+    "face wash for oily skin",
+    "glutathione skin polish",
+    "skin polish kit",
+    "skincare pakistan",
+    "beauty products pakistan"
+  ],
   authors: [{ name: "AZEEORA" }],
   manifest: "/manifest.webmanifest",
   // preview deployments stay out of search results so they never compete with the real domain
   robots: process.env.NEXT_PUBLIC_NOINDEX === "true" ? { index: false, follow: false } : undefined,
 
   openGraph: {
-    title: "AZEEORA | Beauty for Pakistani Skin",
-    description: "AZEEORA skincare and beauty, made for Pakistani skin and weather.",
+    title: "AZEEORA | Best Whitening Cream, Hair Serum & Skincare in Pakistan",
+    description: "Shop AZEEORA luxury skincare and beauty in Pakistan: Best Whitening Cream for glowing skin, Hair Growth Serum, Radiance Face Wash, and Glutathione Skin Polish.",
     type: "website",
     url: APP_URL,
     siteName: "AZEEORA",
@@ -60,8 +77,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AZEEORA | Beauty for Pakistani Skin",
-    description: "AZEEORA skincare and beauty, made for Pakistani skin and weather.",
+    title: "AZEEORA | Best Whitening Cream, Hair Serum & Skincare in Pakistan",
+    description: "Shop AZEEORA luxury skincare and beauty in Pakistan: Best Whitening Cream for glowing skin, Hair Growth Serum, Radiance Face Wash, and Glutathione Skin Polish.",
     images: ["/brand/og.png"],
   },
   verification: {

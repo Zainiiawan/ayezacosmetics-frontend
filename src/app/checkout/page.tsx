@@ -265,7 +265,7 @@ function CheckoutContent() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
-        <Link href={isBuyNow ? `/products/${buyNowProduct?.slug}` : '/cart'} className="inline-flex items-center gap-2 text-[0.85rem] text-gray-600 hover:text-crimson">
+        <Link href={isBuyNow ? `/products/${buyNowProduct?.slug?.replace(/^ayeza-/, 'azeeora-') || buyNowProduct?.slug}` : '/cart'} className="inline-flex items-center gap-2 text-[0.85rem] text-gray-600 hover:text-crimson">
           <ArrowLeft className="w-4 h-4" /> Back to {isBuyNow ? 'product' : 'bag'}
         </Link>
         <h1 className="mt-4 font-serif text-[1.8rem] sm:text-[2.1rem] text-ink">Checkout</h1>

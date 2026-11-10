@@ -140,8 +140,17 @@ export const productApi = {
   },
 
   getBySlug: async (slug: string): Promise<Product> => {
-    const response = await api.get(`/products/${slug}`);
-    return response.data.data;
+    try {
+      const response = await api.get(`/products/${slug}`);
+      return response.data.data;
+    } catch (err: any) {
+      if (slug.startsWith('azeeora-')) {
+        const fallbackSlug = slug.replace(/^azeeora-/, 'ayeza-');
+        const fallbackResponse = await api.get(`/products/${fallbackSlug}`);
+        return fallbackResponse.data.data;
+      }
+      throw err;
+    }
   },
 
   getById: async (id: string): Promise<Product> => {
