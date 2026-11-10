@@ -4,7 +4,10 @@ import { blogPosts } from '@/lib/data/blog';
 import { rebrand } from '@/lib/rebrand';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = getBaseUrl();
+  let base = getBaseUrl();
+  if (!base || base.includes('vercel.app') || base.includes('ayezacosmetics')) {
+    base = 'https://azeeoracosmetics.com';
+  }
   const now = new Date();
 
   const staticPages = [

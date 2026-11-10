@@ -8,15 +8,19 @@ const useRelay = process.env.NEXT_PUBLIC_API_PROXY === 'true' && typeof window !
 export const config = {
   apiUrl: useRelay ? '/backend-api' : backendUrl,
   backendUrl,
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-  appName: process.env.NEXT_PUBLIC_APP_NAME || 'AZEEORA',
+  appUrl: 'https://azeeoracosmetics.com',
+  appName: 'AZEEORA',
   stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
   googleClientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
   getBaseUrl: () => {
     if (process.env.NODE_ENV === 'development') {
       return 'http://localhost:3000';
     }
-    return process.env.NEXT_PUBLIC_APP_URL || 'https://azeeoracosmetics.com';
+    const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (envUrl && !envUrl.includes('vercel.app') && !envUrl.includes('ayezacosmetics')) {
+      return envUrl.replace(/\/+$/, '');
+    }
+    return 'https://azeeoracosmetics.com';
   }
 };
 
