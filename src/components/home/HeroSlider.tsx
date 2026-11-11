@@ -15,8 +15,6 @@ const mainImage = (p: Product) => (p.images?.find((i) => i.isMain) || p.images?.
 
 // full-screen 1920x1080 banners for laptops and desktops; phones and tablets show the product's poster
 const BANNERS: Record<string, string> = {
-  'ayeza-radiance-face-wash': '/brand/banners/radiance-face-wash.jpg',
-  'ayeza-beauty-cream': '/brand/banners/beauty-cream.jpg',
   'azeeora-radiance-face-wash': '/brand/banners/radiance-face-wash.jpg',
   'azeeora-beauty-cream': '/brand/banners/beauty-cream.jpg',
   'azeeora-hair-growth-serum-30ml': '/brand/banners/hair-serum.jpg',
