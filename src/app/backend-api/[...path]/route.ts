@@ -12,7 +12,6 @@ const BACKEND = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api')
 const FORWARD_HEADERS = ['authorization', 'content-type', 'accept', 'accept-language', 'user-agent', 'cookie'];
 
 async function relay(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
-  if (process.env.NEXT_PUBLIC_API_PROXY !== 'true') return new Response('Not found', { status: 404 });
   const { path } = await params;
   const target = `${BACKEND}/${path.map(encodeURIComponent).join('/')}${req.nextUrl.search}`;
 
@@ -43,6 +42,15 @@ async function relay(req: NextRequest, { params }: { params: Promise<{ path: str
     const v = upstream.headers.get(h);
     if (v) out.set(h, v);
   }
+
+  // Edge-cache safe public read endpoints so Googlebot and shoppers get instant sub-second responses
+  if (req.method === 'GET' && upstream.status === 200) {
+    const p = path.join('/');
+    if (p.includes('settings') || p.includes('categories') || p.includes('slides') || p.includes('products')) {
+      out.set('cache-control', 'public, s-maxage=60, stale-while-revalidate=300');
+    }
+  }
+
   return new Response(upstream.body, { status: upstream.status, headers: out });
 }
 
