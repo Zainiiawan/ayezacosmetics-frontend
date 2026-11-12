@@ -56,6 +56,48 @@ const nextConfig: NextConfig = {
         destination: 'https://azeeoracosmetics.com/:path*',
         permanent: true,
       },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'ayezacosmetics.vercel.app',
+          },
+        ],
+        destination: 'https://azeeoracosmetics.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'ayezacosmetics-frontend-gamma.vercel.app',
+          },
+        ],
+        destination: 'https://azeeoracosmetics.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/products/ayeza-beauty-cream',
+        destination: '/products/azeeora-beauty-cream',
+        permanent: true,
+      },
+      {
+        source: '/products/ayeza-radiance-face-wash',
+        destination: '/products/azeeora-radiance-face-wash',
+        permanent: true,
+      },
+      {
+        source: '/products/ayezabeautycream',
+        destination: '/products/azeeora-beauty-cream',
+        permanent: true,
+      },
+      {
+        source: '/products/ayezaradiancefacewash',
+        destination: '/products/azeeora-radiance-face-wash',
+        permanent: true,
+      },
     ];
   },
 };

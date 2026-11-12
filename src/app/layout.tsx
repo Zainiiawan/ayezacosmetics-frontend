@@ -39,6 +39,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
+  alternates: {
+    canonical: APP_URL,
+  },
   title: {
     default: "AZEEORA | Best Whitening Cream, Hair Serum & Skincare in Pakistan",
     template: "%s | AZEEORA",

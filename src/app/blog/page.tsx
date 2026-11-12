@@ -12,6 +12,9 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: 'Beauty Blog & Skincare Tips | AZEEORA',
   description: 'Discover the latest skincare tips, makeup tutorials, and beauty secrets from AZEEORA experts. Achieve your flawless look today.',
+  alternates: {
+    canonical: '/blog',
+  },
   openGraph: {
     title: 'Beauty Blog & Skincare Tips | AZEEORA',
     description: 'Discover the latest skincare tips, makeup tutorials, and beauty secrets from AZEEORA experts.',

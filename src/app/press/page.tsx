@@ -3,6 +3,10 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Press & Media | AZEEORA',
+  description: 'AZEEORA press room, media inquiries, brand coverage, and press releases.',
+  alternates: {
+    canonical: '/press',
+  },
 };
 
 export default function PressPage() {

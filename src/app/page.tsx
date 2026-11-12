@@ -9,6 +9,15 @@ import { rebrand } from '@/lib/rebrand';
 export const metadata: Metadata = {
   title: { absolute: 'AZEEORA | Skincare & Beauty Made for Pakistani Skin' },
   description: 'Shop AZEEORA face washes, beauty creams and skincare made for Pakistani skin and weather. Cash on delivery and fast delivery across Pakistan.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'AZEEORA | Skincare & Beauty Made for Pakistani Skin',
+    description: 'Shop AZEEORA face washes, beauty creams and skincare made for Pakistani skin and weather. Cash on delivery and fast delivery across Pakistan.',
+    url: 'https://azeeoracosmetics.com',
+    type: 'website',
+  },
 };
 
 // Ensure this page is cached and revalidated hourly

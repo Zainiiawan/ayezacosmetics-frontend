@@ -3,6 +3,10 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Careers | AZEEORA',
+  description: 'Explore career opportunities and join the luxury beauty team at AZEEORA in Pakistan.',
+  alternates: {
+    canonical: '/careers',
+  },
 };
 
 export default function CareersPage() {

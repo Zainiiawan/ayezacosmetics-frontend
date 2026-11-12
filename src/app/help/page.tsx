@@ -8,6 +8,9 @@ import Button from '@/components/ui/Button';
 export const metadata: Metadata = {
   title: 'Help Center | AZEEORA',
   description: 'FAQs, shipping, returns, refunds, and customer support for AZEEORA.',
+  alternates: {
+    canonical: '/help',
+  },
 };
 
 const CONTACT = {

@@ -4,6 +4,10 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Cookie Policy | AZEEORA',
+  description: 'Understand how AZEEORA uses first-party cookies and essential browser storage for a secure shopping experience.',
+  alternates: {
+    canonical: '/cookies',
+  },
 };
 
 export default function CookiesPage() {
