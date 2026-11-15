@@ -80,8 +80,8 @@ export async function generateMetadata({
   const nameLower = (product.name || '').toLowerCase();
 
   if (slugLower.includes('beauty-cream') || nameLower.includes('beauty cream') || nameLower.includes('whitening cream')) {
-    title = 'Azeeora Beauty Cream - Best Whitening Cream in Pakistan for Glowing Skin | AZEEORA';
-    description = 'Buy Azeeora Beauty Cream online in Pakistan. The best skin whitening and brightening night cream for dark spots, radiant glowing skin & anti-pigmentation. Fast cash on delivery nationwide.';
+    title = 'Azeeora Whitening Beauty Cream - Best Night Cream & Glow Cream in Pakistan | AZEEORA';
+    description = 'Buy authentic Azeeora Beauty Cream online in Pakistan. The best whitening cream, night cream, and glow cream for removing dark spots, pigmentation and dullness. 100% original with cash on delivery nationwide.';
   } else if (slugLower.includes('hair') || slugLower.includes('serum') || nameLower.includes('hair growth') || nameLower.includes('hair serum')) {
     title = 'Azeeora Hair Growth Serum - Best Hair Serum for Growth & Frizz Control in Pakistan | AZEEORA';
     description = 'Buy Azeeora Hair Growth Serum (30ml) online in Pakistan. The best hair serum for hair fall reduction, frizz control, silken shine & follicle nourishment. Fast COD delivery.';
