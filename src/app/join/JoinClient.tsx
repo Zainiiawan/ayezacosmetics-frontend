@@ -32,6 +32,8 @@ export default function JoinClient() {
   const { data: programme } = useQuery({ queryKey: ['programme'], queryFn: memberApi.programme });
 
   const pct = programme?.referralCommissionPct ?? 10;
+  const levels = programme?.levelCommissionPct ?? [pct];
+  const levelText = levels.map((p, i) => `${p}% on level ${i + 1}`).join(', ');
   const tiers = programme?.partnerDiscountTiers ?? [{ minBV: 0, pct: 20 }];
   const startPct = tiers[0]?.pct ?? 20;
   const topPct = tiers[tiers.length - 1]?.pct ?? startPct;
@@ -89,7 +91,7 @@ export default function JoinClient() {
       <section className="px-5 sm:px-8 lg:px-11 py-16 lg:py-24">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 max-w-6xl mx-auto">
           {[
-            [Percent, `${pct}% commission`, 'On every order from customers and partners you refer, for as long as they shop.'],
+            [Percent, levels.length > 1 ? `${levels.length}-level commission` : `${pct}% commission`, levels.length > 1 ? `${levelText}: on every order in your network, from the people you introduce and the people they introduce.` : 'On every order from customers and partners you refer, for as long as they shop.'],
             [Gift, `Up to ${topPct}% off`, `Your partner discount starts at ${startPct}% and grows with your monthly points.`],
             [Wallet, 'Paid to your wallet', 'Spend it at checkout or withdraw to your bank, JazzCash or Easypaisa.'],
             [Users, 'Free to join', 'No joining fee, no targets to hit and no stock to buy up front.'],
@@ -263,7 +265,8 @@ export default function JoinClient() {
           <div className="border-t border-line">
             {[
               ['Does it cost anything to join?', 'No. Joining is free and there is nothing you have to buy.'],
-              ['When do I get paid?', `Your ${pct}% commission is added to your wallet when the order is delivered. You can spend it at checkout or withdraw it once it reaches ${money(programme?.minWithdrawal ?? 1000)}.`],
+              ['When do I get paid?', `Commission (${levelText}) is added to your wallet when the order is delivered.${programme?.performanceBonusEnabled ? ' A monthly performance bonus on your group points is added when the month closes.' : ''} You can spend it at checkout or withdraw it once it reaches ${money(programme?.minWithdrawal ?? 1000)}.`],
+              ['What are BP and BV?', 'Every product carries bonus points (BP) and business volume (BV). Your own orders give you personal points; orders anywhere in your network below you give you team points. Your group BV (personal plus team) sets your title and your monthly bonus.'],
               ['How are people linked to me?', 'Anyone who signs up or orders through your personal link, or enters your member code, is linked to you. Their future orders keep earning you commission.'],
               ['What if an order is cancelled or returned?', 'Commission is only earned on orders that are delivered and kept. If an order is cancelled or refunded, its commission is cancelled too.'],
               ['Can I run a shop or salon instead?', 'Yes, that is our wholesale programme for businesses buying in quantity.'],

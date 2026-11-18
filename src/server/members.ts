@@ -3,11 +3,12 @@ import { db, getSql, newId, Doc } from './db';
 import { BadRequestError } from './http';
 import { getSettings, createNotification } from './commerce';
 import { logger } from './logger';
+import { creditOrderPoints, reverseOrderPoints, syncOrderPoints } from './network';
 
 /**
- * Member programme: Brand Partners (single-level referral commission and a
- * partner discount on their own orders), wholesale (B2B) accounts, the wallet
- * ledger, loyalty points and monthly points (BV).
+ * Member programme: Brand Partners (multi-level commission, see network.ts,
+ * and a partner discount on their own orders), wholesale (B2B) accounts, the
+ * wallet ledger, loyalty points and monthly points (BP and BV).
  *
  * Money rules:
  * - The wallet is a ledger (`wallet_entries`). Balance is the sum of rows with
@@ -34,8 +35,29 @@ export type MemberSettings = {
   /** Credited to a registered customer's wallet when their order is delivered */
   cashbackPct: number;
   claimWindowDays: number;
-  /** Partner titles, lowest first. Group BV = own points plus points from people they referred, this month. */
+  /** Partner titles, lowest first. Group BV = own points plus the points of the whole team below, this month. */
   titles: Title[];
+  /** Price in Rs that earns one BP when a product has no BP of its own */
+  rsPerBP: number;
+  /** Commission % by upline level: [level 1 (direct sponsor), level 2, ...] */
+  levelCommissionPct: number[];
+  /** How many upline levels receive team BP/BV from an order */
+  maxTeamLevels: number;
+  performanceBonus: PerformanceBonus;
+};
+
+/**
+ * Monthly performance bonus on group BV, paid as a differential: a partner
+ * earns their tier % on their own group BV, less what each partner directly
+ * below them earns on their leg (never less than zero per leg).
+ */
+export type PerformanceBonus = {
+  enabled: boolean;
+  /** Rs paid per 1 BV of bonus volume (bonus = tier% x BV x this) */
+  rsPerBV: number;
+  /** Personal BV a partner needs in the month to qualify */
+  minPersonalBV: number;
+  tiers: { minGroupBV: number; pct: number }[];
 };
 
 export type Title = { name: string; minPersonalBV: number; minGroupBV: number; minRecruits: number };
@@ -65,6 +87,21 @@ export const MEMBER_DEFAULTS: MemberSettings = {
     { name: 'Manager', minPersonalBV: 100, minGroupBV: 1500, minRecruits: 5 },
     { name: 'Director', minPersonalBV: 150, minGroupBV: 4000, minRecruits: 10 },
   ],
+  rsPerBP: 100,
+  levelCommissionPct: [10, 5, 3],
+  maxTeamLevels: 10,
+  performanceBonus: {
+    enabled: true,
+    rsPerBV: 10,
+    minPersonalBV: 0,
+    tiers: [
+      { minGroupBV: 200, pct: 3 },
+      { minGroupBV: 600, pct: 6 },
+      { minGroupBV: 1200, pct: 9 },
+      { minGroupBV: 2400, pct: 12 },
+      { minGroupBV: 4000, pct: 15 },
+    ],
+  },
 };
 
 export async function getMemberSettings(): Promise<MemberSettings> {
@@ -72,6 +109,11 @@ export async function getMemberSettings(): Promise<MemberSettings> {
   const m = { ...MEMBER_DEFAULTS, ...(s.members ?? {}) };
   m.partnerDiscountTiers = [...(m.partnerDiscountTiers ?? MEMBER_DEFAULTS.partnerDiscountTiers)].sort((a, b) => a.minBV - b.minBV);
   m.titles = [...(m.titles?.length ? m.titles : MEMBER_DEFAULTS.titles)].sort((a, b) => a.minGroupBV - b.minGroupBV);
+  // stores saved before levels existed: their single rate becomes level 1
+  if (!s.members?.levelCommissionPct) m.levelCommissionPct = [m.referralCommissionPct, ...MEMBER_DEFAULTS.levelCommissionPct.slice(1)];
+  m.referralCommissionPct = m.levelCommissionPct[0] ?? 0;
+  m.performanceBonus = { ...MEMBER_DEFAULTS.performanceBonus, ...(m.performanceBonus ?? {}) };
+  m.performanceBonus.tiers = [...(m.performanceBonus.tiers ?? [])].sort((a, b) => a.minGroupBV - b.minGroupBV);
   return m;
 }
 
@@ -103,6 +145,12 @@ export function nextTier(settings: MemberSettings, monthlyBV = 0) {
 export function unitBV(product: Doc, salePrice: number, settings: MemberSettings): number {
   if (typeof product.bv === 'number' && product.bv >= 0) return product.bv;
   return Math.max(0, Math.round(salePrice / Math.max(1, settings.rsPerBV)));
+}
+
+/** Bonus points (BP) for one unit: the product's own value, else price / rsPerBP. */
+export function unitBP(product: Doc, salePrice: number, settings: MemberSettings): number {
+  if (typeof product.bp === 'number' && product.bp >= 0) return product.bp;
+  return Math.max(0, Math.round(salePrice / Math.max(1, settings.rsPerBP)));
 }
 
 export function wholesaleTerms(product: Doc, retailPrice: number, settings: MemberSettings) {
@@ -143,7 +191,7 @@ export async function findSponsor(code?: string | null): Promise<Doc | null> {
 // ---------------------------------------------------------------------------
 type EntryInput = {
   user: string;
-  type: 'commission' | 'cashback' | 'claim_refund' | 'withdrawal' | 'withdrawal_reversal' | 'order_payment' | 'order_refund' | 'adjustment' | 'commission_reversal' | 'cashback_reversal';
+  type: 'commission' | 'cashback' | 'claim_refund' | 'withdrawal' | 'withdrawal_reversal' | 'order_payment' | 'order_refund' | 'adjustment' | 'commission_reversal' | 'cashback_reversal' | 'performance_bonus';
   amount: number; // signed: + credit, - debit
   status: 'pending' | 'available' | 'cancelled';
   order?: string;
@@ -151,6 +199,11 @@ type EntryInput = {
   fromUser?: string;
   note?: string;
   withdrawal?: string;
+  /** commission: upline level (1 = direct sponsor) and its % */
+  level?: number;
+  pct?: number;
+  /** performance bonus: the month it was earned in, YYYY-MM */
+  month?: string;
 };
 
 export async function walletSummary(userId: string) {
@@ -159,7 +212,7 @@ export async function walletSummary(userId: string) {
     select
       coalesce(sum(case when status = 'available' then (data->>'amount')::numeric end), 0) as available,
       coalesce(sum(case when status = 'pending' then (data->>'amount')::numeric end), 0) as pending,
-      coalesce(sum(case when status = 'available' and type = 'commission' then (data->>'amount')::numeric end), 0) as earned,
+      coalesce(sum(case when status = 'available' and type in ('commission', 'performance_bonus') then (data->>'amount')::numeric end), 0) as earned,
       coalesce(-sum(case when status = 'available' and type in ('withdrawal', 'withdrawal_reversal') then (data->>'amount')::numeric end), 0) as withdrawn
     from wallet_entries where "user" = ${userId}`;
   const r = rows[0] as any;
@@ -229,8 +282,9 @@ export async function bumpUserCounter(userId: string, field: 'loyaltyPoints' | '
 // ---------------------------------------------------------------------------
 
 /**
- * Called right after an order is created. Books the pending commission and
- * credits points (BV) to the buyer (if a partner) and the sponsor's team BV.
+ * Called right after an order is created. Books a pending commission for each
+ * upline level and credits points: personal BP/BV to the buyer, team BP/BV to
+ * every upline partner (network.ts).
  */
 export async function onOrderPlaced(order: Doc) {
   try {
@@ -244,28 +298,33 @@ export async function onOrderPlaced(order: Doc) {
         { user: order.user, type: 'cashback', amount: m.cashback, status: 'pending', order: order._id, orderNumber: order.orderNumber, note: `${m.cashbackPct}% cashback on order ${order.orderNumber}` },
       ]);
     }
-    if (m.sponsor && m.commission > 0) {
+    await creditOrderPoints(order);
+    const shares: { user: string; level: number; pct: number; amount: number }[] =
+      m.commissions ?? (m.sponsor && m.commission > 0 ? [{ user: m.sponsor, level: 1, pct: m.commissionPct, amount: m.commission }] : []);
+    for (const c of shares.filter((x) => x.amount > 0)) {
       await postEntries([
         {
-          user: m.sponsor,
+          user: c.user,
           type: 'commission',
-          amount: m.commission,
+          amount: c.amount,
           status: 'pending',
           order: order._id,
           orderNumber: order.orderNumber,
           fromUser: order.user ?? undefined,
-          note: `${m.commissionPct}% referral commission on order ${order.orderNumber}`,
+          level: c.level,
+          pct: c.pct,
+          note: `Level ${c.level} commission (${c.pct}%) on order ${order.orderNumber}`,
         },
       ]);
-      if (m.bv) await bumpUserCounter(m.sponsor, 'referredBV', m.bv);
       await createNotification({
-        userId: m.sponsor,
+        userId: c.user,
         type: 'general',
-        title: 'New referral order',
-        message: `Order ${order.orderNumber} earns you Rs. ${m.commission.toLocaleString()} once it is delivered.`,
+        title: c.level === 1 ? 'New referral order' : `New level ${c.level} team order`,
+        message: `Order ${order.orderNumber} earns you Rs. ${c.amount.toLocaleString()} once it is delivered.`,
         link: '/account/partner',
       });
     }
+    if (m.sponsor && m.bv) await bumpUserCounter(m.sponsor, 'referredBV', m.bv);
   } catch (err) {
     logger.error('onOrderPlaced failed', err);
   }
@@ -281,14 +340,13 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
   const sql = getSql();
 
   try {
-    const commissionRows = await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'commission' limit 1`;
-    const commission = commissionRows[0] as any;
+    const commissions = (await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'commission'`) as any[];
     const cashbackRows = await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'cashback' limit 1`;
     const cashback = cashbackRows[0] as any;
 
     if (status === 'delivered' && !CLOSED.includes(previousStatus)) {
       // Commission becomes spendable; loyalty points are earned
-      if (commission && commission.data.status === 'pending') {
+      for (const commission of commissions.filter((c) => c.data.status === 'pending')) {
         await setEntryStatus(commission._id, 'available', { releasedAt: new Date().toISOString() });
         await createNotification({
           userId: commission.data.user,
@@ -317,7 +375,7 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
 
     if (CLOSED.includes(status) && !CLOSED.includes(previousStatus)) {
       const entries: EntryInput[] = [];
-      if (commission) {
+      for (const commission of commissions) {
         if (commission.data.status === 'pending') {
           await setEntryStatus(commission._id, 'cancelled', { cancelledAt: new Date().toISOString() });
         } else if (commission.data.status === 'available') {
@@ -328,6 +386,7 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
             status: 'available',
             order: order._id,
             orderNumber: order.orderNumber,
+            level: commission.data.level,
             note: `Order ${order.orderNumber} was ${status}`,
           });
         }
@@ -363,6 +422,7 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
         await bumpUserCounter(order.user, 'totalBV', -m.bv);
       }
       if (m.sponsor && m.bv) await bumpUserCounter(m.sponsor, 'referredBV', -m.bv);
+      await reverseOrderPoints(order, status);
       await db.orders.updateById(order._id, { member: { ...m, bvReversed: true } });
     }
   } catch (err) {
@@ -382,17 +442,24 @@ async function postCredits(entries: EntryInput[]) {
   });
 }
 
-/** Admin edited an order's lines: keep a still-pending commission in step with the new total. */
+/** Admin edited an order's lines: keep still-pending commissions (every level) and the order's points in step. */
 export async function recalcPendingCommission(order: Doc) {
   const m = order.member ?? {};
-  if (!m.sponsor || !m.commissionPct) return;
-  const merchandise = Math.max(0, (order.subtotal ?? 0) - (order.discount ?? 0) - (order.manualDiscount ?? 0));
-  const amount = round((merchandise * m.commissionPct) / 100);
   const sql = getSql();
   const now = new Date().toISOString();
-  await sql`update wallet_entries set data = data || ${JSON.stringify({ amount, updatedAt: now })}::text::jsonb, updated_at = ${now}
-            where "order" = ${order._id} and type = 'commission' and status = 'pending'`;
-  await db.orders.updateById(order._id, { member: { ...m, commission: amount } });
+  if (m.sponsor) {
+    const merchandise = Math.max(0, (order.subtotal ?? 0) - (order.discount ?? 0) - (order.manualDiscount ?? 0));
+    const pending = (await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'commission' and status = 'pending'`) as any[];
+    for (const row of pending) {
+      const pct = Number(row.data.pct ?? m.commissionPct ?? 0);
+      const amount = round((merchandise * pct) / 100);
+      await sql`update wallet_entries set data = data || ${JSON.stringify({ amount, updatedAt: now })}::text::jsonb, updated_at = ${now} where _id = ${row._id}`;
+    }
+    const shares = (m.commissions ?? []).map((c: any) => ({ ...c, amount: round((merchandise * c.pct) / 100) }));
+    const level1 = shares.find((c: any) => c.level === 1)?.amount ?? round((merchandise * (m.commissionPct ?? 0)) / 100);
+    await db.orders.updateById(order._id, { member: { ...m, commission: level1, commissions: shares.length ? shares : m.commissions } });
+  }
+  await syncOrderPoints(order);
 }
 
 export { postCredits };
@@ -405,12 +472,11 @@ export async function titleProgress(u: Doc, ms?: MemberSettings) {
   const sql = getSql();
   const month = new Date().toISOString().slice(0, 7);
   const personalBV = Number(u.monthlyBV ?? 0);
+  // team BV from every level below, as credited in the points ledger
   const team = await sql`
-    select coalesce(sum((data#>>'{member,bv}')::numeric), 0) as bv
-      from orders
-     where data#>>'{member,sponsor}' = ${u._id}
-       and status not in ('cancelled', 'refunded', 'returned')
-       and to_char(created_at, 'YYYY-MM') = ${month}`;
+    select coalesce(sum((data->>'bv')::numeric), 0) as bv
+      from points_entries
+     where "user" = ${u._id} and kind = 'team' and status = 'active' and month = ${month}`;
   const recruits = await sql`
     select count(*)::int as n from users
      where referred_by = ${u._id} and data#>>'{partner,status}' = 'approved'`;

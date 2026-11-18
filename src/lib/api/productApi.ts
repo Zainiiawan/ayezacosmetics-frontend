@@ -32,6 +32,7 @@ export interface Product {
   sku?: string;
   images: ProductImage[];
   basePrice: number;
+  bp?: number;
   bv?: number;
   wholesalePrice?: number | null;
   wholesaleMinQty?: number | null;
@@ -95,6 +96,7 @@ export interface CreateProductData {
   description?: string;
   images?: ProductImage[];
   discount?: ProductDiscount | null;
+  bp?: number | null;
   bv?: number | null;
   wholesalePrice?: number | null;
   wholesaleMinQty?: number | null;

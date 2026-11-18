@@ -44,10 +44,13 @@ export interface OrderMemberInfo {
   discountPct?: number;
   memberDiscount?: number;
   bv?: number;
+  bp?: number;
   sponsor?: string;
   sponsorCode?: string;
   commission?: number;
   commissionPct?: number;
+  // every upline level paid on this order (admin only)
+  commissions?: { user: string; level: number; pct: number; amount: number }[];
   pointsRedeemed?: number;
   pointsEarned?: number;
   walletUsed?: number;

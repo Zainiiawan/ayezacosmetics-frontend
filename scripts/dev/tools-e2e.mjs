@@ -71,6 +71,7 @@ ok(q.welcomeDiscount === Math.round(q.subtotal * 0.15) && q.welcomeDiscountPct =
 ok(q.cashback === Math.round((q.subtotal - q.welcomeDiscount) * 0.05), 'cashback is quoted on the discounted amount', q);
 r = await call('POST', '/orders', { items: [{ productId: P._id, quantity: 2 }], shippingAddress: ship, paymentMethod: 'cod', refCode: alias }, cus.token);
 const order1 = r.data;
+order1.member = (await sql`select data->'member' as m from orders where _id = ${order1._id}`)[0]?.m ?? order1.member; // buyers no longer see commission; read it as the admin would
 ok(r.status === 201 && order1.total === q.total && order1.welcomeDiscount === q.welcomeDiscount, 'order keeps welcome discount and quote total', r);
 ok(order1.member.commission === Math.round((q.subtotal - q.welcomeDiscount) * 0.1), 'partner commission is on the discounted amount', order1.member);
 r = await call('POST', '/orders/quote', { items: [{ productId: P._id, quantity: 1 }], city: 'Lahore' }, cus.token);

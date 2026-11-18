@@ -12,7 +12,7 @@ import { apiError } from '@/lib/api/memberApi';
 import { money } from './ui';
 
 /** Product page extras: partners share with their code and see what they earn; members add to a list. */
-export default function ProductMemberActions({ productId, slug, name, price }: { productId: string; slug: string; name: string; price: number }) {
+export default function ProductMemberActions({ productId, slug, name, price, bp, bv }: { productId: string; slug: string; name: string; price: number; bp?: number | null; bv?: number | null }) {
   const qc = useQueryClient();
   const isAuthenticated = useSelector((s: RootState) => s.auth.isAuthenticated);
   const { member } = useMember();
@@ -34,6 +34,9 @@ export default function ProductMemberActions({ productId, slug, name, price }: {
 
   const partner = member?.accountType === 'partner' ? member : null;
   const earn = partner ? Math.round((price * partner.settings.referralCommissionPct) / 100) : 0;
+  // points per unit: the product's own, else from price (same rule as checkout)
+  const unitBP = typeof bp === 'number' ? bp : Math.round(price / Math.max(1, member?.settings.rsPerBP ?? 100));
+  const unitBV = typeof bv === 'number' ? bv : Math.round(price / Math.max(1, member?.settings.rsPerBV ?? 100));
 
   const share = async () => {
     const base = `${window.location.origin}/products/${slug}`;
@@ -51,6 +54,11 @@ export default function ProductMemberActions({ productId, slug, name, price }: {
 
   return (
     <div className="mt-6 space-y-3">
+      {member && (unitBP > 0 || unitBV > 0) && (
+        <p className="text-[0.85rem] text-gray-600">
+          Earns <b className="font-medium text-ink">{unitBP} BP</b> · <b className="font-medium text-ink">{unitBV} BV</b> per unit
+        </p>
+      )}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.85rem]">
         <button onClick={share} className="inline-flex items-center gap-2 text-ink underline underline-offset-4">
           <Share2 className="w-4 h-4" strokeWidth={1.3} />

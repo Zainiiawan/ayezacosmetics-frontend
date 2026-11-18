@@ -272,8 +272,20 @@ export default function AdminOrdersPage() {
                         <p>Brand Partner order · {selectedOrder.member.discountPct}% off ({formatPrice(selectedOrder.member.memberDiscount || 0)}) · {selectedOrder.member.bv} BV</p>
                       )}
                       {selectedOrder.member.buyerType === 'business' && <p>Wholesale order · saved {formatPrice(selectedOrder.member.memberDiscount || 0)}</p>}
+                      {(selectedOrder.member.bp || selectedOrder.member.bv) ? (
+                        <p>Points: {selectedOrder.member.bp ?? 0} BP · {selectedOrder.member.bv ?? 0} BV (to the buyer and their upline)</p>
+                      ) : null}
                       {selectedOrder.member.sponsorCode && (
                         <p>Referral: {selectedOrder.member.sponsorCode} earns {formatPrice(selectedOrder.member.commission || 0)} ({selectedOrder.member.commissionPct}%) on delivery</p>
+                      )}
+                      {(selectedOrder.member.commissions?.length ?? 0) > 1 && (
+                        <p>
+                          Upline commission:{' '}
+                          {selectedOrder.member.commissions!
+                            .filter((c: { level: number }) => c.level > 1)
+                            .map((c: { level: number; pct: number; amount: number }) => `level ${c.level} ${formatPrice(c.amount)} (${c.pct}%)`)
+                            .join(', ')}
+                        </p>
                       )}
                     </div>
                   ) : null}

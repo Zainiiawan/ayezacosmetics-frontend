@@ -333,7 +333,7 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
               </details>
             </div>
 
-            <ProductMemberActions productId={product._id} slug={product.slug} name={product.name} price={effectivePrice} />
+            <ProductMemberActions productId={product._id} slug={product.slug} name={product.name} price={effectivePrice} bp={product.bp} bv={product.bv} />
           </div>
         </div>
       </div>

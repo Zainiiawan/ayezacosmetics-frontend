@@ -88,6 +88,7 @@ export default function AdminProductsPage() {
     discountValue: '',
     isComingSoon: false,
     launchDate: '',
+    bp: '',
     bv: '',
     wholesalePrice: '',
     wholesaleMinQty: '',
@@ -120,6 +121,7 @@ export default function AdminProductsPage() {
         discountValue: product.discount?.value?.toString() || '',
         isComingSoon: product.isComingSoon || false,
         launchDate: product.launchDate ? new Date(product.launchDate).toISOString().split('T')[0] : '',
+        bp: product.bp != null ? String(product.bp) : '',
         bv: product.bv != null ? String(product.bv) : '',
         wholesalePrice: product.wholesalePrice != null ? String(product.wholesalePrice) : '',
         wholesaleMinQty: product.wholesaleMinQty != null ? String(product.wholesaleMinQty) : '',
@@ -141,7 +143,8 @@ export default function AdminProductsPage() {
         discountValue: '',
         isComingSoon: false,
         launchDate: '',
-        bv: '',
+        bp: '',
+    bv: '',
         wholesalePrice: '',
         wholesaleMinQty: '',
       });
@@ -169,7 +172,8 @@ export default function AdminProductsPage() {
       discountValue: '',
       isComingSoon: false,
       launchDate: '',
-      bv: '',
+      bp: '',
+    bv: '',
       wholesalePrice: '',
       wholesaleMinQty: '',
     });
@@ -244,6 +248,7 @@ export default function AdminProductsPage() {
           : null,
         isComingSoon: formData.isComingSoon,
         launchDate: formData.launchDate || undefined,
+        bp: formData.bp !== '' ? Number(formData.bp) : undefined,
         bv: formData.bv !== '' ? Number(formData.bv) : undefined,
         wholesalePrice: formData.wholesalePrice !== '' ? Number(formData.wholesalePrice) : null,
         wholesaleMinQty: formData.wholesaleMinQty !== '' ? parseInt(formData.wholesaleMinQty, 10) : null,
@@ -623,10 +628,11 @@ export default function AdminProductsPage() {
                     </select>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
                   {(
                     [
-                      ['bv', 'Points (BV) per unit', 'Blank = price ÷ Rs per BV'],
+                      ['bp', 'Bonus points (BP) per unit', 'Blank = price ÷ Rs per BP'],
+                      ['bv', 'Business volume (BV) per unit', 'Blank = price ÷ Rs per BV'],
                       ['wholesalePrice', 'Wholesale price (PKR)', 'Blank = default wholesale discount'],
                       ['wholesaleMinQty', 'Wholesale minimum qty', 'Blank = default minimum'],
                     ] as const

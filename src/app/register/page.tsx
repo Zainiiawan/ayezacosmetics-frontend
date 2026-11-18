@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { m as motion } from 'framer-motion';
 import Link from 'next/link';
@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { getRef } from '@/lib/member/referral';
+import { memberApi } from '@/lib/api/memberApi';
 
 interface RegisterFormData {
   firstName: string;
@@ -41,6 +42,28 @@ export default function RegisterPage() {
   } = useForm<RegisterFormData>();
 
   const password = watch('password');
+
+  // Sponsor: filled in from a referral link, or typed by the member
+  const [refCode, setRefCode] = useState('');
+  const [sponsor, setSponsor] = useState<{ state: 'idle' | 'checking' | 'ok' | 'bad'; name?: string }>({ state: 'idle' });
+  const checkRef = async (code: string) => {
+    const clean = code.trim().toUpperCase();
+    if (!clean) return setSponsor({ state: 'idle' });
+    setSponsor({ state: 'checking' });
+    try {
+      const r = await memberApi.checkRef(clean);
+      setSponsor(r.valid ? { state: 'ok', name: r.name } : { state: 'bad' });
+    } catch {
+      setSponsor({ state: 'bad' });
+    }
+  };
+  useEffect(() => {
+    const saved = getRef();
+    if (saved) {
+      setRefCode(saved);
+      void checkRef(saved);
+    }
+  }, []);
   const displayError = formError || storeError;
   const alreadyExists =
     !!displayError && /already exists|sign in/i.test(displayError);
@@ -49,8 +72,12 @@ export default function RegisterPage() {
     setFormError('');
     dispatch(clearError());
     const { terms: _terms, ...registerData } = data;
-    const refCode = getRef();
-    const result = await dispatch(registerUser({ ...registerData, ...(refCode ? { refCode } : {}) }) as any);
+    const code = refCode.trim().toUpperCase();
+    if (code && sponsor.state === 'bad') {
+      setFormError('That referral code does not match any Brand Partner. Check it, or leave it empty.');
+      return;
+    }
+    const result = await dispatch(registerUser({ ...registerData, ...(code ? { refCode: code } : {}) }) as any);
     const next = new URLSearchParams(window.location.search).get('redirect');
     const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : '';
 
@@ -138,6 +165,24 @@ export default function RegisterPage() {
             })}
             error={errors.phone?.message}
           />
+
+          <div>
+            <Input
+              label="Referral code (optional)"
+              type="text"
+              autoComplete="off"
+              placeholder="e.g. AZ-123456"
+              value={refCode}
+              onChange={(e) => {
+                setRefCode(e.target.value.toUpperCase());
+                setSponsor({ state: 'idle' });
+              }}
+              onBlur={() => void checkRef(refCode)}
+              error={sponsor.state === 'bad' ? 'No Brand Partner has this code' : undefined}
+            />
+            {sponsor.state === 'ok' && <p className="mt-1 text-sm text-green-700">You will join {sponsor.name}&apos;s team.</p>}
+            {sponsor.state === 'checking' && <p className="mt-1 text-sm text-gray-500">Checking code…</p>}
+          </div>
 
           <div className="relative">
             <Input

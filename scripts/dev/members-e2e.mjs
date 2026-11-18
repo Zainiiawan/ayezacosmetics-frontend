@@ -72,6 +72,7 @@ const bobQuote = r.data;
 ok(r.status === 200 && bobQuote.buyerType === 'customer' && bobQuote.referredBy, 'quote shows referral', r);
 r = await call('POST', '/orders', { items: [{ productId: P._id, quantity: 2 }], shippingAddress: ship, paymentMethod: 'cod', refCode: code }, bob.token);
 const bobOrder = r.data;
+bobOrder.member = (await sql`select data->'member' as m from orders where _id = ${bobOrder._id}`)[0]?.m ?? bobOrder.member; // buyers no longer see commission; read it as the admin would
 ok(r.status === 201 && bobOrder.member.commission === Math.round(bobQuote.subtotal * 0.1), 'commission is 10% of merchandise', { got: bobOrder?.member, sub: bobQuote.subtotal });
 ok(bobOrder.total === bobQuote.total, 'order total matches quote');
 r = await call('GET', '/members/me', null, alice.token);
@@ -96,6 +97,7 @@ ok(aq.buyerType === 'partner' && aq.discountPct === 20 && aq.items[0].price === 
 const useWallet = Math.min(aq.walletAvailable, aq.total);
 r = await call('POST', '/orders', { items: [{ productId: P._id, quantity: 1 }], shippingAddress: ship, paymentMethod: 'cod', walletAmount: useWallet }, alice.token);
 const aliceOrder = r.data;
+aliceOrder.member = (await sql`select data->'member' as m from orders where _id = ${aliceOrder._id}`)[0]?.m ?? aliceOrder.member; // buyers no longer see commission; read it as the admin would
 ok(r.status === 201 && aliceOrder.walletUsed === useWallet && aliceOrder.member.commission === 0, 'partner order uses wallet, no self-commission', r);
 r = await call('GET', '/members/me', null, alice.token);
 ok(r.data.wallet.available === bobOrder.member.commission - useWallet, 'wallet debited');

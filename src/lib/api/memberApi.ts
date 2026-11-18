@@ -72,6 +72,9 @@ export interface MemberProfile {
     loyaltyRsPerPoint: number;
     wholesaleDefaultDiscountPct: number;
     wholesaleDefaultMinQty: number;
+    rsPerBP: number;
+    rsPerBV: number;
+    levelCommissionPct: number[];
   };
 }
 
@@ -123,6 +126,8 @@ export interface Programme {
   loyaltyRsPerPoint: number;
   pointValueRs: number;
   minRedeemPoints: number;
+  levelCommissionPct?: number[];
+  performanceBonusEnabled?: boolean;
 }
 
 export interface WalletEntry {
@@ -182,7 +187,63 @@ export interface AdminMember {
   wallet?: WalletSummary;
 }
 
-export type MemberSettings = Programme & { rsPerBV: number; couponsForMembers: boolean; welcomeDiscountPct: number; cashbackPct: number; claimWindowDays: number; titles: Title[] };
+export type PerformanceBonus = { enabled: boolean; rsPerBV: number; minPersonalBV: number; tiers: { minGroupBV: number; pct: number }[] };
+export type MemberSettings = Programme & {
+  rsPerBV: number;
+  couponsForMembers: boolean;
+  welcomeDiscountPct: number;
+  cashbackPct: number;
+  claimWindowDays: number;
+  titles: Title[];
+  rsPerBP: number;
+  levelCommissionPct: number[];
+  maxTeamLevels: number;
+  performanceBonus: PerformanceBonus;
+};
+
+export type Points = { bp: number; bv: number };
+export interface PointsReport {
+  month: string;
+  personal: Points;
+  team: Points;
+  group: Points;
+  lifetime: { personal: Points; team: Points; group: Points };
+  byLevel: { level: number; bp: number; bv: number; orders: number }[];
+  history: { _id: string; kind: 'personal' | 'team'; level: number; bp: number; bv: number; status: 'active' | 'reversed'; orderNumber?: string; from?: string; createdAt: string }[];
+}
+export interface NetworkMember {
+  _id: string;
+  sponsor?: string;
+  level: number;
+  name: string;
+  memberCode: string | null;
+  type: 'partner' | 'customer' | 'business';
+  city: string;
+  joinedAt: string;
+  active: boolean;
+  directCount: number;
+  personal: Points;
+  team: Points;
+  group: Points;
+}
+export type TreeNode = NetworkMember & { children: TreeNode[]; hasMore: boolean };
+export interface Downline {
+  month: string;
+  people: NetworkMember[];
+  levels: { level: number; people: number; partners: number; bv: number; bp: number }[];
+  totals: { people: number; direct: number; indirect: number };
+}
+export interface BonusLine {
+  user: string;
+  name: string;
+  memberCode: string | null;
+  personalBV: number;
+  groupBV: number;
+  pct: number;
+  amount: number;
+  paid: boolean;
+  legs: { user: string; groupBV: number; pct: number }[];
+}
 
 export interface Quote {
   buyerType: 'customer' | 'partner' | 'business';
@@ -235,6 +296,10 @@ export const memberApi = {
   team: (filter = 'all') => d<{ people: TeamMember[]; totals: { people: number; active: number; newThisMonth: number; monthSales: number; monthBV: number }; month: string }>(api.get('/members/team', { params: { filter } })),
   earnings: (period?: string) => d<Earnings>(api.get('/members/earnings', { params: { period } })),
   recognition: () => d<{ month: string; list: { rank: number; name: string; city: string; groupBV: number; title: string; isMe: boolean }[] }>(api.get('/members/recognition')),
+  points: (month?: string) => d<PointsReport>(api.get('/members/points', { params: { month } })),
+  downline: (level?: number, month?: string) => d<Downline>(api.get('/members/downline', { params: { level, month } })),
+  genealogy: (root?: string, depth = 3, month?: string) =>
+    d<{ month: string; depth: number; root: TreeNode; sponsor: { _id: string; name: string; memberCode: string | null } | null }>(api.get('/members/genealogy', { params: { root, depth, month } })),
   outOfStock: () => d<{ _id: string; name: string; slug: string; sku?: string; image: string; stock: number; variantsOut: string[] }[]>(api.get('/members/out-of-stock')),
   registerFriend: (body: Record<string, unknown>) => d<{ _id: string; name: string; activationLink: string; expiresInDays: number }>(api.post('/members/register-friend', body)),
   registered: () => d<{ _id: string; name: string; email: string; phone?: string; createdAt: string; activated: boolean; expired: boolean }[]>(api.get('/members/registered')),
@@ -256,7 +321,10 @@ export const memberApi = {
     settings: () => d<MemberSettings>(api.get('/members/admin/settings')),
     saveSettings: (body: MemberSettings) => d<MemberSettings>(api.put('/members/admin/settings', body)),
     reallocate: (userId: string, sponsorCode: string, note: string) => d<AdminMember>(api.post('/members/admin/reallocate', { userId, sponsorCode, note })),
-    closeMonth: () => d<{ period: string; members: number }>(api.post('/members/admin/close-month', {})),
+    closeMonth: () => d<{ period: string; members: number; bonus?: { paid: number; total: number } }>(api.post('/members/admin/close-month', {})),
+    bonus: (month: string) => d<{ month: string; lines: BonusLine[]; total: number; settings: PerformanceBonus }>(api.get('/members/admin/bonus', { params: { month } })),
+    payBonus: (month: string) => d<{ paid: number; total: number; skipped: number }>(api.post('/members/admin/bonus/pay', { month })),
+    points: (userId: string, month?: string) => d<PointsReport & { member: { _id: string; name: string; memberCode: string | null } }>(api.get(`/members/admin/points/${userId}`, { params: { month } })),
   },
 };
 

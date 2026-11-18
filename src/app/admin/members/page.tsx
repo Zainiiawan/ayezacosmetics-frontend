@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
 import { memberApi, apiError, AdminMember, MemberSettings } from '@/lib/api/memberApi';
+import { GenealogyTree, MonthSelect } from '@/components/member/Network';
 import ReallocateButton from '@/components/member/ReallocateButton';
 import { formatDate, formatPrice } from '@/lib/utils';
 
@@ -15,6 +16,8 @@ const TABS = [
   ['kyc', 'Payout details'],
   ['withdrawals', 'Withdrawals'],
   ['commissions', 'Commissions'],
+  ['network', 'Network tree'],
+  ['bonus', 'Performance bonus'],
   ['settings', 'Programme settings'],
 ] as const;
 type Tab = (typeof TABS)[number][0];
@@ -96,6 +99,8 @@ function MembersAdmin() {
         {tab === 'kyc' && <Applications kind="kyc" />}
         {tab === 'withdrawals' && <Withdrawals />}
         {tab === 'commissions' && <Commissions />}
+        {tab === 'network' && <div className="bg-white rounded-xl p-6 shadow-sm"><GenealogyTree adminSearch /></div>}
+        {tab === 'bonus' && <Bonus />}
         {tab === 'settings' && <Settings />}
       </div>
     </div>
@@ -433,8 +438,40 @@ function Settings() {
         }}
       >
         <h3 className="font-semibold">Brand Partners</h3>
-        <L label="Referral commission (%)" hint="Paid on every order from people a partner referred, after it is delivered.">
-          <input {...num('referralCommissionPct')} step="0.5" />
+        <div>
+          <span className="block text-sm font-medium mb-1">Commission by level (%)</span>
+          <p className="text-xs text-gray-500 mb-2">
+            Paid on every order in a partner&apos;s network once it is delivered. Level 1 is the person who introduced the buyer, level 2 is their sponsor, and so on.
+          </p>
+          <div className="flex flex-wrap items-end gap-2">
+            {form.levelCommissionPct.map((pct, i) => (
+              <label key={i} className="text-xs text-gray-600">
+                Level {i + 1}
+                <input
+                  type="number"
+                  step="0.5"
+                  min={0}
+                  value={pct}
+                  onChange={(e) => setForm({ ...form, levelCommissionPct: form.levelCommissionPct.map((x, j) => (j === i ? Number(e.target.value) : x)) })}
+                  className="block w-20 mt-1 border border-gray-300 rounded-lg px-2 py-1.5 text-sm"
+                />
+              </label>
+            ))}
+            {form.levelCommissionPct.length < 10 && (
+              <button type="button" onClick={() => setForm({ ...form, levelCommissionPct: [...form.levelCommissionPct, 1] })} className="text-sm underline pb-2">
+                Add level
+              </button>
+            )}
+            {form.levelCommissionPct.length > 1 && (
+              <button type="button" onClick={() => setForm({ ...form, levelCommissionPct: form.levelCommissionPct.slice(0, -1) })} className="text-sm text-red-500 pb-2">
+                Remove last
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Total across levels: {form.levelCommissionPct.reduce((a, b) => a + b, 0)}% (at most 60%).</p>
+        </div>
+        <L label="Team points depth (levels)" hint="How many levels up a purchase adds team BP/BV.">
+          <input {...num('maxTeamLevels')} min={1} max={20} />
         </L>
         <div>
           <span className="block text-sm font-medium mb-1">Partner discount by monthly points</span>
@@ -475,9 +512,14 @@ function Settings() {
             </button>
           </div>
         </div>
-        <L label="Rupees per 1 BV" hint="Used when a product has no BV of its own (price ÷ this).">
-          <input {...num('rsPerBV')} />
-        </L>
+        <div className="grid grid-cols-2 gap-3">
+          <L label="Rupees per 1 BP" hint="When a product has no BP of its own (price ÷ this).">
+            <input {...num('rsPerBP')} />
+          </L>
+          <L label="Rupees per 1 BV" hint="When a product has no BV of its own (price ÷ this).">
+            <input {...num('rsPerBV')} />
+          </L>
+        </div>
         <L label="Minimum withdrawal (Rs)">
           <input {...num('minWithdrawal')} />
         </L>
@@ -496,7 +538,7 @@ function Settings() {
         </L>
 
         <h3 className="font-semibold pt-4 border-t">Titles</h3>
-        <p className="text-xs text-gray-500 -mt-3">Worked out each month. Group points are the partner&apos;s own points plus points from people they introduced.</p>
+        <p className="text-xs text-gray-500 -mt-3">Worked out each month. Group BV is the partner&apos;s own BV plus the BV of their whole network below them.</p>
         <div className="space-y-2">
           <div className="grid grid-cols-[1.4fr_1fr_1fr_1fr_auto] gap-2 text-xs text-gray-500">
             <span>Title</span>
@@ -532,6 +574,52 @@ function Settings() {
             className="text-sm underline"
           >
             Add a title
+          </button>
+        </div>
+
+        <h3 className="font-semibold pt-4 border-t">Performance bonus</h3>
+        <p className="text-xs text-gray-500 -mt-3">
+          Paid when you close the month (or from the Performance bonus tab). Each partner earns their tier % on their group BV, less what partners directly below them earn on
+          their own groups. Bonus in Rs = tier % × BV × Rs per BV.
+        </p>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={form.performanceBonus.enabled} onChange={(e) => setForm({ ...form, performanceBonus: { ...form.performanceBonus, enabled: e.target.checked } })} />
+          Pay a monthly performance bonus
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <L label="Rs per 1 BV of bonus">
+            <input type="number" min={0} value={form.performanceBonus.rsPerBV} onChange={(e) => setForm({ ...form, performanceBonus: { ...form.performanceBonus, rsPerBV: Number(e.target.value) } })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+          </L>
+          <L label="Own BV needed to qualify">
+            <input type="number" min={0} value={form.performanceBonus.minPersonalBV} onChange={(e) => setForm({ ...form, performanceBonus: { ...form.performanceBonus, minPersonalBV: Number(e.target.value) } })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+          </L>
+        </div>
+        <div className="space-y-2">
+          {form.performanceBonus.tiers.map((t, i) => {
+            const setTier = (patch: Partial<typeof t>) =>
+              setForm({ ...form, performanceBonus: { ...form.performanceBonus, tiers: form.performanceBonus.tiers.map((x, j) => (j === i ? { ...x, ...patch } : x)) } });
+            return (
+              <div key={i} className="flex items-center gap-2 text-sm">
+                <span>From</span>
+                <input type="number" value={t.minGroupBV} onChange={(e) => setTier({ minGroupBV: Number(e.target.value) })} className="w-24 border border-gray-300 rounded-lg px-2 py-1.5" />
+                <span>group BV:</span>
+                <input type="number" value={t.pct} onChange={(e) => setTier({ pct: Number(e.target.value) })} className="w-20 border border-gray-300 rounded-lg px-2 py-1.5" />
+                <span>%</span>
+                <button type="button" onClick={() => setForm({ ...form, performanceBonus: { ...form.performanceBonus, tiers: form.performanceBonus.tiers.filter((_, j) => j !== i) } })} className="text-red-500 text-xs ml-2">
+                  Remove
+                </button>
+              </div>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() => {
+              const last = form.performanceBonus.tiers[form.performanceBonus.tiers.length - 1];
+              setForm({ ...form, performanceBonus: { ...form.performanceBonus, tiers: [...form.performanceBonus.tiers, { minGroupBV: (last?.minGroupBV ?? 0) + 1000, pct: (last?.pct ?? 0) + 3 }] } });
+            }}
+            className="text-sm underline"
+          >
+            Add a tier
           </button>
         </div>
 
@@ -585,5 +673,84 @@ export default function Page() {
     <Suspense fallback={null}>
       <MembersAdmin />
     </Suspense>
+  );
+}
+
+
+function Bonus() {
+  const qc = useQueryClient();
+  const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
+  const { data, isLoading } = useQuery({ queryKey: ['admin-bonus', month], queryFn: () => memberApi.admin.bonus(month) });
+  const pay = useMutation({
+    mutationFn: () => memberApi.admin.payBonus(month),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-bonus', month] }),
+  });
+  const unpaid = data?.lines.filter((l) => !l.paid) ?? [];
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="font-semibold">Performance bonus</h3>
+          <p className="text-xs text-gray-500">A preview from this month&apos;s points; nothing is paid until you press Pay. Each partner can be paid once per month.</p>
+        </div>
+        <MonthSelect value={month} onChange={setMonth} />
+      </div>
+      {isLoading || !data ? (
+        <p className="text-gray-500">Loading…</p>
+      ) : !data.settings.enabled ? (
+        <p className="text-sm text-amber-700">The performance bonus is switched off in Programme settings.</p>
+      ) : data.lines.length === 0 ? (
+        <p className="text-sm text-gray-500">No partner reaches a bonus tier for this month yet.</p>
+      ) : (
+        <>
+          <div className="overflow-x-auto border rounded-lg">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-left text-xs text-gray-500">
+                <tr>
+                  <th className="px-3 py-2 font-medium">Partner</th>
+                  <th className="px-3 py-2 font-medium text-right">Own BV</th>
+                  <th className="px-3 py-2 font-medium text-right">Group BV</th>
+                  <th className="px-3 py-2 font-medium text-right">Tier</th>
+                  <th className="px-3 py-2 font-medium text-right">Partners below</th>
+                  <th className="px-3 py-2 font-medium text-right">Bonus</th>
+                  <th className="px-3 py-2 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.lines.map((l) => (
+                  <tr key={l.user} className="border-t">
+                    <td className="px-3 py-2">
+                      {l.name}
+                      {l.memberCode && <span className="block text-xs text-gray-500">{l.memberCode}</span>}
+                    </td>
+                    <td className="px-3 py-2 text-right">{l.personalBV.toLocaleString()}</td>
+                    <td className="px-3 py-2 text-right">{l.groupBV.toLocaleString()}</td>
+                    <td className="px-3 py-2 text-right">{l.pct}%</td>
+                    <td className="px-3 py-2 text-right">{l.legs.length}</td>
+                    <td className="px-3 py-2 text-right font-medium">{formatPrice(l.amount)}</td>
+                    <td className="px-3 py-2">{l.paid ? <span className="text-green-700">Paid</span> : <span className="text-gray-500">Not paid</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm">
+              Total {formatPrice(data.total)}, {unpaid.length} still to pay ({formatPrice(unpaid.reduce((s, l) => s + l.amount, 0))}).
+            </p>
+            <button
+              type="button"
+              disabled={!unpaid.length || pay.isPending}
+              onClick={() => window.confirm(`Pay ${unpaid.length} partners for ${month} into their wallets?`) && pay.mutate()}
+              className="px-5 py-2.5 rounded-lg bg-black text-white text-sm disabled:opacity-40"
+            >
+              {pay.isPending ? 'Paying…' : 'Pay into wallets'}
+            </button>
+          </div>
+          {pay.isError && <p className="text-sm text-red-600">{apiError(pay.error)}</p>}
+          {pay.isSuccess && <p className="text-sm text-green-700">Paid {pay.data.paid} partners {formatPrice(pay.data.total)}.</p>}
+        </>
+      )}
+    </div>
   );
 }

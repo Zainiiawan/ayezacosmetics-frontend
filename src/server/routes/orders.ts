@@ -36,6 +36,7 @@ import {
   postEntries,
   recalcPendingCommission,
   round,
+  unitBP,
   unitBV,
   walletSummary,
   wholesaleTerms,
@@ -48,6 +49,7 @@ import {
   sendPaymentStatusEmail,
 } from '../email';
 import { logger } from '../logger';
+import { commissionChain } from '../network';
 
 export const orders = new Router();
 
@@ -169,6 +171,7 @@ async function buildQuote(input: {
   let productDiscountTotal = 0;
   let memberDiscount = 0;
   let bv = 0;
+  let bp = 0;
 
   for (const line of input.lines) {
     const product = await db.products.findById(line.productId);
@@ -185,6 +188,7 @@ async function buildQuote(input: {
       else notices.push(`${product.name}: wholesale price applies from ${terms.minQty} units.`);
     }
     const lineBV = unitBV(product, retailUnit, ms) * line.quantity;
+    const lineBP = unitBP(product, retailUnit, ms) * line.quantity;
     Object.assign(priced, {
       category: product.category ? String(product.category) : undefined,
       retailPrice: retailUnit,
@@ -194,11 +198,13 @@ async function buildQuote(input: {
       total: unit * line.quantity,
       lineTotal: unit * line.quantity,
       bv: lineBV,
+      bp: lineBP,
     });
     memberDiscount += (retailUnit - unit) * line.quantity;
     subtotal += priced.lineTotal;
     productDiscountTotal += priced.productDiscount * line.quantity;
     bv += lineBV;
+    bp += lineBP;
     items.push(priced);
   }
   if (items.length === 0) throw new BadRequestError('No items to checkout');
@@ -303,7 +309,9 @@ async function buildQuote(input: {
   const walletUsed = buyer ? Math.max(0, Math.min(Number(input.walletAmount ?? 0) || 0, wallet.available, total)) : 0;
 
   const commissionBase = Math.max(0, subtotal - discount - welcomeDiscount - pointsValue);
-  const commission = sponsor ? round((commissionBase * ms.referralCommissionPct) / 100) : 0;
+  // level 1 is the sponsor; each level above earns its own level's rate
+  const commissions = await commissionChain(sponsor, buyer?._id, commissionBase, ms);
+  const commission = commissions.find((c) => c.level === 1)?.amount ?? 0;
   const cashbackPct = buyer && buyerType === 'customer' ? ms.cashbackPct : 0;
   const cashback = round((commissionBase * cashbackPct) / 100);
 
@@ -335,8 +343,10 @@ async function buildQuote(input: {
     total,
     amountDue: Math.max(0, total - walletUsed),
     bv,
+    bp,
     sponsor,
     commission,
+    commissions,
     commissionPct: ms.referralCommissionPct,
     settings: ms,
     pickupPoint,
@@ -362,6 +372,14 @@ async function linesFor(body: { items?: QuoteLine[] }, userId?: string) {
   return { lines, cartDoc };
 }
 
+/** What a buyer may see of their order: not who earns commission on it, or how much. */
+function forBuyer(order: Doc, viewer?: { _id: string; role?: string } | null): Doc {
+  if (!order?.member || viewer?.role === 'admin' || viewer?.role === 'staff') return order;
+  const { commissions, commission, commissionPct, sponsor, ...member } = order.member;
+  void commissions; void commission; void commissionPct; void sponsor;
+  return { ...order, member };
+}
+
 orders.post('/quote', optionalAuthenticate, validate(quoteSchema), async ({ body, user }) => {
   const { lines } = await linesFor(body, user?._id);
   const q = await buildQuote({ user, lines, couponCode: body.couponCode, city: body.city, refCode: body.refCode, walletAmount: body.walletAmount, pointsToRedeem: body.pointsToRedeem, pickupPointId: body.pickupPointId });
@@ -371,7 +389,7 @@ orders.post('/quote', optionalAuthenticate, validate(quoteSchema), async ({ body
     data: {
       buyerType: q.buyerType,
       discountPct: q.discountPct,
-      items: q.items.map((i) => ({ product: i.product, name: i.name, image: i.image, quantity: i.quantity, retailPrice: i.retailPrice, price: i.price, total: i.total, bv: i.bv })),
+      items: q.items.map((i) => ({ product: i.product, name: i.name, image: i.image, quantity: i.quantity, retailPrice: i.retailPrice, price: i.price, total: i.total, bv: i.bv, bp: i.bp })),
       notices: q.notices,
       retailSubtotal: q.retailSubtotal,
       memberDiscount: q.memberDiscount,
@@ -394,6 +412,7 @@ orders.post('/quote', optionalAuthenticate, validate(quoteSchema), async ({ body
       total: q.total,
       amountDue: q.amountDue,
       bv: q.bv,
+      bp: q.bp,
       referredBy: q.sponsor ? `${q.sponsor.firstName} ${String(q.sponsor.lastName ?? '').slice(0, 1)}.` : null,
     },
   });
@@ -533,10 +552,12 @@ orders.post('/', optionalAuthenticate, validate(checkoutSchema), async ({ body, 
       discountPct: q.discountPct,
       memberDiscount: q.memberDiscount,
       bv: q.bv,
+      bp: q.bp,
       sponsor: q.sponsor?._id,
       sponsorCode: q.sponsor?.memberCode,
       commission: q.commission,
       commissionPct: q.sponsor ? q.commissionPct : 0,
+      commissions: q.commissions,
       cashback: q.cashback,
       cashbackPct: q.cashbackPct,
       pointsRedeemed: q.pointsRedeemed,
@@ -593,7 +614,7 @@ orders.post('/', optionalAuthenticate, validate(checkoutSchema), async ({ body, 
     link: '/admin/orders',
   });
 
-  return json({ success: true, message: 'Order created', data: order }, 201);
+  return json({ success: true, message: 'Order created', data: forBuyer(order, user) }, 201);
 });
 
 // ---------------------------------------------------------------------------
@@ -607,7 +628,7 @@ orders.get('/', authenticate, async ({ query, user }) => {
     db.orders.count(filter),
     db.orders.find(filter, { sort: { createdAt: -1 }, skip: (page - 1) * limit, limit }),
   ]);
-  return json({ success: true, message: 'Orders fetched', data: { orders: list, pagination: pagination(page, limit, total) } });
+  return json({ success: true, message: 'Orders fetched', data: { orders: list.map((o: Doc) => forBuyer(o, user)), pagination: pagination(page, limit, total) } });
 });
 
 orders.get('/admin/all', adminOnly, async ({ query }) => {
@@ -659,7 +680,7 @@ orders.get('/:orderId', authenticate, async ({ params, user }) => {
   if (String(order.user) !== String(user!._id) && user!.role !== 'admin' && user!.role !== 'warehouse') {
     throw new ForbiddenError('You do not have access to this order');
   }
-  return json({ success: true, message: 'Order fetched', data: order });
+  return json({ success: true, message: 'Order fetched', data: forBuyer(order, user) });
 });
 
 // ---------------------------------------------------------------------------
@@ -700,6 +721,7 @@ orders.patch('/:orderId/admin-edit', adminOnly, validate(adminEditSchema), async
     let newSubtotal = 0;
     let newProductDiscount = 0;
     let newBV = 0;
+    let newBP = 0;
     const newItems: any[] = [];
     const ms = await getMemberSettings();
     const member = order.member ?? {};
@@ -716,8 +738,10 @@ orders.patch('/:orderId/admin-edit', adminOnly, validate(adminEditSchema), async
         if (input.quantity >= terms.minQty) unit = Math.min(retailUnit, terms.price);
       }
       const lineBV = unitBV(product, retailUnit, ms) * input.quantity;
-      Object.assign(priced, { retailPrice: retailUnit, price: unit, salePrice: unit, total: unit * input.quantity, lineTotal: unit * input.quantity, bv: lineBV });
+      const lineBP = unitBP(product, retailUnit, ms) * input.quantity;
+      Object.assign(priced, { retailPrice: retailUnit, price: unit, salePrice: unit, total: unit * input.quantity, lineTotal: unit * input.quantity, bv: lineBV, bp: lineBP });
       newBV += lineBV;
+      newBP += lineBP;
       newSubtotal += priced.lineTotal;
       newProductDiscount += priced.productDiscount * input.quantity;
       newItems.push(priced);
@@ -743,7 +767,7 @@ orders.patch('/:orderId/admin-edit', adminOnly, validate(adminEditSchema), async
         await bumpUserCounter(order.user, 'monthlyBV', delta);
         await bumpUserCounter(order.user, 'totalBV', delta);
       }
-      order.member = { ...order.member, bv: newBV };
+      order.member = { ...order.member, bv: newBV, bp: newBP };
     }
     hasChanges = true;
   }

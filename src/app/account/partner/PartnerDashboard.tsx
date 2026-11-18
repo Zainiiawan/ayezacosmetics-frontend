@@ -13,12 +13,16 @@ import { useMember } from '@/lib/member/useMember';
 import { Field, Notice, SelectField, Stat, StatusBadge, money } from '@/components/member/ui';
 import InviteCard from '@/components/member/InviteCard';
 import EarningsView from '@/components/member/EarningsView';
+import { DownlineTab, GenealogyTree, PointsTab } from '@/components/member/Network';
 import { NewsTeaser, OnboardingCard, RecognitionTab, SponsorCard, TeamTab, TitleCard, ToolsTab, TrainingProgressTab } from './PartnerTools';
 import { cn, formatDate } from '@/lib/utils';
 
 const TABS = [
   ['overview', 'Overview'],
   ['team', 'My team'],
+  ['network', 'Network tree'],
+  ['downline', 'Downline'],
+  ['points', 'Points (BP/BV)'],
   ['tools', 'Tools'],
   ['wallet', 'Wallet'],
   ['earnings', 'Earnings'],
@@ -100,6 +104,9 @@ export default function PartnerDashboard() {
       </div>
       {tab === 'overview' && <Overview onTraining={() => setTab('training')} />}
       {tab === 'team' && <TeamTab />}
+      {tab === 'network' && <GenealogyTree />}
+      {tab === 'downline' && <DownlineTab />}
+      {tab === 'points' && <PointsTab />}
       {tab === 'tools' && <ToolsTab />}
       {tab === 'wallet' && <WalletTab onPayout={() => setTab('payout')} />}
       {tab === 'earnings' && <EarningsView partner />}

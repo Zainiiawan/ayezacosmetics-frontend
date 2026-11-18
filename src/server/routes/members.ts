@@ -19,6 +19,7 @@ import {
   titleProgress,
   INVITE_CODE_RE,
 } from '../members';
+import { pointsSummary, pointsHistory, downline, isInUpline, computePerformanceBonus, payPerformanceBonus } from '../network';
 import crypto from 'crypto';
 import { hashToken } from '../jwt';
 import { canSendEmail } from '../email';
@@ -63,6 +64,9 @@ async function memberProfile(u: Doc) {
       loyaltyRsPerPoint: ms.loyaltyRsPerPoint,
       wholesaleDefaultDiscountPct: ms.wholesaleDefaultDiscountPct,
       wholesaleDefaultMinQty: ms.wholesaleDefaultMinQty,
+      rsPerBP: ms.rsPerBP,
+      rsPerBV: ms.rsPerBV,
+      levelCommissionPct: ms.levelCommissionPct,
     },
   };
   if (type === 'partner') {
@@ -117,6 +121,8 @@ members.get('/programme', async () => {
       loyaltyRsPerPoint: ms.loyaltyRsPerPoint,
       pointValueRs: ms.pointValueRs,
       minRedeemPoints: ms.minRedeemPoints,
+      levelCommissionPct: ms.levelCommissionPct,
+      performanceBonusEnabled: ms.performanceBonus.enabled,
     },
   });
 });
@@ -385,6 +391,152 @@ members.get('/team', authenticate, async ({ user, query }) => {
     monthBV: rows.reduce((s: number, r: any) => s + Number(r.month_bv), 0),
   };
   return json({ success: true, message: 'Team', data: { people, totals, month } });
+});
+
+
+// ---------------------------------------------------------------------------
+// Network: points (BP/BV), downline by level, genealogy tree
+// ---------------------------------------------------------------------------
+const PERIOD_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
+const periodOf = (v: unknown) => (typeof v === 'string' && PERIOD_RE.test(v) ? v : new Date().toISOString().slice(0, 7));
+
+/** Personal, team and group BP/BV for a month, team points by level, and the ledger. */
+members.get('/points', authenticate, async ({ user, query }) => {
+  const period = periodOf(query.month);
+  const [summary, history] = await Promise.all([pointsSummary(user!._id, period), pointsHistory(user!._id, period)]);
+  const names = new Map<string, string>();
+  for (const id of Array.from(new Set(history.map((h: any) => h.fromUser).filter(Boolean))) as string[]) {
+    const u = await db.users.findById(id);
+    if (u) names.set(id, maskName(u));
+  }
+  const rows = history.map((h: any) => ({
+    _id: h._id,
+    kind: h.kind,
+    level: h.level,
+    bp: h.bp,
+    bv: h.bv,
+    status: h.status,
+    orderNumber: h.orderNumber,
+    from: h.kind === 'personal' ? 'Your order' : names.get(h.fromUser) ?? 'Guest order',
+    createdAt: h.createdAt,
+  }));
+  return json({ success: true, message: 'Points', data: { ...summary, history: rows } });
+});
+
+function networkNode(r: { _id: string; level: number; data: Doc; createdAt: string; directCount: number; personal: { bp: number; bv: number }; team: { bp: number; bv: number }; sponsor?: string }) {
+  const d = r.data;
+  return {
+    _id: r._id,
+    sponsor: r.sponsor,
+    level: r.level,
+    name: maskName(d),
+    memberCode: isPartner(d) ? d.memberCode ?? null : null,
+    type: accountType(d),
+    city: d.partner?.city ?? d.addresses?.[0]?.city ?? '',
+    joinedAt: d.referredAt ?? r.createdAt,
+    active: d.isActive !== false,
+    directCount: r.directCount,
+    personal: r.personal,
+    team: r.team,
+    group: { bp: r.personal.bp + r.team.bp, bv: r.personal.bv + r.team.bv },
+  };
+}
+
+/** Everyone in the partner's network, direct (level 1) and indirect (level 2+). */
+members.get('/downline', authenticate, async ({ user, query }) => {
+  await requirePartner(user!._id);
+  const ms = await getMemberSettings();
+  const period = periodOf(query.month);
+  const all = (await downline(user!._id, Math.max(ms.maxTeamLevels, 1), period)).map(networkNode);
+  const level = Number(query.level);
+  const people = Number.isInteger(level) && level > 0 ? all.filter((p) => p.level === level) : all;
+  const levels = Array.from(new Set(all.map((p) => p.level))).sort((a, b) => a - b).map((l) => {
+    const at = all.filter((p) => p.level === l);
+    return { level: l, people: at.length, partners: at.filter((p) => p.type === 'partner').length, bv: at.reduce((s, p) => s + p.personal.bv, 0), bp: at.reduce((s, p) => s + p.personal.bp, 0) };
+  });
+  return json({
+    success: true,
+    message: 'Downline',
+    data: { month: period, people, levels, totals: { people: all.length, direct: all.filter((p) => p.level === 1).length, indirect: all.filter((p) => p.level > 1).length } },
+  });
+});
+
+/**
+ * Genealogy tree below `root` (default: yourself), `depth` levels deep. A
+ * partner can open any member of their own network; an admin can open anyone,
+ * found by id, member code or email.
+ */
+members.get('/genealogy', authenticate, async ({ user, query }) => {
+  const isAdmin = user!.role === 'admin';
+  if (!isAdmin) await requirePartner(user!._id);
+  const period = periodOf(query.month);
+  const depth = Math.min(Math.max(Number(query.depth) || 3, 1), 6);
+  let root: Doc | null = null;
+  const want = String(query.root ?? '').trim();
+  if (!want || want === user!._id) root = await db.users.findById(user!._id);
+  else if (isAdmin) {
+    root =
+      (await db.users.findById(want)) ??
+      (await db.users.findOne({ memberCode: want.toUpperCase() })) ??
+      (await db.users.findOne({ inviteAlias: want.toUpperCase() })) ??
+      (await db.users.findOne({ email: want.toLowerCase() }));
+  } else {
+    root = await db.users.findById(want);
+    if (root && !(await isInUpline(root._id, user!._id))) throw new ForbiddenError('That member is not in your network');
+  }
+  if (!root) throw new NotFoundError('Member');
+  const rows = (await downline(root._id, depth, period)).map(networkNode);
+  const own = await pointsSummary(root._id, period);
+  const directCount = (await getSql()`select count(*)::int as n from users where referred_by = ${root._id}`)[0] as any;
+  const top = {
+    ...networkNode({ _id: root._id, level: 0, data: root, createdAt: String(root.createdAt ?? ""), directCount: Number(directCount.n), personal: own.personal, team: own.team }),
+    name: root._id === user!._id ? 'You' : maskName(root),
+  };
+  // nest: children of each node, in joining order
+  const byParent = new Map<string, any[]>();
+  for (const n of rows) byParent.set(n.sponsor!, [...(byParent.get(n.sponsor!) ?? []), n]);
+  const build = (n: any): any => ({ ...n, children: (byParent.get(n._id) ?? []).map(build), hasMore: n.level >= depth && n.directCount > 0 });
+  const sponsor = isAdmin && root.referredBy ? await db.users.findById(root.referredBy) : null;
+  return json({
+    success: true,
+    message: 'Genealogy',
+    data: { month: period, depth, root: build(top), sponsor: sponsor ? { _id: sponsor._id, name: maskName(sponsor), memberCode: sponsor.memberCode ?? null } : null },
+  });
+});
+
+/** Admin: one member's points and ledger. */
+members.get('/admin/points/:userId', adminOnly, async ({ params, query }) => {
+  const period = periodOf(query.month);
+  const u = await db.users.findById(params.userId);
+  if (!u) throw new NotFoundError('User');
+  const [summary, history] = await Promise.all([pointsSummary(u._id, period), pointsHistory(u._id, period)]);
+  return json({ success: true, message: 'Points', data: { ...summary, history, member: { _id: u._id, name: `${u.firstName} ${u.lastName ?? ''}`.trim(), memberCode: u.memberCode ?? null } } });
+});
+
+/** Admin: preview a month's performance bonus (nothing is paid). */
+members.get('/admin/bonus', adminOnly, async ({ query }) => {
+  const period = periodOf(query.month);
+  const sql = getSql();
+  const lines = await computePerformanceBonus(period);
+  const paidRows = (await sql`select "user" from wallet_entries where type = 'performance_bonus' and data->>'month' = ${period}`) as any[];
+  const paid = new Set(paidRows.map((r) => r.user));
+  const out = [];
+  for (const l of lines) {
+    const u = await db.users.findById(l.user);
+    out.push({ ...l, name: u ? `${u.firstName} ${u.lastName ?? ''}`.trim() : l.user, memberCode: u?.memberCode ?? null, paid: paid.has(l.user) });
+  }
+  return json({ success: true, message: 'Performance bonus', data: { month: period, lines: out, total: out.reduce((s, l) => s + l.amount, 0), settings: (await getMemberSettings()).performanceBonus } });
+});
+
+const bonusPaySchema = z.object({ month: z.string().regex(PERIOD_RE) });
+
+/** Admin: pay a month's performance bonus into wallets (each partner at most once per month). */
+members.post('/admin/bonus/pay', adminOnly, validate(bonusPaySchema), async ({ body }) => {
+  if (body.month > new Date().toISOString().slice(0, 7)) throw new BadRequestError('That month has not started yet');
+  const ms = await getMemberSettings();
+  if (!ms.performanceBonus.enabled) throw new BadRequestError('Performance bonus is switched off in settings');
+  const result = await payPerformanceBonus(body.month);
+  return json({ success: true, message: `Paid ${result.paid} partners Rs. ${result.total.toLocaleString()} for ${body.month}`, data: result });
 });
 
 /** Earnings for one month: what was earned, by kind, and what the member saved. */
@@ -698,13 +850,27 @@ const settingsSchema = z.object({
     .min(1)
     .max(12)
     .default(MEMBER_DEFAULTS.titles),
+  rsPerBP: z.number().min(1).default(MEMBER_DEFAULTS.rsPerBP),
+  levelCommissionPct: z.array(z.number().min(0).max(50)).min(1).max(10).default(MEMBER_DEFAULTS.levelCommissionPct),
+  maxTeamLevels: z.number().int().min(1).max(20).default(MEMBER_DEFAULTS.maxTeamLevels),
+  performanceBonus: z
+    .object({
+      enabled: z.boolean(),
+      rsPerBV: z.number().min(0),
+      minPersonalBV: z.number().min(0),
+      tiers: z.array(z.object({ minGroupBV: z.number().min(0), pct: z.number().min(0).max(50) })).max(12),
+    })
+    .default(MEMBER_DEFAULTS.performanceBonus),
 });
 
 members.get('/admin/settings', adminOnly, async () => json({ success: true, message: 'Member settings', data: await getMemberSettings() }));
 
 members.put('/admin/settings', adminOnly, validate(settingsSchema), async ({ body }) => {
   const s = await getSettings();
-  s.members = { ...MEMBER_DEFAULTS, ...body };
+  const levels = body.levelCommissionPct ?? MEMBER_DEFAULTS.levelCommissionPct;
+  if (levels.reduce((a: number, b: number) => a + b, 0) > 60) throw new BadRequestError('Commission across all levels can be at most 60% of an order');
+  // level 1 and the older single rate are the same thing
+  s.members = { ...MEMBER_DEFAULTS, ...body, referralCommissionPct: levels[0] };
   await db.settings.save(s);
   return json({ success: true, message: 'Member settings saved', data: await getMemberSettings() });
 });
@@ -722,10 +888,13 @@ members.post('/admin/close-month', adminOnly, async ({ user: admin }) => {
       updated_at = now()
     where coalesce((data->>'monthlyBV')::numeric, 0) <> 0 or data#>>'{partner,status}' = 'approved'
     returning _id`;
+  // pay the month's performance bonus as part of closing it
+  const bonus = (await getMemberSettings()).performanceBonus.enabled ? await payPerformanceBonus(period) : { paid: 0, total: 0, skipped: 0 };
   s.lastClosedPeriod = period;
   s.monthCloses = [...(s.monthCloses ?? []), { period, closedAt: new Date().toISOString(), by: admin!._id, members: rows.length }].slice(-36);
   await db.settings.save(s);
-  return json({ success: true, message: `Closed ${period} for ${rows.length} members`, data: { period, members: rows.length } });
+  const bonusNote = bonus.paid ? `, performance bonus Rs. ${bonus.total.toLocaleString()} to ${bonus.paid} partners` : '';
+  return json({ success: true, message: `Closed ${period} for ${rows.length} members${bonusNote}`, data: { period, members: rows.length, bonus } });
 });
 
 
@@ -740,7 +909,7 @@ members.post('/admin/reallocate', adminOnly, validate(reallocateSchema), async (
     sponsor = await findSponsor(body.sponsorCode);
     if (!sponsor) throw new BadRequestError('No active Brand Partner has that code');
     if (sponsor._id === u._id) throw new BadRequestError('A member cannot sponsor themselves');
-    if (sponsor.referredBy === u._id) throw new BadRequestError('That partner is in this member\'s own team');
+    if (await isInUpline(sponsor._id, u._id)) throw new BadRequestError('That partner is in this member\'s own team');
   }
   const now = new Date().toISOString();
   const history = [...(u.sponsorHistory ?? []), { from: u.referredBy ?? null, to: sponsor?._id ?? null, at: now, by: admin!._id, note: body.note }];
