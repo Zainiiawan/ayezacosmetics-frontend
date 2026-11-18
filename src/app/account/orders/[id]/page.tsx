@@ -87,7 +87,14 @@ export default function OrderTrackingPage() {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
               <h1 className="text-2xl font-serif font-bold text-black">Order {order.orderNumber}</h1>
-              <a href={`/invoice/${order._id}`} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">View invoice</a>
+              {['pending', 'pending_confirmation'].includes(order.status) ? (
+                <p className="text-sm text-gray-500">Your receipt will be ready once we confirm this order.</p>
+              ) : (
+                <span className="flex flex-wrap gap-4">
+                  <a href={`/invoice/${order._id}`} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">View receipt</a>
+                  <a href={`/invoice/${order._id}?print=1`} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">Print receipt</a>
+                </span>
+              )}
               {order.status === 'delivered' && <a href="/account/claims" className="text-sm underline underline-offset-4">Report a problem</a>}
               <p className="text-gray-500 text-sm mt-1">
                 Placed {order.createdAt ? formatDate(order.createdAt) : ''}

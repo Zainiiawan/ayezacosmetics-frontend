@@ -302,27 +302,32 @@ export async function onOrderPlaced(order: Doc) {
     const shares: { user: string; level: number; pct: number; amount: number }[] =
       m.commissions ?? (m.sponsor && m.commission > 0 ? [{ user: m.sponsor, level: 1, pct: m.commissionPct, amount: m.commission }] : []);
     for (const c of shares.filter((x) => x.amount > 0)) {
-      await postEntries([
-        {
-          user: c.user,
-          type: 'commission',
-          amount: c.amount,
-          status: 'pending',
-          order: order._id,
-          orderNumber: order.orderNumber,
-          fromUser: order.user ?? undefined,
-          level: c.level,
-          pct: c.pct,
-          note: `Level ${c.level} commission (${c.pct}%) on order ${order.orderNumber}`,
-        },
-      ]);
-      await createNotification({
-        userId: c.user,
-        type: 'general',
-        title: c.level === 1 ? 'New referral order' : `New level ${c.level} team order`,
-        message: `Order ${order.orderNumber} earns you Rs. ${c.amount.toLocaleString()} once it is delivered.`,
-        link: '/account/partner',
-      });
+      // each level on its own: one level failing must not cost the others their commission
+      try {
+        await postEntries([
+          {
+            user: c.user,
+            type: 'commission',
+            amount: c.amount,
+            status: 'pending',
+            order: order._id,
+            orderNumber: order.orderNumber,
+            fromUser: order.user ?? undefined,
+            level: c.level,
+            pct: c.pct,
+            note: `Level ${c.level} commission (${c.pct}%) on order ${order.orderNumber}`,
+          },
+        ]);
+        await createNotification({
+          userId: c.user,
+          type: 'general',
+          title: c.level === 1 ? 'New referral order' : `New level ${c.level} team order`,
+          message: `Order ${order.orderNumber} earns you Rs. ${c.amount.toLocaleString()} once it is delivered.`,
+          link: '/account/partner',
+        });
+      } catch (err) {
+        logger.error(`Level ${c.level} commission for order ${order.orderNumber} not booked`, err);
+      }
     }
     if (m.sponsor && m.bv) await bumpUserCounter(m.sponsor, 'referredBV', m.bv);
   } catch (err) {

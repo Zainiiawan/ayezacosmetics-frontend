@@ -292,6 +292,15 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
 
+              <div className="flex flex-wrap gap-3 mb-6">
+                <a href={`/invoice/${selectedOrder._id}?print=1`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-black text-white text-sm">
+                  Print receipt
+                </a>
+                <a href={`/invoice/${selectedOrder._id}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg border text-sm">
+                  View receipt
+                </a>
+                {['pending', 'pending_confirmation'].includes(selectedOrder.status) && <span className="self-center text-xs text-gray-500">The customer can see the receipt once you confirm the order.</span>}
+              </div>
               <h3 className="font-serif font-bold text-lg mb-4">Update Status</h3>
               <div className="space-y-4">
                 <div>
