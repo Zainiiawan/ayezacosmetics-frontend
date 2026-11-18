@@ -191,7 +191,7 @@ export async function findSponsor(code?: string | null): Promise<Doc | null> {
 // ---------------------------------------------------------------------------
 type EntryInput = {
   user: string;
-  type: 'commission' | 'cashback' | 'claim_refund' | 'withdrawal' | 'withdrawal_reversal' | 'order_payment' | 'order_refund' | 'adjustment' | 'commission_reversal' | 'cashback_reversal' | 'performance_bonus';
+  type: 'commission' | 'team_commission' | 'cashback' | 'claim_refund' | 'withdrawal' | 'withdrawal_reversal' | 'order_payment' | 'order_refund' | 'adjustment' | 'commission_reversal' | 'cashback_reversal' | 'performance_bonus';
   amount: number; // signed: + credit, - debit
   status: 'pending' | 'available' | 'cancelled';
   order?: string;
@@ -212,7 +212,7 @@ export async function walletSummary(userId: string) {
     select
       coalesce(sum(case when status = 'available' then (data->>'amount')::numeric end), 0) as available,
       coalesce(sum(case when status = 'pending' then (data->>'amount')::numeric end), 0) as pending,
-      coalesce(sum(case when status = 'available' and type in ('commission', 'performance_bonus') then (data->>'amount')::numeric end), 0) as earned,
+      coalesce(sum(case when status = 'available' and type in ('commission', 'team_commission', 'performance_bonus') then (data->>'amount')::numeric end), 0) as earned,
       coalesce(-sum(case when status = 'available' and type in ('withdrawal', 'withdrawal_reversal') then (data->>'amount')::numeric end), 0) as withdrawn
     from wallet_entries where "user" = ${userId}`;
   const r = rows[0] as any;
@@ -307,7 +307,8 @@ export async function onOrderPlaced(order: Doc) {
         await postEntries([
           {
             user: c.user,
-            type: 'commission',
+            // level 1 is 'commission'; upline levels are 'team_commission' (one per order per person)
+            type: c.level === 1 ? 'commission' : 'team_commission',
             amount: c.amount,
             status: 'pending',
             order: order._id,
@@ -345,7 +346,7 @@ export async function onOrderStatusChange(order: Doc, previousStatus: string) {
   const sql = getSql();
 
   try {
-    const commissions = (await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'commission'`) as any[];
+    const commissions = (await sql`select _id, data from wallet_entries where "order" = ${order._id} and type in ('commission', 'team_commission')`) as any[];
     const cashbackRows = await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'cashback' limit 1`;
     const cashback = cashbackRows[0] as any;
 
@@ -454,7 +455,7 @@ export async function recalcPendingCommission(order: Doc) {
   const now = new Date().toISOString();
   if (m.sponsor) {
     const merchandise = Math.max(0, (order.subtotal ?? 0) - (order.discount ?? 0) - (order.manualDiscount ?? 0));
-    const pending = (await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'commission' and status = 'pending'`) as any[];
+    const pending = (await sql`select _id, data from wallet_entries where "order" = ${order._id} and type in ('commission', 'team_commission') and status = 'pending'`) as any[];
     for (const row of pending) {
       const pct = Number(row.data.pct ?? m.commissionPct ?? 0);
       const amount = round((merchandise * pct) / 100);

@@ -128,7 +128,7 @@ async function incentiveProgress(userId: string, inc: Doc): Promise<number> {
     return Number(r[0].v);
   }
   const r = await sql`select coalesce(sum((data->>'amount')::numeric),0) as v from wallet_entries
-    where "user" = ${userId} and type = 'commission' and status <> 'cancelled' and created_at >= ${from} and created_at < ${to}`;
+    where "user" = ${userId} and type in ('commission', 'team_commission') and status <> 'cancelled' and created_at >= ${from} and created_at < ${to}`;
   return Number(r[0].v);
 }
 
@@ -428,7 +428,7 @@ reports.get('/orders.csv', adminOnly, async ({ query }) => {
 reports.get('/commissions.csv', adminOnly, async () => {
   const sql = getSql();
   const rows = await sql`select w.data, w.created_at, u.data->>'firstName' as fn, u.data->>'lastName' as ln, u.data->>'memberCode' as code
-    from wallet_entries w left join users u on u._id = w."user" where w.type in ('commission','commission_reversal') order by w.created_at desc limit 20000`;
+    from wallet_entries w left join users u on u._id = w."user" where w.type in ('commission','team_commission','commission_reversal') order by w.created_at desc limit 20000`;
   return csvResponse(
     'commissions',
     toCsv(['Date', 'Partner', 'Member code', 'Order', 'Amount', 'Status', 'Note'], rows.map((r: any) => [new Date(r.created_at).toISOString().slice(0, 10), `${r.fn ?? ''} ${r.ln ?? ''}`.trim(), r.code, r.data.orderNumber, r.data.amount, r.data.status, r.data.note]))

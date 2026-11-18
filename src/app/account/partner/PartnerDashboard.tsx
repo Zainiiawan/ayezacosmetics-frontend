@@ -37,6 +37,8 @@ const METHOD: Record<string, string> = { jazzcash: 'JazzCash', easypaisa: 'Easyp
 
 const ENTRY_LABEL: Record<string, string> = {
   commission: 'Referral commission',
+  team_commission: 'Team commission (level 2+)',
+  performance_bonus: 'Performance bonus',
   commission_reversal: 'Commission reversed',
   cashback: 'Cashback',
   cashback_reversal: 'Cashback reversed',

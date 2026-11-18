@@ -29,6 +29,9 @@ export const members = new Router();
 const phone = z.string().min(7).max(20);
 const cnic = z.string().regex(/^\d{5}-?\d{7}-?\d$/, 'CNIC must be 13 digits, e.g. 35202-1234567-1');
 
+/** Commission at every level: level 1 is 'commission', upline levels 'team_commission'. */
+const COMMISSION_TYPES = ['commission', 'team_commission'];
+
 const maskName = (u: Doc) => `${u.firstName ?? ''} ${String(u.lastName ?? '').slice(0, 1)}.`.trim();
 
 function siteUrl() {
@@ -223,7 +226,7 @@ members.get('/referrals', authenticate, async ({ user }) => {
   const people = await db.users.find({ referredBy: u!._id }, { sort: { createdAt: -1 }, limit: 500 });
   const commissions = await sql`
     select coalesce(sum(case when status <> 'cancelled' then (data->>'amount')::numeric end),0) as total, data->>'fromUser' as from_user, count(*)::int as orders
-    from wallet_entries where "user" = ${u!._id} and type = 'commission' group by data->>'fromUser'`;
+    from wallet_entries where "user" = ${u!._id} and type in ('commission', 'team_commission') group by data->>'fromUser'`;
   const byUser = new Map(commissions.map((r: any) => [r.from_user, r]));
   const list = people.map((p) => {
     const c: any = byUser.get(p._id);
@@ -548,8 +551,8 @@ members.get('/earnings', authenticate, async ({ user, query }) => {
       from wallet_entries
      where "user" = ${user!._id} and to_char(created_at, 'YYYY-MM') = ${period}
      group by type, status`;
-  const pick = (type: string, status?: string) =>
-    rows.filter((r: any) => r.type === type && (!status || r.status === status)).reduce((s: number, r: any) => s + Number(r.amount), 0);
+  const pick = (type: string | string[], status?: string) =>
+    rows.filter((r: any) => (Array.isArray(type) ? type.includes(r.type) : r.type === type) && (!status || r.status === status)).reduce((s: number, r: any) => s + Number(r.amount), 0);
   const saved = await sql`
     select coalesce(sum((data#>>'{member,memberDiscount}')::numeric),0) as member_discount,
            coalesce(sum((data->>'discount')::numeric),0) as discounts,
@@ -563,7 +566,7 @@ members.get('/earnings', authenticate, async ({ user, query }) => {
   const data = {
     period,
     periods: Array.from(new Set([new Date().toISOString().slice(0, 7), ...months.map((m: any) => m.p)])),
-    commission: { pending: pick('commission', 'pending'), available: pick('commission', 'available'), cancelled: pick('commission', 'cancelled') },
+    commission: { pending: pick(COMMISSION_TYPES, 'pending'), available: pick(COMMISSION_TYPES, 'available'), cancelled: pick(COMMISSION_TYPES, 'cancelled') },
     cashback: { pending: pick('cashback', 'pending'), available: pick('cashback', 'available') },
     claimRefunds: pick('claim_refund', 'available'),
     reversals: pick('commission_reversal') + pick('cashback_reversal'),
@@ -734,8 +737,8 @@ members.get('/admin/overview', adminOnly, async () => {
     from users`;
   const money = await sql`
     select
-      coalesce(sum(case when type='commission' and status='pending' then (data->>'amount')::numeric end),0) as commission_pending,
-      coalesce(sum(case when type='commission' and status='available' then (data->>'amount')::numeric end),0) as commission_released,
+      coalesce(sum(case when type in ('commission','team_commission') and status='pending' then (data->>'amount')::numeric end),0) as commission_pending,
+      coalesce(sum(case when type in ('commission','team_commission') and status='available' then (data->>'amount')::numeric end),0) as commission_released,
       coalesce(sum(case when status='available' then (data->>'amount')::numeric end),0) as wallet_liability
     from wallet_entries`;
   const wd = await sql`select count(*)::int as n, coalesce(sum((data->>'amount')::numeric),0) as amt from withdrawals where status = 'requested'`;
@@ -808,8 +811,8 @@ members.get('/admin/commissions', adminOnly, async ({ query }) => {
   const sql = getSql();
   const status = query.status ? String(query.status) : null;
   const rows = status
-    ? await sql`select _id, data from wallet_entries where type in ('commission','commission_reversal') and status = ${status} order by created_at desc limit 500`
-    : await sql`select _id, data from wallet_entries where type in ('commission','commission_reversal') order by created_at desc limit 500`;
+    ? await sql`select _id, data from wallet_entries where type in ('commission','team_commission','commission_reversal') and status = ${status} order by created_at desc limit 500`
+    : await sql`select _id, data from wallet_entries where type in ('commission','team_commission','commission_reversal') order by created_at desc limit 500`;
   const entries = rows.map((r: any) => ({ _id: r._id, ...r.data }));
   const users = new Map((await db.users.findByIds(Array.from(new Set(entries.map((e) => e.user))))).map((u) => [u._id, u]));
   return json({

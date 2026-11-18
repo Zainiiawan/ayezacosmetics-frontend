@@ -76,7 +76,7 @@ p = await pts(B);
 ok(p.team.bv === 40 && p.byLevel[0]?.level === 2, 'B: team BV from level 2', p.byLevel);
 p = await pts(A);
 ok(p.team.bv === 40 && p.byLevel[0]?.level === 3, 'A: team BV from level 3', p.byLevel);
-const comm = async (orderId) => (await sql`select "user", status, (data->>'amount')::numeric as amount, (data->>'level')::int as level from wallet_entries where "order" = ${orderId} and type = 'commission' order by level`);
+const comm = async (orderId) => (await sql`select "user", status, (data->>'amount')::numeric as amount, (data->>'level')::int as level from wallet_entries where "order" = ${orderId} and type in ('commission', 'team_commission') order by level`);
 let c = await comm(o1._id);
 ok(c.length === 3 && c[0].user === C._id && Number(c[0].amount) === 200 && c[1].user === B._id && Number(c[1].amount) === 100 && c[2].user === A._id && Number(c[2].amount) === 60 && c.every((x) => x.status === 'pending'),
   'commission: C 200 (L1 10%), B 100 (L2 5%), A 60 (L3 3%), all pending', c);
