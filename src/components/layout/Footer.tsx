@@ -40,10 +40,9 @@ const Footer = ({ className }: { className?: string }) => {
       { name: 'Sale', href: '/shop?sort=sale' },
     ],
     categories: [
-      { name: 'Skincare', href: '/categories/skincare' },
-      { name: 'Makeup', href: '/categories/makeup' },
-      { name: 'Fragrances', href: '/categories/fragrances' },
+      { name: 'Skin Care', href: '/categories/skin-care' },
       { name: 'Hair Care', href: '/categories/hair-care' },
+      { name: 'All Categories', href: '/categories' },
     ],
     information: [
       { name: 'About Us', href: '/about' },

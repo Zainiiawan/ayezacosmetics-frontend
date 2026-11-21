@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { config } from '@/lib/config';
 
 export const metadata: Metadata = {
-  title: 'Careers | AZEEORA',
+  title: 'Careers & Opportunities',
   description: 'Explore career opportunities and join the luxury beauty team at AZEEORA in Pakistan.',
   alternates: {
-    canonical: '/careers',
+    canonical: `${config.getBaseUrl()}/careers`,
   },
 };
 

@@ -40,7 +40,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   alternates: {
-    canonical: APP_URL,
+    canonical: `${APP_URL}/`,
   },
   title: {
     default: "AZEEORA | Best Whitening Cream, Hair Serum & Skincare in Pakistan",
@@ -146,6 +146,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${nastaliq.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
+        {/* Google Tag Manager & Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PDTTSF9Q" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'GTM-PDTTSF9Q');
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
@@ -156,6 +168,15 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col overflow-x-hidden bg-white">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-PDTTSF9Q"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <ScrollToTop />
         <Providers>
           <ConditionalSiteChrome>{children}</ConditionalSiteChrome>

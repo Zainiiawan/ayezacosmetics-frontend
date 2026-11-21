@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://google-analytics.com https://analytics.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; frame-src 'self' https://www.googletagmanager.com;",
           },
         ],
       },
@@ -96,6 +96,16 @@ const nextConfig: NextConfig = {
       {
         source: '/products/ayezaradiancefacewash',
         destination: '/products/azeeora-radiance-face-wash',
+        permanent: true,
+      },
+      {
+        source: '/categories/whitening-cream',
+        destination: '/categories/skin-care',
+        permanent: true,
+      },
+      {
+        source: '/categories/skincare',
+        destination: '/categories/skin-care',
         permanent: true,
       },
     ];

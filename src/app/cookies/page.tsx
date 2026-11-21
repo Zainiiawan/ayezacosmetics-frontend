@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
+import { config } from '@/lib/config';
 import LegalFooter from '@/components/legal/LegalFooter';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Cookie Policy | AZEEORA',
+  title: 'Cookie Policy | First-Party Privacy Storage',
   description: 'Understand how AZEEORA uses first-party cookies and essential browser storage for a secure shopping experience.',
   alternates: {
-    canonical: '/cookies',
+    canonical: `${config.getBaseUrl()}/cookies`,
   },
 };
 

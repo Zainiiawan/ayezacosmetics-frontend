@@ -10,14 +10,14 @@ import ShopTheRange from '@/components/blog/ShopTheRange';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Beauty Blog & Skincare Tips | AZEEORA',
-  description: 'Discover the latest skincare tips, makeup tutorials, and beauty secrets from AZEEORA experts. Achieve your flawless look today.',
+  title: 'The Beauty Edit — Skincare Advice & Guides',
+  description: 'Expert skincare tips, whitening beauty guides, and daily routines tailored for Pakistani weather and skin types by AZEEORA.',
   alternates: {
-    canonical: '/blog',
+    canonical: `${getBaseUrl()}/blog`,
   },
   openGraph: {
-    title: 'Beauty Blog & Skincare Tips | AZEEORA',
-    description: 'Discover the latest skincare tips, makeup tutorials, and beauty secrets from AZEEORA experts.',
+    title: 'The Beauty Edit — Skincare Advice & Guides | AZEEORA',
+    description: 'Expert skincare tips, whitening beauty guides, and daily routines tailored for Pakistani weather and skin types by AZEEORA.',
     url: `${getBaseUrl()}/blog`,
     type: 'website',
   },

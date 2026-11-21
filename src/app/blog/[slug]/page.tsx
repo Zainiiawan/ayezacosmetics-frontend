@@ -40,7 +40,7 @@ export async function generateMetadata(
   const canonicalUrl = `${config.getBaseUrl()}/blog/${post.slug}`;
 
   return {
-    title: `${post.title} | AZEEORA Blog`,
+    title: post.title,
     description: post.excerpt,
     alternates: {
       canonical: canonicalUrl,

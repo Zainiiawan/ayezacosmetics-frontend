@@ -5,15 +5,15 @@ import Link from 'next/link';
 import { RefreshCcw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Refund & Returns | AZEEORA',
-  description: 'Our hassle-free 14-day refund and return policy.',
+  title: 'Refund & Returns Policy | 14-Day Guarantee',
+  description: 'Learn about AZEEORA hassle-free 14-day refund and return policy in Pakistan. Easy exchanges and customer satisfaction guaranteed.',
   alternates: {
-    canonical: '/refunds',
+    canonical: `${config.getBaseUrl()}/refunds`,
   },
   openGraph: {
-    title: 'Refund & Returns | AZEEORA',
-    description: 'Our hassle-free 14-day refund and return policy.',
-    url: '/refunds',
+    title: 'Refund & Returns Policy | 14-Day Guarantee | AZEEORA',
+    description: 'Learn about AZEEORA hassle-free 14-day refund and return policy in Pakistan.',
+    url: `${config.getBaseUrl()}/refunds`,
     type: 'website',
   },
 };

@@ -3,15 +3,15 @@ import { config } from '@/lib/config';
 import ContactPageClient from './ContactPageClient';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | AZEEORA',
-  description: 'Get in touch with AZEEORA for orders, product advice, or partnership enquiries. We are here to help.',
+  title: 'Contact Us | Customer Care & Support',
+  description: 'Get in touch with AZEEORA customer care for orders, product consultations, or partnership enquiries in Pakistan. Fast support via WhatsApp and phone.',
   alternates: {
-    canonical: '/contact',
+    canonical: `${config.getBaseUrl()}/contact`,
   },
   openGraph: {
-    title: 'Contact Us | AZEEORA',
-    description: 'Get in touch with AZEEORA for orders, product advice, or partnership enquiries.',
-    url: '/contact',
+    title: 'Contact Us | Customer Care & Support | AZEEORA',
+    description: 'Get in touch with AZEEORA customer care for orders, product consultations, or partnership enquiries in Pakistan.',
+    url: `${config.getBaseUrl()}/contact`,
     type: 'website',
   },
 };

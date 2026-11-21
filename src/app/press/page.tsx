@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { config } from '@/lib/config';
 
 export const metadata: Metadata = {
-  title: 'Press & Media | AZEEORA',
-  description: 'AZEEORA press room, media inquiries, brand coverage, and press releases.',
+  title: 'Press & Media Inquiries',
+  description: 'AZEEORA press room, media inquiries, brand coverage, and official press releases in Pakistan.',
   alternates: {
-    canonical: '/press',
+    canonical: `${config.getBaseUrl()}/press`,
   },
 };
 

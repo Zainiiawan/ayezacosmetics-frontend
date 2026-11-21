@@ -79,18 +79,67 @@ export async function generateMetadata({
   const slugLower = (product.slug || slug).toLowerCase();
   const nameLower = (product.name || '').toLowerCase();
 
-  if (slugLower.includes('beauty-cream') || nameLower.includes('beauty cream') || nameLower.includes('whitening cream')) {
+  let keywords: string[] = product.seo?.metaKeywords || product.tags || [];
+
+  if (slugLower.includes('beauty-cream') || slugLower.includes('cream') || nameLower.includes('beauty cream') || nameLower.includes('whitening cream')) {
     title = 'Azeeora Whitening Beauty Cream - Best Night Cream & Glow Cream in Pakistan | AZEEORA';
     description = 'Buy authentic Azeeora Beauty Cream online in Pakistan. The best whitening cream, night cream, and glow cream for removing dark spots, pigmentation and dullness. 100% original with cash on delivery nationwide.';
+    keywords = [
+      'whitening cream',
+      'best whitening cream in pakistan',
+      'night cream',
+      'glow cream',
+      'azeeora beauty cream',
+      'face whitening cream',
+      'best night cream for glowing skin',
+      'whitening night cream',
+      'beauty cream',
+      'azeeora'
+    ];
   } else if (slugLower.includes('hair') || slugLower.includes('serum') || nameLower.includes('hair growth') || nameLower.includes('hair serum')) {
-    title = 'Azeeora Hair Growth Serum - Best Hair Serum for Growth & Frizz Control in Pakistan | AZEEORA';
+    title = 'Azeeora Hair Growth Serum - Best Hair Serum for Growth & Hair Fall in Pakistan | AZEEORA';
     description = 'Buy Azeeora Hair Growth Serum (30ml) online in Pakistan. The best hair serum for hair fall reduction, frizz control, silken shine & follicle nourishment. Fast COD delivery.';
+    keywords = [
+      'hair serum',
+      'best hair serum in pakistan',
+      'hair growth serum',
+      'hair fall control',
+      'serum for hair growth',
+      'hair serum for frizzy hair',
+      'hair oil serum',
+      'azeeora hair serum',
+      'azeeora'
+    ];
   } else if (slugLower.includes('polish') || nameLower.includes('skin polish') || nameLower.includes('glutathione')) {
     title = 'Azeeora Glutathione Skin Polish Kit - Best Facial Skin Polish in Pakistan | AZEEORA';
     description = 'Buy Azeeora Glutathione Skin Polish Kit (Oxidizing Emulsion & Dust-Free Blonder Powder) online in Pakistan. Delivers instant salon-like facial glow, fairness & tan removal.';
+    keywords = [
+      'skin polish',
+      'best skin polish in pakistan',
+      'glutathione skin polish',
+      'skin polish kit',
+      'facial skin polish',
+      'facial polish',
+      'glow polish',
+      'skin polish for glowing skin',
+      'azeeora skin polish',
+      'azeeora'
+    ];
   } else if (slugLower.includes('face-wash') || slugLower.includes('radiance') || nameLower.includes('face wash')) {
     title = 'Azeeora Radiance Face Wash - Best Face Wash for Glowing & Clear Skin in Pakistan | AZEEORA';
     description = 'Buy Azeeora Radiance Face Wash online in Pakistan. Sulfate-free formula enriched with Niacinamide, Aloe Vera & Vitamin B5 for deep pore cleansing, oil balance and instant glow.';
+    keywords = [
+      'face wash',
+      'best face wash in pakistan',
+      'face wash for glowing skin',
+      'radiance face wash',
+      'face wash for oily skin',
+      'face wash for acne',
+      'niacinamide face wash',
+      'sulfate free face wash',
+      'azeeora face wash',
+      'azeeora'
+    ];
   }
   
   const safeSlug = product.slug?.replace(/^ayeza-/, 'azeeora-') || slug.replace(/^ayeza-/, 'azeeora-');
@@ -101,7 +150,7 @@ export async function generateMetadata({
   return {
     title,
     description,
-    keywords: product.seo?.metaKeywords || product.tags,
+    keywords,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -288,7 +337,124 @@ export default async function ProductPageServer({ params }: { params: Promise<{ 
       ],
     };
 
+    let faqJsonLd: any = null;
+    const sLower = (product.slug || slug).toLowerCase();
+    const nLower = (product.name || '').toLowerCase();
+
+    if (sLower.includes('beauty-cream') || sLower.includes('cream') || nLower.includes('cream')) {
+      faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Is Azeeora the best whitening cream without side effects in Pakistan?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes! Azeeora Whitening Beauty Cream is 100% free from mercury, hydroquinone, steroids, and harsh bleach. Formulated with safe active ingredients, it nourishes and brightens naturally without thinning the skin.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'How long does it take to see visible results?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Most customers notice a clearer, brighter complexion with enhanced hydration and reduced dark spots within 7 to 14 days of regular night use.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Can men also use Azeeora Beauty Cream?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Absolutely. Azeeora Whitening Beauty Cream works effectively for both men and women struggling with sun tan, dullness, or dark spots.',
+            },
+          },
+        ],
+      };
+    } else if (sLower.includes('hair') || sLower.includes('serum') || nLower.includes('hair')) {
+      faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Which is the best hair growth serum for hair fall in Pakistan?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Azeeora Hair Growth Serum (30ml) is rated among the best hair serums in Pakistan because it controls humidity-induced frizz, strengthens weak roots, and stimulates healthy follicle growth.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Can I use Azeeora Hair Serum on dry hair?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes! While applying to damp hair seals in moisture best, applying a drop to dry hair provides an instant shine boost and tames flyaways.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Does this serum make hair greasy?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'No. Azeeora Hair Serum has a quick-absorbing, lightweight texture that leaves hair soft, silky, and bouncy without any heavy greasy buildup.',
+            },
+          },
+        ],
+      };
+    } else if (sLower.includes('polish') || nLower.includes('polish')) {
+      faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Does this glutathione skin polish cause redness or burning?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Azeeora Skin Polish is formulated with soothing conditioning agents to minimize irritation. We always recommend performing a 24-hour patch test behind your ear before full facial application.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'How often can I use the skin polish?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Using the kit once every 2 to 3 weeks is recommended to maintain a fresh, bright complexion without over-exfoliating.',
+            },
+          },
+        ],
+      };
+    } else if (sLower.includes('wash') || sLower.includes('radiance') || nLower.includes('wash')) {
+      faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Which is the best face wash for oily and acne-prone skin in Pakistan?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Azeeora Radiance Face Wash is formulated with Niacinamide and soothing botanical extracts, which regulate sebum production and reduce active breakouts without drying out the skin.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Does this face wash help with whitening and glowing skin?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Yes! By removing dead cells and delivering Niacinamide, regular cleansing promotes a bright, clear, and glowing complexion.',
+            },
+          },
+        ],
+      };
+    }
+
     jsonLdArray = [productJsonLd, breadcrumbJsonLd];
+    if (faqJsonLd) {
+      jsonLdArray.push(faqJsonLd);
+    }
   }
 
   return (

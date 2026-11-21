@@ -58,43 +58,6 @@ export default function ProductSeoContent({ slug }: { slug: string }) {
             </div>
           </div>
         </div>
-
-        {/* SEO FAQ Schema for Beauty Cream */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": [
-                {
-                  "@type": "Question",
-                  "name": "Is Azeeora the best whitening cream without side effects?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes! Azeeora Beauty Cream is 100% free from mercury, hydroquinone, steroids, and harsh bleach. We use safe active ingredients that nourish and brighten naturally without thinning the skin."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "How long does it take to see visible results?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Most customers notice a clearer, brighter complexion with enhanced hydration in 7 to 14 days of consistent night use."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Can men also use Azeeora Beauty Cream?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Absolutely. Azeeora Beauty Cream works effectively for both men and women struggling with sun tan, dullness, or dark spots."
-                  }
-                }
-              ]
-            })
-          }}
-        />
       </div>
     );
   }
@@ -154,43 +117,6 @@ export default function ProductSeoContent({ slug }: { slug: string }) {
             </div>
           </div>
         </div>
-
-        {/* SEO FAQ Schema for Hair Serum */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": [
-                {
-                  "@type": "Question",
-                  "name": "Which is the best hair serum in Pakistan for frizzy hair?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Azeeora Hair Growth Serum is rated as one of the best hair serums in Pakistan because it controls humidity-induced frizz while delivering essential nourishment for long-term hair growth."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Can I use Azeeora Hair Serum on dry hair?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes! While applying to damp hair seals in moisture best, applying a drop to dry hair provides an instant shine boost and tames flyaways."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Does this serum make hair greasy?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "No. Azeeora Hair Serum has a quick-absorbing, lightweight texture that leaves hair soft, silky, and bouncy without any heavy greasy buildup."
-                  }
-                }
-              ]
-            })
-          }}
-        />
       </div>
     );
   }
@@ -247,35 +173,6 @@ export default function ProductSeoContent({ slug }: { slug: string }) {
             </div>
           </div>
         </div>
-
-        {/* SEO FAQ Schema for Skin Polish */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": [
-                {
-                  "@type": "Question",
-                  "name": "Does this skin polish cause redness or burning?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Azeeora Skin Polish is formulated with soothing conditioning agents to minimize irritation. We always recommend performing a 24-hour patch test behind your ear before full facial application."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "How often can I use the skin polish?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Using the kit once every 2 to 3 weeks is recommended to maintain a fresh, bright complexion without over-exfoliating."
-                  }
-                }
-              ]
-            })
-          }}
-        />
       </div>
     );
   }
@@ -331,35 +228,6 @@ export default function ProductSeoContent({ slug }: { slug: string }) {
             </div>
           </div>
         </div>
-
-        {/* SEO FAQ Schema for Face Wash */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": [
-                {
-                  "@type": "Question",
-                  "name": "Which is the best face wash for oily and acne-prone skin in Pakistan?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Azeeora Radiance Face Wash is formulated with Niacinamide and soothing botanical extracts, which regulate sebum production and reduce active breakouts without drying out the skin."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Does this face wash help with whitening and glowing skin?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes! By removing dead cells and delivering Niacinamide, regular cleansing promotes a bright, clear, and glowing complexion."
-                  }
-                }
-              ]
-            })
-          }}
-        />
       </div>
     );
   }

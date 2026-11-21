@@ -7,14 +7,26 @@ import { Metadata } from 'next';
 import { rebrand } from '@/lib/rebrand';
 
 export const metadata: Metadata = {
-  title: { absolute: 'AZEEORA | Skincare & Beauty Made for Pakistani Skin' },
-  description: 'Shop AZEEORA face washes, beauty creams and skincare made for Pakistani skin and weather. Cash on delivery and fast delivery across Pakistan.',
+  title: { absolute: 'AZEEORA | Best Whitening Cream, Hair Serum, Skin Polish & Face Wash in Pakistan' },
+  description: 'Shop authentic Azeeora cosmetics in Pakistan: Best whitening beauty cream, hair growth serum, glutathione skin polish kit & radiance face wash. Fast Cash on Delivery nationwide.',
+  keywords: [
+    'whitening cream',
+    'best whitening cream in pakistan',
+    'hair growth serum',
+    'best hair serum in pakistan',
+    'skin polish',
+    'glutathione skin polish',
+    'face wash',
+    'best face wash in pakistan',
+    'azeeora cosmetics',
+    'azeeora'
+  ],
   alternates: {
-    canonical: '/',
+    canonical: 'https://azeeoracosmetics.com/',
   },
   openGraph: {
-    title: 'AZEEORA | Skincare & Beauty Made for Pakistani Skin',
-    description: 'Shop AZEEORA face washes, beauty creams and skincare made for Pakistani skin and weather. Cash on delivery and fast delivery across Pakistan.',
+    title: 'AZEEORA | Best Whitening Cream, Hair Serum, Skin Polish & Face Wash in Pakistan',
+    description: 'Shop authentic Azeeora cosmetics in Pakistan: Best whitening beauty cream, hair growth serum, glutathione skin polish kit & radiance face wash. Fast Cash on Delivery nationwide.',
     url: 'https://azeeoracosmetics.com',
     type: 'website',
   },

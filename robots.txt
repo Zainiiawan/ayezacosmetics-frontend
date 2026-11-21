@@ -1,6 +1,10 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /account/
+Disallow: /api/
+Disallow: /backend-api/
+Disallow: /checkout
+Disallow: /cart
 
-# Sitemap
-Sitemap: http://localhost:3000/sitemap.xml
+Sitemap: https://azeeoracosmetics.com/sitemap.xml

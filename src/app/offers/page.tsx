@@ -6,10 +6,10 @@ import { Product } from '@/lib/api/productApi';
 import { rebrand } from '@/lib/rebrand';
 
 export const metadata: Metadata = {
-  title: 'Special Offers | AZEEORA',
-  description: 'Exclusive deals on luxury beauty — limited time only.',
+  title: 'Exclusive Special Offers & Beauty Bundles',
+  description: 'Shop limited-time exclusive deals and bundle savings on AZEEORA luxury beauty creams, hair serums, and skincare essentials in Pakistan.',
   alternates: {
-    canonical: '/offers',
+    canonical: `${config.getBaseUrl()}/offers`,
   },
 };
 

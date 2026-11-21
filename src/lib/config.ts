@@ -13,11 +13,10 @@ export const config = {
   stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
   googleClientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
   getBaseUrl: () => {
-    if (process.env.NODE_ENV === 'development') {
-      return 'http://localhost:3000';
-    }
+    // Canonical production base URL MUST ALWAYS be https://azeeoracosmetics.com
+    // Never allow localhost or temporary preview domains to leak into canonical tags or sitemaps.
     const envUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (envUrl && !envUrl.includes('vercel.app') && !envUrl.includes('ayezacosmetics')) {
+    if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1') && !envUrl.includes('vercel.app')) {
       return envUrl.replace(/\/+$/, '');
     }
     return 'https://azeeoracosmetics.com';

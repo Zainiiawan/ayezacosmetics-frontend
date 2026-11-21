@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
+import { config } from '@/lib/config';
 
 export const metadata: Metadata = {
-  title: 'Track Your Order | AZEEORA',
-  description: 'Track your AZEEORA luxury cosmetics order status and courier delivery live across Pakistan.',
+  title: 'Track Your Order | Live Courier Tracking',
+  description: 'Track your AZEEORA cosmetics order status in real time across Pakistan using your Order ID and email address.',
   alternates: {
-    canonical: '/track-order',
+    canonical: `${config.getBaseUrl()}/track-order`,
   },
   openGraph: {
-    title: 'Track Your Order | AZEEORA',
-    description: 'Track your AZEEORA luxury cosmetics order status and courier delivery live across Pakistan.',
-    url: '/track-order',
+    title: 'Track Your Order | Live Courier Tracking | AZEEORA',
+    description: 'Track your AZEEORA cosmetics order status in real time across Pakistan.',
+    url: `${config.getBaseUrl()}/track-order`,
     type: 'website',
   },
 };

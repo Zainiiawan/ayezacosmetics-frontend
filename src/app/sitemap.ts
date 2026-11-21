@@ -5,7 +5,7 @@ import { rebrand } from '@/lib/rebrand';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let base = getBaseUrl();
-  if (!base || base.includes('vercel.app') || base.includes('ayezacosmetics')) {
+  if (!base || base.includes('localhost') || base.includes('127.0.0.1') || base.includes('vercel.app')) {
     base = 'https://azeeoracosmetics.com';
   }
   const now = new Date();
@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const sitemapEntries: MetadataRoute.Sitemap = staticPages.map((path) => ({
-    url: `${base}${path}`,
+    url: path === '' ? `${base}/` : `${base}${path}`,
     lastModified: now,
     changeFrequency: path === '' ? 'daily' : 'weekly',
     priority: path === '' ? 1 : 0.8,
@@ -85,7 +85,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const { data } = catJson;
       if (Array.isArray(data)) {
         data.forEach((category: any) => {
-          const categorySlug = category.slug?.replace(/^ayeza-/, 'azeeora-') || category.slug;
+          let categorySlug = category.slug?.replace(/^ayeza-/, 'azeeora-') || category.slug;
+          if (categorySlug === 'whitening-cream') categorySlug = 'skin-care';
           sitemapEntries.push({
             url: `${base}/categories/${categorySlug}`,
             lastModified: new Date(category.updatedAt || now),
@@ -97,6 +98,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch (error) {
     console.error('Error fetching dynamic sitemap entries:', error);
+  }
+
+  const hasProducts = sitemapEntries.some((e) => e.url.includes('/products/'));
+  if (!hasProducts) {
+    const fallbackProducts = [
+      'azeeora-beauty-cream',
+      'azeeora-radiance-face-wash',
+      'azeeora-glutathione-skin-polish-kit-or-oxidizing-emulsion-and-dust-free-blonder-powder',
+      'azeeora-hair-growth-serum-30ml',
+    ];
+    fallbackProducts.forEach((slug) => {
+      sitemapEntries.push({
+        url: `${base}/products/${slug}`,
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.95,
+      });
+    });
+  }
+
+  const hasCategories = sitemapEntries.some((e) => e.url.includes('/categories/'));
+  if (!hasCategories) {
+    ['skin-care', 'hair-care'].forEach((cat) => {
+      sitemapEntries.push({
+        url: `${base}/categories/${cat}`,
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
+    });
   }
 
   return sitemapEntries;

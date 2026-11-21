@@ -3,7 +3,7 @@ import { getBaseUrl } from '@/lib/config';
 
 export default function robots(): MetadataRoute.Robots {
   let base = getBaseUrl();
-  if (!base || base.includes('vercel.app') || base.includes('ayezacosmetics')) {
+  if (!base || base.includes('localhost') || base.includes('127.0.0.1') || base.includes('vercel.app')) {
     base = 'https://azeeoracosmetics.com';
   }
   if (process.env.NEXT_PUBLIC_NOINDEX === 'true') return { rules: { userAgent: '*', disallow: '/' } };
@@ -24,7 +24,6 @@ export default function robots(): MetadataRoute.Robots {
         '/reset-password',
         '/verify-otp',
         '/wishlist',
-        '/compare',
       ],
     },
     sitemap: `${base}/sitemap.xml`,
