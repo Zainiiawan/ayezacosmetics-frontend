@@ -45,7 +45,7 @@ ok([admin, A, B, C, D].every((u) => u.token), 'test users log in');
 let r = await call('GET', '/members/admin/settings', null, admin.token);
 const base = r.data;
 ok(Array.isArray(base.levelCommissionPct) && base.levelCommissionPct.length === 3, 'settings have commission levels', base.levelCommissionPct);
-r = await call('PUT', '/members/admin/settings', { ...base, levelCommissionPct: [10, 5, 3], maxTeamLevels: 10, rsPerBP: 100, performanceBonus: { enabled: true, rsPerBV: 10, minPersonalBV: 0, tiers: [{ minGroupBV: 10, pct: 3 }, { minGroupBV: 50, pct: 6 }] }, partnerDiscountTiers: [{ minBV: 0, pct: 0 }] }, admin.token);
+r = await call('PUT', '/members/admin/settings', { ...base, levelCommissionPct: [10, 5, 3], maxTeamLevels: 10, rsPerBP: 100, earnerEligibility: 'partners', minPersonalBVToEarn: 0, performanceBonus: { enabled: true, rsPerBV: 10, minPersonalBV: 0, tiers: [{ minGroupBV: 10, pct: 3 }, { minGroupBV: 50, pct: 6 }] }, partnerDiscountTiers: [{ minBV: 0, pct: 0 }] }, admin.token);
 ok(r.status === 200 && r.data.referralCommissionPct === 10, 'admin saves level rates; level 1 is the referral rate', r.message);
 r = await call('PUT', '/members/admin/settings', { ...base, levelCommissionPct: [30, 20, 15] }, admin.token);
 ok(r.status === 400, 'commission over 60% across levels is refused');
@@ -66,6 +66,7 @@ ok(r.data?.bp === 60 && r.data?.bv === 40, 'checkout preview shows BP 60 and BV 
 r = await call('POST', '/orders', { items: [{ productId: P._id, quantity: 2 }], shippingAddress: ship, paymentMethod: 'cod' }, D.token);
 ok(r.status === 201, 'D places an order', r.message);
 const o1 = r.data;
+await call('PATCH', `/orders/${o1._id}/status`, { status: 'processing', message: 'Approved' }, admin.token); // points and commission start on confirmation
 ok(o1.member && !('commissions' in o1.member) && !('sponsor' in o1.member) && !('commission' in o1.member), 'buyer does not see who earns commission', o1.member);
 const pts = async (u) => (await call('GET', '/members/points', null, u.token)).data;
 let p = await pts(D);
@@ -87,6 +88,7 @@ c = await comm(o1._id);
 ok(r.status === 200 && c.every((x) => x.status === 'available'), 'delivery makes all three commissions available', c);
 r = await call('POST', '/orders', { items: [{ productId: P._id, quantity: 1 }], shippingAddress: ship, paymentMethod: 'cod' }, D.token);
 const o2 = r.data;
+await call('PATCH', `/orders/${o2._id}/status`, { status: 'processing', message: 'Approved' }, admin.token); // points and commission start on confirmation
 ok((await pts(A)).team.bv === 60, 'a second order adds 20 BV to A');
 await call('PATCH', `/orders/${o2._id}/status`, { status: 'cancelled', message: 'Cancelled' }, admin.token);
 ok((await pts(A)).team.bv === 40 && (await pts(D)).personal.bv === 40, 'cancelling takes the points back from buyer and every upline');
@@ -98,6 +100,7 @@ ok(hist.some((h) => h.status === 'reversed') && hist.some((h) => h.status === 'a
 // --- B buys for themself: personal for B, team for A only ------------------------------------
 r = await call('POST', '/orders', { items: [{ productId: P._id, quantity: 1 }], shippingAddress: ship, paymentMethod: 'cod' }, B.token);
 const o3 = r.data;
+await call('PATCH', `/orders/${o3._id}/status`, { status: 'processing', message: 'Approved' }, admin.token); // points and commission start on confirmation
 p = await pts(B);
 ok(p.personal.bv === 20 && p.team.bv === 40 && p.group.bv === 60, 'B: personal 20 + team 40 = group 60', p);
 ok((await pts(C)).team.bv === 40, 'C gets nothing from their upline\'s order');
@@ -120,9 +123,9 @@ ok(r.status === 200 && r.data.root.children[0]?.name === 'Dua T.', 'B can open C
 r = await call('GET', `/members/genealogy?root=${A._id}`, null, C.token);
 ok(r.status === 403, 'C cannot open their upline\'s tree');
 r = await call('GET', '/members/downline', null, D.token);
-ok(r.status === 403, 'a customer has no downline view');
+ok(r.status === 200 && r.data.totals.people === 0, 'a customer sees their own (empty) team, like every member');
 r = await call('GET', `/members/genealogy?root=${B.code}&depth=2`, null, admin.token);
-ok(r.status === 200 && r.data.root.name === 'Bilal T.' && r.data.sponsor?.memberCode === A.code, 'admin opens any member by code, with their sponsor');
+ok(r.status === 200 && r.data.root.name === 'Bilal T.' && r.data.sponsor?.memberCode === (await sql`select data->>'referralCode' as c from users where _id = ${A._id}`)[0].c, 'admin opens any member by code, with their sponsor');
 
 // --- performance bonus (differential) -----------------------------------------------------
 const month = new Date().toISOString().slice(0, 7);

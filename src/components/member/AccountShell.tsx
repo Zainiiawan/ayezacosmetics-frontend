@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 
 const LINKS: { href: string; label: string; partner?: boolean }[] = [
   { href: '/account', label: 'Dashboard' },
+  { href: '/account/network', label: 'My network' },
   { href: '/account/news', label: "What's new" },
   { href: '/account/earnings', label: 'My earnings' },
   { href: '/account/lists', label: 'Favourite lists' },

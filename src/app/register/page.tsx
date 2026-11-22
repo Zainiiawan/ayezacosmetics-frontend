@@ -11,7 +11,7 @@ import { RootState } from '@/store';
 import { useRouter } from 'next/navigation';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
-import { getRef } from '@/lib/member/referral';
+import { getRef, rememberRef } from '@/lib/member/referral';
 import { memberApi } from '@/lib/api/memberApi';
 
 interface RegisterFormData {
@@ -58,7 +58,10 @@ export default function RegisterPage() {
     }
   };
   useEffect(() => {
-    const saved = getRef();
+    // a referral link straight to this page (?ref=CODE) wins over a code saved from an earlier visit
+    const fromLink = new URLSearchParams(window.location.search).get('ref')?.trim().toUpperCase();
+    if (fromLink) rememberRef(fromLink);
+    const saved = fromLink || getRef();
     if (saved) {
       setRefCode(saved);
       void checkRef(saved);
@@ -74,7 +77,7 @@ export default function RegisterPage() {
     const { terms: _terms, ...registerData } = data;
     const code = refCode.trim().toUpperCase();
     if (code && sponsor.state === 'bad') {
-      setFormError('That referral code does not match any Brand Partner. Check it, or leave it empty.');
+      setFormError('That referral code does not match any member. Check it, or leave it empty.');
       return;
     }
     const result = await dispatch(registerUser({ ...registerData, ...(code ? { refCode: code } : {}) }) as any);
@@ -171,14 +174,14 @@ export default function RegisterPage() {
               label="Referral code (optional)"
               type="text"
               autoComplete="off"
-              placeholder="e.g. AZ-123456"
+              placeholder="e.g. AZEEORA0001"
               value={refCode}
               onChange={(e) => {
                 setRefCode(e.target.value.toUpperCase());
                 setSponsor({ state: 'idle' });
               }}
               onBlur={() => void checkRef(refCode)}
-              error={sponsor.state === 'bad' ? 'No Brand Partner has this code' : undefined}
+              error={sponsor.state === 'bad' ? 'No member has this code' : undefined}
             />
             {sponsor.state === 'ok' && <p className="mt-1 text-sm text-green-700">You will join {sponsor.name}&apos;s team.</p>}
             {sponsor.state === 'checking' && <p className="mt-1 text-sm text-gray-500">Checking code…</p>}

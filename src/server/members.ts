@@ -3,7 +3,7 @@ import { db, getSql, newId, Doc } from './db';
 import { BadRequestError } from './http';
 import { getSettings, createNotification } from './commerce';
 import { logger } from './logger';
-import { creditOrderPoints, reverseOrderPoints, syncOrderPoints } from './network';
+import { creditOrderPoints, reverseOrderPoints, syncOrderPoints, pointsSummary } from './network';
 
 /**
  * Member programme: Brand Partners (multi-level commission, see network.ts,
@@ -44,6 +44,10 @@ export type MemberSettings = {
   /** How many upline levels receive team BP/BV from an order */
   maxTeamLevels: number;
   performanceBonus: PerformanceBonus;
+  /** Who earns team points, commission and the bonus: every registered member, or approved Brand Partners only */
+  earnerEligibility: 'all' | 'partners';
+  /** Own BV a member needs in the month for commission on their team's orders (0 = none) */
+  minPersonalBVToEarn: number;
 };
 
 /**
@@ -90,6 +94,8 @@ export const MEMBER_DEFAULTS: MemberSettings = {
   rsPerBP: 100,
   levelCommissionPct: [10, 5, 3],
   maxTeamLevels: 10,
+  earnerEligibility: 'all',
+  minPersonalBVToEarn: 0,
   performanceBonus: {
     enabled: true,
     rsPerBV: 10,
@@ -176,14 +182,50 @@ export async function uniqueMemberCode(): Promise<string> {
 /** Personal invite codes: letters, digits and dashes. */
 export const INVITE_CODE_RE = /^[A-Z0-9][A-Z0-9-]{2,18}[A-Z0-9]$/;
 
-/** An approved, active partner with this member code or personal invite code (case-insensitive), or null. */
+export const REFERRAL_CODE_RE = /^AZEEORA\d{4,}$/;
+
+/**
+ * The member's referral code (AZEEORA0001, AZEEORA0002, ...), giving them the
+ * next number if they have none yet. Numbers come from a database sequence,
+ * so codes are unique and in joining order even when people sign up at once.
+ */
+export async function ensureReferralCode(userId: string): Promise<string | null> {
+  const sql = getSql();
+  const now = new Date().toISOString();
+  const rows = await sql`
+    update users
+       set data = jsonb_set(data, '{referralCode}', to_jsonb('AZEEORA' || lpad(n::text, greatest(4, length(n::text)), '0'))),
+           updated_at = ${now}
+      from (select nextval('referral_code_seq') as n) seq
+     where _id = ${userId} and data->>'referralCode' is null and coalesce((data->>'isEmailVerified')::boolean, false)
+     returning data->>'referralCode' as code`;
+  if (rows.length) return (rows[0] as any).code;
+  const u = await db.users.findById(userId);
+  return u?.referralCode ?? null;
+}
+
+/**
+ * The active member who owns this code, or null. Accepts the referral code
+ * (AZEEORA0001), a partner's member code (AZ-123456) and a personal invite
+ * code, in any letter case. Any verified member can introduce people.
+ */
 export async function findSponsor(code?: string | null): Promise<Doc | null> {
   if (!code) return null;
   const clean = String(code).trim().toUpperCase();
   if (!INVITE_CODE_RE.test(clean)) return null;
-  const u = /^AZ-\d{6}$/.test(clean) ? await db.users.findOne({ memberCode: clean }) : await db.users.findOne({ inviteAlias: clean });
-  if (!u || !isPartner(u) || u.isActive === false) return null;
+  const u = REFERRAL_CODE_RE.test(clean)
+    ? await db.users.findOne({ referralCode: clean })
+    : /^AZ-\d{6}$/.test(clean)
+      ? await db.users.findOne({ memberCode: clean })
+      : await db.users.findOne({ inviteAlias: clean });
+  if (!u || u.isActive === false || u.isEmailVerified === false) return null;
   return u;
+}
+
+/** Whether this member can earn team points, commission and the bonus under the current rules. */
+export function canEarn(u: Doc | null | undefined, settings: MemberSettings): boolean {
+  if (!u || u.isActive === false) return false;
+  return settings.earnerEligibility === 'all' || isPartner(u);
 }
 
 // ---------------------------------------------------------------------------
@@ -282,9 +324,9 @@ export async function bumpUserCounter(userId: string, field: 'loyaltyPoints' | '
 // ---------------------------------------------------------------------------
 
 /**
- * Called right after an order is created. Books a pending commission for each
- * upline level and credits points: personal BP/BV to the buyer, team BP/BV to
- * every upline partner (network.ts).
+ * Called right after an order is created: cashback and the buyer's monthly BV
+ * counter. Network points and commission wait until the order is confirmed
+ * (onOrderAccepted).
  */
 export async function onOrderPlaced(order: Doc) {
   try {
@@ -298,42 +340,64 @@ export async function onOrderPlaced(order: Doc) {
         { user: order.user, type: 'cashback', amount: m.cashback, status: 'pending', order: order._id, orderNumber: order.orderNumber, note: `${m.cashbackPct}% cashback on order ${order.orderNumber}` },
       ]);
     }
-    await creditOrderPoints(order);
-    const shares: { user: string; level: number; pct: number; amount: number }[] =
-      m.commissions ?? (m.sponsor && m.commission > 0 ? [{ user: m.sponsor, level: 1, pct: m.commissionPct, amount: m.commission }] : []);
-    for (const c of shares.filter((x) => x.amount > 0)) {
-      // each level on its own: one level failing must not cost the others their commission
-      try {
-        await postEntries([
-          {
-            user: c.user,
-            // level 1 is 'commission'; upline levels are 'team_commission' (one per order per person)
-            type: c.level === 1 ? 'commission' : 'team_commission',
-            amount: c.amount,
-            status: 'pending',
-            order: order._id,
-            orderNumber: order.orderNumber,
-            fromUser: order.user ?? undefined,
-            level: c.level,
-            pct: c.pct,
-            note: `Level ${c.level} commission (${c.pct}%) on order ${order.orderNumber}`,
-          },
-        ]);
-        await createNotification({
-          userId: c.user,
-          type: 'general',
-          title: c.level === 1 ? 'New referral order' : `New level ${c.level} team order`,
-          message: `Order ${order.orderNumber} earns you Rs. ${c.amount.toLocaleString()} once it is delivered.`,
-          link: '/account/partner',
-        });
-      } catch (err) {
-        logger.error(`Level ${c.level} commission for order ${order.orderNumber} not booked`, err);
-      }
-    }
     if (m.sponsor && m.bv) await bumpUserCounter(m.sponsor, 'referredBV', m.bv);
   } catch (err) {
     logger.error('onOrderPlaced failed', err);
   }
+}
+
+/** Statuses that mean the store has accepted the order. */
+export const ACCEPTED_STATUSES = ['confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered'];
+
+/**
+ * The order was confirmed (or moved past confirmation): credit personal BP/BV to
+ * the buyer and team BP/BV up the network, and book a pending commission for each
+ * upline level. Runs once per order; the ledger's unique keys stop any repeat.
+ */
+export async function onOrderAccepted(order: Doc) {
+  const m = order.member ?? {};
+  if (m.acceptedAt) return;
+  const ms = await getMemberSettings();
+  await creditOrderPoints(order);
+  let shares: { user: string; level: number; pct: number; amount: number }[] =
+    m.commissions ?? (m.sponsor && m.commission > 0 ? [{ user: m.sponsor, level: 1, pct: m.commissionPct, amount: m.commission }] : []);
+  // members below the month's own-BV requirement do not earn on their team's orders
+  if (ms.minPersonalBVToEarn > 0) {
+    const kept = [];
+    for (const c of shares) if ((await pointsSummary(c.user)).personal.bv >= ms.minPersonalBVToEarn) kept.push(c);
+    shares = kept;
+  }
+  for (const c of shares.filter((x) => x.amount > 0)) {
+    // each level on its own: one level failing must not cost the others their commission
+    try {
+      await postEntries([
+        {
+          user: c.user,
+          // level 1 is 'commission'; upline levels are 'team_commission' (one per order per person)
+          type: c.level === 1 ? 'commission' : 'team_commission',
+          amount: c.amount,
+          status: 'pending',
+          order: order._id,
+          orderNumber: order.orderNumber,
+          fromUser: order.user ?? undefined,
+          level: c.level,
+          pct: c.pct,
+          note: `Level ${c.level} commission (${c.pct}%) on order ${order.orderNumber}`,
+        },
+      ]);
+      await createNotification({
+        userId: c.user,
+        type: 'general',
+        title: c.level === 1 ? 'New referral order' : `New level ${c.level} team order`,
+        message: `Order ${order.orderNumber} earns you Rs. ${c.amount.toLocaleString()} once it is delivered.`,
+        link: '/account/network',
+      });
+    } catch (err) {
+      logger.error(`Level ${c.level} commission for order ${order.orderNumber} not booked`, err);
+    }
+  }
+  order.member = { ...m, acceptedAt: new Date().toISOString() };
+  await db.orders.updateById(order._id, { member: order.member });
 }
 
 const CLOSED = ['cancelled', 'refunded', 'returned'];
@@ -342,10 +406,14 @@ const CLOSED = ['cancelled', 'refunded', 'returned'];
 export async function onOrderStatusChange(order: Doc, previousStatus: string) {
   const status = order.status;
   if (status === previousStatus) return;
-  const m = order.member ?? {};
+  let m = order.member ?? {};
   const sql = getSql();
 
   try {
+    if (ACCEPTED_STATUSES.includes(status) && !ACCEPTED_STATUSES.includes(previousStatus) && !CLOSED.includes(previousStatus)) {
+      await onOrderAccepted(order);
+      m = order.member ?? {};
+    }
     const commissions = (await sql`select _id, data from wallet_entries where "order" = ${order._id} and type in ('commission', 'team_commission')`) as any[];
     const cashbackRows = await sql`select _id, data from wallet_entries where "order" = ${order._id} and type = 'cashback' limit 1`;
     const cashback = cashbackRows[0] as any;

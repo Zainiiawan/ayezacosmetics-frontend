@@ -28,7 +28,6 @@ import {
   bumpUserCounter,
   findSponsor,
   getMemberSettings,
-  isPartner,
   onOrderPlaced,
   onOrderStatusChange,
   partnerDiscountPct,
@@ -267,7 +266,8 @@ async function buildQuote(input: {
   if (buyerType !== 'business') {
     if (buyer?.referredBy) sponsor = await db.users.findById(buyer.referredBy);
     else if (input.refCode) sponsor = await findSponsor(input.refCode);
-    if (sponsor && (!isPartner(sponsor) || sponsor.isActive === false || sponsor._id === buyer?._id)) sponsor = null;
+    // the buyer's sponsor is whoever introduced them; who earns from it is decided per level (canEarn)
+    if (sponsor && (sponsor.isActive === false || sponsor._id === buyer?._id)) sponsor = null;
     // A partner checking out as a guest with their own code earns nothing
     const digits = (v?: string) => String(v ?? '').replace(/\D/g, '').slice(-10);
     if (sponsor && !buyer) {
@@ -513,8 +513,8 @@ orders.post('/', optionalAuthenticate, validate(checkoutSchema), async ({ body, 
     throw err;
   }
 
-  // A customer who came through a partner's link stays linked to that partner
-  if (q.buyer && q.sponsor && !q.buyer.referredBy && q.buyerType === 'customer') {
+  // A member who came through someone's link, with no sponsor yet, is linked to them for good
+  if (q.buyer && q.sponsor && !q.buyer.referredBy && q.buyerType !== 'business' && q.sponsor._id !== q.buyer._id) {
     await db.users.updateById(q.buyer._id, { referredBy: q.sponsor._id, referredAt: new Date().toISOString() });
   }
 
@@ -1016,6 +1016,7 @@ payments.patch('/:orderId/verify', adminOnly, validate(verifyPaymentSchema), asy
   order.paymentProof.verifiedAt = now;
   order.paymentProof.verifiedBy = user!._id;
 
+  const previousStatus = order.status;
   if (approved) {
     order.paymentStatus = 'paid';
     order.status = 'processing';
@@ -1034,6 +1035,8 @@ payments.patch('/:orderId/verify', adminOnly, validate(verifyPaymentSchema), asy
     ];
   }
   await db.orders.save(order);
+  // an approved payment confirms the order: points and commission are credited now
+  if (approved) await onOrderStatusChange(order, previousStatus);
 
   await createNotification({
     userId: String(order.user),

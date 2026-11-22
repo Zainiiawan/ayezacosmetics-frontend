@@ -75,6 +75,7 @@ const bobOrder = r.data;
 bobOrder.member = (await sql`select data->'member' as m from orders where _id = ${bobOrder._id}`)[0]?.m ?? bobOrder.member; // buyers no longer see commission; read it as the admin would
 ok(r.status === 201 && bobOrder.member.commission === Math.round(bobQuote.subtotal * 0.1), 'commission is 10% of merchandise', { got: bobOrder?.member, sub: bobQuote.subtotal });
 ok(bobOrder.total === bobQuote.total, 'order total matches quote');
+await call('PATCH', `/orders/${bobOrder._id}/status`, { status: 'processing', message: 'Approved' }, admin.token); // commission is booked on confirmation
 r = await call('GET', '/members/me', null, alice.token);
 ok(r.data.wallet.pending === bobOrder.member.commission && r.data.wallet.available === 0, 'commission waits as pending', r.data.wallet);
 r = await call('GET', '/members/me', null, bob.token);

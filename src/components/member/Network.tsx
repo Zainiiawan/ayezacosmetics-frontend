@@ -164,7 +164,7 @@ export function DownlineTab() {
       {isLoading || !data ? (
         <p className="text-muted">Loading…</p>
       ) : data.people.length === 0 ? (
-        <Notice>Nobody in your network yet. Share your link from the Tools tab.</Notice>
+        <Notice>Nobody in your network yet. Share your referral link or code to build your team.</Notice>
       ) : (
         <MemberTable people={data.people} />
       )}

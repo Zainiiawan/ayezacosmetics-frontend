@@ -14,6 +14,7 @@ import Input from '@/components/ui/Input';
 import { formatPrice, formatDate } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import AccountMemberPanel from '@/components/member/AccountMemberPanel';
+import ReferralCard from '@/components/member/ReferralCard';
 import ProfileStrength from '@/components/member/ProfileStrength';
 
 interface ProfileFormData {
@@ -98,6 +99,7 @@ export default function AccountPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        <ReferralCard />
         <AccountMemberPanel />
         <ProfileStrength />
         <div className="flex flex-col lg:flex-row gap-8">

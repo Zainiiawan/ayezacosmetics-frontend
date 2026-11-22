@@ -87,6 +87,7 @@ ok(r.status === 200 && r.data.people.length === 1 && r.data.people[0].monthOrder
 ok(!JSON.stringify(r.data).includes('e2t-cus@'), 'team report does not expose emails');
 r = await call('GET', '/members/team?filter=inactive', null, pat.token);
 ok(r.data.people.length === 0, 'team filter: inactive');
+await call('PATCH', `/orders/${order1._id}/status`, { status: 'processing', message: 'Approved' }, admin.token); // team points start on confirmation
 r = await call('GET', '/members/me', null, pat.token);
 ok(r.data.titleProgress && r.data.titleProgress.groupBV === order1.member.bv && r.data.titleProgress.title, 'title progress counts team points', r.data.titleProgress);
 r = await call('GET', '/members/recognition', null, pat.token);

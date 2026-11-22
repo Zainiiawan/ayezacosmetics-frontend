@@ -1,14 +1,15 @@
 import { db, getSql, newId, Doc } from './db';
 import { createNotification } from './commerce';
 import { logger } from './logger';
-import { getMemberSettings, isPartner, round, MemberSettings } from './members';
+import { getMemberSettings, canEarn, round, MemberSettings } from './members';
 
 /**
  * The multi-level network (Oriflame-style):
  * - Upline: a member's sponsor is `referredBy`; level 1 is the direct sponsor,
  *   level 2 that sponsor's sponsor, and so on.
- * - Points: every order credits BP and BV to the buyer ("personal") and to each
- *   upline partner up to `maxTeamLevels` ("team"). Each credit is one row in
+ * - Points: every confirmed order credits BP and BV to the buyer ("personal") and
+ *   to each eligible upline member up to `maxTeamLevels` ("team"); who is eligible
+ *   is set by `earnerEligibility` (every member, or Brand Partners only). Each credit is one row in
  *   `points_entries`, reversed (kept, status 'reversed') if the order is closed.
  *   Group BV = personal BV + team BV for the month.
  * - Commission: `levelCommissionPct[n-1]` % of the order's value to the level-n
@@ -20,7 +21,6 @@ import { getMemberSettings, isPartner, round, MemberSettings } from './members';
 export type CommissionShare = { user: string; level: number; pct: number; amount: number };
 
 const month = (d?: string | Date) => new Date(d ?? Date.now()).toISOString().slice(0, 7);
-const eligible = (u: Doc | null | undefined) => Boolean(u && isPartner(u) && u.isActive !== false);
 
 /** People above `start` (start itself is level 1), up to `max` levels. Stops at a loop. */
 export async function uplineFrom(start: Doc | null, max: number): Promise<{ level: number; user: Doc }[]> {
@@ -52,7 +52,7 @@ export async function commissionChain(sponsor: Doc | null, buyerId: string | und
   if (!sponsor || base <= 0) return [];
   const chain = await uplineFrom(sponsor, ms.levelCommissionPct.length);
   return chain
-    .filter(({ level, user }) => eligible(user) && user._id !== buyerId && (ms.levelCommissionPct[level - 1] ?? 0) > 0)
+    .filter(({ level, user }) => canEarn(user, ms) && user._id !== buyerId && (ms.levelCommissionPct[level - 1] ?? 0) > 0)
     .map(({ level, user }) => {
       const pct = ms.levelCommissionPct[level - 1];
       return { user: user._id, level, pct, amount: round((base * pct) / 100) };
@@ -76,7 +76,7 @@ export async function creditOrderPoints(order: Doc) {
   if (order.user) rows.push({ ...base, user: order.user, kind: 'personal', level: 0 });
   const sponsor = m.sponsor ? await db.users.findById(m.sponsor) : null;
   for (const { level, user } of await uplineFrom(sponsor, ms.maxTeamLevels)) {
-    if (eligible(user) && user._id !== order.user) rows.push({ ...base, user: user._id, kind: 'team', level });
+    if (canEarn(user, ms) && user._id !== order.user) rows.push({ ...base, user: user._id, kind: 'team', level });
   }
   const sql = getSql();
   const now = new Date().toISOString();
@@ -218,8 +218,12 @@ export async function computePerformanceBonus(period: string, ms?: MemberSetting
            coalesce(sum((data->>'bv')::numeric), 0) as grp
       from points_entries where month = ${period} and status = 'active' group by "user"`;
   const volume = new Map((vol as any[]).map((r) => [r.user, { personal: Number(r.personal), group: Number(r.grp) }]));
-  const partners = await sql`select _id, referred_by, data#>>'{partner,status}' as pstatus, coalesce((data->>'isActive')::boolean, true) as active
-                               from users where data#>>'{partner,status}' = 'approved'`;
+  // the members who can earn under the current rules
+  const partners = settings.earnerEligibility === 'all'
+    ? await sql`select _id, referred_by, coalesce((data->>'isActive')::boolean, true) as active
+                  from users where coalesce((data->>'isEmailVerified')::boolean, false)`
+    : await sql`select _id, referred_by, coalesce((data->>'isActive')::boolean, true) as active
+                  from users where data#>>'{partner,status}' = 'approved'`;
   const partnerIds = new Set((partners as any[]).map((p) => p._id));
   const childrenOf = new Map<string, string[]>();
   for (const p of partners as any[]) {

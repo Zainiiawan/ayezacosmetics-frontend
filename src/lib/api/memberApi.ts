@@ -44,6 +44,8 @@ export interface KycInfo {
 export interface MemberProfile {
   accountType: 'customer' | 'partner' | 'business';
   memberCode: string | null;
+  /** Every member's own code, in joining order: AZEEORA0001, AZEEORA0002, ... */
+  referralCode: string | null;
   partner: PartnerInfo | null;
   business: BusinessInfo | null;
   kyc: KycInfo | null;
@@ -55,10 +57,10 @@ export interface MemberProfile {
   wallet: WalletSummary;
   discountPct?: number;
   nextTier?: Tier | null;
-  links?: { store: string; join: string; member: string };
-  inviteCode?: string;
+  links?: { store: string; join: string; member: string } | null;
+  inviteCode?: string | null;
   inviteAlias?: string | null;
-  sponsor?: { name: string; memberCode: string; phone?: string | null; email?: string };
+  sponsor?: { name: string; memberCode: string | null; referralCode?: string | null; phone?: string | null; email?: string };
   titleProgress?: TitleProgress;
   preferences: { shareContact: boolean; myWhy: string };
   welcomeDiscountPct: number;
@@ -199,6 +201,8 @@ export type MemberSettings = Programme & {
   levelCommissionPct: number[];
   maxTeamLevels: number;
   performanceBonus: PerformanceBonus;
+  earnerEligibility: 'all' | 'partners';
+  minPersonalBVToEarn: number;
 };
 
 export type Points = { bp: number; bv: number };
@@ -279,7 +283,7 @@ const d = <T>(p: Promise<{ data: { data: T } }>) => p.then((r) => r.data.data);
 export const memberApi = {
   me: () => d<MemberProfile>(api.get('/members/me')),
   programme: () => d<Programme>(api.get('/members/programme')),
-  checkRef: (code: string) => d<{ valid: boolean; name?: string; memberCode?: string }>(api.get(`/members/ref/${encodeURIComponent(code)}`)),
+  checkRef: (code: string) => d<{ valid: boolean; name?: string; memberCode?: string | null; referralCode?: string | null }>(api.get(`/members/ref/${encodeURIComponent(code)}`)),
   applyPartner: (body: Record<string, unknown>) => d<MemberProfile>(api.post('/members/partner/apply', body)),
   applyBusiness: (body: Record<string, unknown>) => d<MemberProfile>(api.post('/members/business/apply', body)),
   submitKyc: (body: Record<string, unknown>) => d<MemberProfile>(api.post('/members/kyc', body)),

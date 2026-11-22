@@ -473,6 +473,19 @@ function Settings() {
         <L label="Team points depth (levels)" hint="How many levels up a purchase adds team BP/BV.">
           <input {...num('maxTeamLevels')} min={1} max={20} />
         </L>
+        <L label="Who can earn" hint="Team BP/BV, commission and the performance bonus. Every member always gets their own personal points.">
+          <select
+            value={form.earnerEligibility}
+            onChange={(e) => setForm({ ...form, earnerEligibility: e.target.value as MemberSettings['earnerEligibility'] })}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
+          >
+            <option value="all">Every registered member</option>
+            <option value="partners">Approved Brand Partners only</option>
+          </select>
+        </L>
+        <L label="Own BV needed each month to earn commission" hint="0 = no minimum. Team points still count for everyone.">
+          <input {...num('minPersonalBVToEarn')} min={0} />
+        </L>
         <div>
           <span className="block text-sm font-medium mb-1">Partner discount by monthly points</span>
           <div className="space-y-2">

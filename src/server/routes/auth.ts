@@ -18,7 +18,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from '../http';
-import { findSponsor } from '../members';
+import { findSponsor, ensureReferralCode } from '../members';
 import { generateRandomToken, hashToken, generateTokenPair, verifyRefreshToken } from '../jwt';
 import { sendPasswordResetOtpEmail, sendWelcomeEmail, sendOtpEmail, canSendEmail } from '../email';
 import {
@@ -52,7 +52,11 @@ const authLimiter = rateLimit('auth', 15 * 60 * 1000, 20, 'Too many login attemp
 router.post('/register', authLimiter, validate(registerSchema), async ({ body }) => {
   const { firstName, lastName, email, password, phone } = body;
   const normalizedEmail = email.toLowerCase().trim();
-  const sponsor = await findSponsor(body.refCode);
+  // A referral code (or link) that matches nobody is an error, not a silent sign-up without a sponsor
+  const refCode = String(body.refCode ?? '').trim();
+  const sponsor = await findSponsor(refCode);
+  if (refCode && !sponsor) throw new BadRequestError('That referral code does not belong to any member. Check it, or leave it empty.');
+  if (sponsor && sponsor.email === normalizedEmail) throw new BadRequestError('You cannot use your own referral code.');
   const referral = sponsor ? { referredBy: sponsor._id, referredAt: new Date().toISOString() } : {};
 
   const existing = await db.users.findOne({ email: normalizedEmail });
@@ -84,6 +88,7 @@ router.post('/register', authLimiter, validate(registerSchema), async ({ body })
     const tokens = generateTokenPair({ sub: created._id, email: created.email, role: created.role });
     created.refreshTokens = [hashToken(tokens.refreshToken)];
     await db.users.save(created);
+    created.referralCode = await ensureReferralCode(created._id);
     return json({ success: true, message: 'Account created. Welcome to Azeeora!', data: { user: publicUser(created), tokens } }, 201);
   }
 
@@ -159,6 +164,7 @@ router.post('/verify-otp', validate(verifyOtpSchema), async ({ body }) => {
   user.refreshTokens = [hashToken(tokens.refreshToken)];
   user.lastLogin = new Date().toISOString();
   await db.users.save(user);
+  user.referralCode = await ensureReferralCode(user._id);
 
   void sendWelcomeEmail(user.email, user.firstName);
 
@@ -210,6 +216,8 @@ router.post('/login', authLimiter, validate(loginSchema), async ({ body }) => {
   user.refreshTokens = [...(user.refreshTokens ?? []), hashToken(tokens.refreshToken)].slice(-5);
   user.lastLogin = new Date().toISOString();
   await db.users.save(user);
+  // members from before referral codes get theirs on their next sign-in
+  if (!user.referralCode) user.referralCode = await ensureReferralCode(user._id);
 
   return json({ success: true, message: 'Login successful', data: { user: publicUser(user), tokens } });
 });

@@ -18,6 +18,7 @@ import {
   findSponsor,
   titleProgress,
   INVITE_CODE_RE,
+  ensureReferralCode,
 } from '../members';
 import { pointsSummary, pointsHistory, downline, isInUpline, computePerformanceBonus, payPerformanceBonus } from '../network';
 import crypto from 'crypto';
@@ -49,6 +50,7 @@ async function memberProfile(u: Doc) {
   const profile: Record<string, any> = {
     accountType: type,
     memberCode: u.memberCode ?? null,
+    referralCode: u.referralCode ?? null,
     partner: u.partner ?? null,
     business: u.business ?? null,
     kyc: u.kyc ? { ...u.kyc, accountNumber: u.kyc.accountNumber ? `•••• ${String(u.kyc.accountNumber).slice(-4)}` : undefined } : null,
@@ -72,17 +74,20 @@ async function memberProfile(u: Doc) {
       levelCommissionPct: ms.levelCommissionPct,
     },
   };
+  // Every member can introduce people: their code and links work the same way
+  const code = u.inviteAlias ?? u.referralCode ?? u.memberCode ?? null;
+  profile.inviteAlias = u.inviteAlias ?? null;
+  profile.inviteCode = code;
+  profile.links = code
+    ? {
+        store: `${siteUrl()}/?ref=${code}`,
+        join: `${siteUrl()}/join?ref=${code}`,
+        member: `${siteUrl()}/register?ref=${code}`,
+      }
+    : null;
   if (type === 'partner') {
     profile.discountPct = partnerDiscountPct(ms, monthlyBV);
     profile.nextTier = nextTier(ms, monthlyBV);
-    const code = u.inviteAlias ?? u.memberCode;
-    profile.inviteAlias = u.inviteAlias ?? null;
-    profile.inviteCode = code;
-    profile.links = {
-      store: `${siteUrl()}/?ref=${code}`,
-      join: `${siteUrl()}/join?ref=${code}`,
-      member: `${siteUrl()}/register?ref=${code}`,
-    };
     profile.titleProgress = await titleProgress(u, ms);
   }
   profile.preferences = { shareContact: Boolean(u.preferences?.shareContact), myWhy: u.preferences?.myWhy ?? '' };
@@ -91,7 +96,7 @@ async function memberProfile(u: Doc) {
   if (u.referredBy) {
     const s = await db.users.findById(u.referredBy);
     if (s) {
-      profile.sponsor = { name: maskName(s), memberCode: s.memberCode };
+      profile.sponsor = { name: maskName(s), memberCode: s.memberCode ?? null, referralCode: s.referralCode ?? null };
       // Contact details only when the sponsor chose to share them
       if (s.preferences?.shareContact) {
         profile.sponsor.phone = s.partner?.whatsapp || s.partner?.phone || s.phone || null;
@@ -107,7 +112,7 @@ async function memberProfile(u: Doc) {
 // ---------------------------------------------------------------------------
 members.get('/ref/:code', async ({ params }) => {
   const s = await findSponsor(params.code);
-  return json({ success: true, message: 'Referral code', data: s ? { valid: true, name: maskName(s), memberCode: s.memberCode } : { valid: false } });
+  return json({ success: true, message: 'Referral code', data: s ? { valid: true, name: maskName(s), memberCode: s.memberCode ?? null, referralCode: s.referralCode ?? null } : { valid: false } });
 });
 
 members.get('/programme', async () => {
@@ -134,8 +139,12 @@ members.get('/programme', async () => {
 // Signed-in member
 // ---------------------------------------------------------------------------
 members.get('/me', authenticate, async ({ user }) => {
-  const u = await db.users.findById(user!._id);
+  let u = await db.users.findById(user!._id);
   if (!u) throw new NotFoundError('User');
+  if (!u.referralCode && u.isEmailVerified !== false) {
+    await ensureReferralCode(u._id);
+    u = (await db.users.findById(u._id))!;
+  }
   return json({ success: true, message: 'Member profile', data: await memberProfile(u) });
 });
 
@@ -433,7 +442,7 @@ function networkNode(r: { _id: string; level: number; data: Doc; createdAt: stri
     sponsor: r.sponsor,
     level: r.level,
     name: maskName(d),
-    memberCode: isPartner(d) ? d.memberCode ?? null : null,
+    memberCode: d.referralCode ?? (isPartner(d) ? d.memberCode ?? null : null),
     type: accountType(d),
     city: d.partner?.city ?? d.addresses?.[0]?.city ?? '',
     joinedAt: d.referredAt ?? r.createdAt,
@@ -445,9 +454,8 @@ function networkNode(r: { _id: string; level: number; data: Doc; createdAt: stri
   };
 }
 
-/** Everyone in the partner's network, direct (level 1) and indirect (level 2+). */
+/** Everyone in the member's network, direct (level 1) and indirect (level 2+). */
 members.get('/downline', authenticate, async ({ user, query }) => {
-  await requirePartner(user!._id);
   const ms = await getMemberSettings();
   const period = periodOf(query.month);
   const all = (await downline(user!._id, Math.max(ms.maxTeamLevels, 1), period)).map(networkNode);
@@ -471,7 +479,6 @@ members.get('/downline', authenticate, async ({ user, query }) => {
  */
 members.get('/genealogy', authenticate, async ({ user, query }) => {
   const isAdmin = user!.role === 'admin';
-  if (!isAdmin) await requirePartner(user!._id);
   const period = periodOf(query.month);
   const depth = Math.min(Math.max(Number(query.depth) || 3, 1), 6);
   let root: Doc | null = null;
@@ -480,6 +487,7 @@ members.get('/genealogy', authenticate, async ({ user, query }) => {
   else if (isAdmin) {
     root =
       (await db.users.findById(want)) ??
+      (await db.users.findOne({ referralCode: want.toUpperCase() })) ??
       (await db.users.findOne({ memberCode: want.toUpperCase() })) ??
       (await db.users.findOne({ inviteAlias: want.toUpperCase() })) ??
       (await db.users.findOne({ email: want.toLowerCase() }));
@@ -503,7 +511,7 @@ members.get('/genealogy', authenticate, async ({ user, query }) => {
   return json({
     success: true,
     message: 'Genealogy',
-    data: { month: period, depth, root: build(top), sponsor: sponsor ? { _id: sponsor._id, name: maskName(sponsor), memberCode: sponsor.memberCode ?? null } : null },
+    data: { month: period, depth, root: build(top), sponsor: sponsor ? { _id: sponsor._id, name: maskName(sponsor), memberCode: sponsor.referralCode ?? sponsor.memberCode ?? null } : null },
   });
 });
 
@@ -856,6 +864,8 @@ const settingsSchema = z.object({
   rsPerBP: z.number().min(1).default(MEMBER_DEFAULTS.rsPerBP),
   levelCommissionPct: z.array(z.number().min(0).max(50)).min(1).max(10).default(MEMBER_DEFAULTS.levelCommissionPct),
   maxTeamLevels: z.number().int().min(1).max(20).default(MEMBER_DEFAULTS.maxTeamLevels),
+  earnerEligibility: z.enum(['all', 'partners']).default(MEMBER_DEFAULTS.earnerEligibility),
+  minPersonalBVToEarn: z.number().min(0).default(MEMBER_DEFAULTS.minPersonalBVToEarn),
   performanceBonus: z
     .object({
       enabled: z.boolean(),
