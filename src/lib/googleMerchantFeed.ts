@@ -47,7 +47,7 @@ const fallbackFeedProducts: FeedProduct[] = [
     productType: 'Skin Care > Face Wash',
   },
   {
-    id: 'azeeora-glutathione-skin-polish-kit',
+    id: 'azeeora-skin-polish-kit',
     title: 'AZEEORA Glutathione Skin Polish Kit - Salon-Grade Exfoliation',
     description: 'AZEEORA Glutathione Skin Polish Kit with oxidizing emulsion and dust-free blonder powder delivers salon-grade exfoliation, instant brightening, and radiant skin texture.',
     link: 'https://azeeoracosmetics.com/products/azeeora-glutathione-skin-polish-kit-or-oxidizing-emulsion-and-dust-free-blonder-powder',
@@ -112,9 +112,31 @@ export async function generateGoogleMerchantFeedXml(): Promise<string> {
           const salePriceNum = p.salePrice ? Number(p.salePrice) : undefined;
 
           const isHair = rawSlug.includes('hair') || rawSlug.includes('serum');
+          const isPolish = rawSlug.includes('polish');
+          const isFaceWash = rawSlug.includes('wash') || rawSlug.includes('cleanser');
+
+          // Google Merchant Center strictly enforces max 50 characters on <g:id>
+          let productId = rawSlug;
+          if (productId.includes('skin-polish')) {
+            productId = 'azeeora-skin-polish-kit';
+          } else if (productId.length > 50) {
+            productId = productId.substring(0, 50).replace(/-+$/, '');
+          }
+
+          let productType = 'Skin Care > Whitening Cream';
+          let googleProductCategory = 'Health & Beauty > Personal Care > Cosmetics > Skin Care';
+
+          if (isHair) {
+            productType = 'Hair Care > Hair Growth Serum';
+            googleProductCategory = 'Health & Beauty > Personal Care > Hair Care';
+          } else if (isPolish) {
+            productType = 'Skin Care > Skin Polish Kit';
+          } else if (isFaceWash) {
+            productType = 'Skin Care > Face Wash';
+          }
 
           return {
-            id: rawSlug,
+            id: productId,
             title: `${p.name} - Luxury ${isHair ? 'Hair Care' : 'Skincare'} Pakistan`,
             description: p.description || p.shortDescription || `${p.name} by AZEEORA. Formulated for glowing Pakistani skin.`,
             link: `${base}/products/${rawSlug}`,
@@ -125,10 +147,8 @@ export async function generateGoogleMerchantFeedXml(): Promise<string> {
             salePrice: (salePriceNum && salePriceNum < basePriceNum) ? `${salePriceNum.toFixed(2)} PKR` : undefined,
             brand: 'AZEEORA',
             condition: 'new',
-            googleProductCategory: isHair
-              ? 'Health & Beauty > Personal Care > Hair Care'
-              : 'Health & Beauty > Personal Care > Cosmetics > Skin Care',
-            productType: isHair ? 'Hair Care > Hair Serum' : 'Skin Care > Beauty Cream',
+            googleProductCategory,
+            productType,
           };
         });
       }
@@ -142,7 +162,7 @@ export async function generateGoogleMerchantFeedXml(): Promise<string> {
       return `    <item>
       <g:id>${escapeXml(item.id)}</g:id>
       <g:title>${escapeXml(item.title)}</g:title>
-      <g:description>${escapeXml(item.description)}</g:description>
+      <g:description><![CDATA[${item.description.replace(/]]>/g, '')}]]></g:description>
       <g:link>${escapeXml(item.link)}</g:link>
       <g:image_link>${escapeXml(item.imageLink)}</g:image_link>
 ${(item.additionalImages || [])
