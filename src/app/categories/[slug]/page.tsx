@@ -25,6 +25,15 @@ const fallbackCategoryMap: Record<string, any> = {
     },
     subcategories: [],
   },
+  'skincare': {
+    category: {
+      _id: 'cat-skincare',
+      name: 'Skin Care',
+      slug: 'skin-care',
+      description: 'Shop authentic AZEEORA whitening cream, night cream, and glutathione skin polish kit in Pakistan. 100% natural glow formulas with cash on delivery.',
+    },
+    subcategories: [],
+  },
   'hair-care': {
     category: {
       _id: 'cat-haircare',
@@ -78,6 +87,7 @@ const skinCareProducts = [
 const fallbackCategoryProducts: Record<string, any[]> = {
   'skin-care': skinCareProducts,
   'whitening-cream': skinCareProducts,
+  'skincare': skinCareProducts,
   'hair-care': [
     {
       _id: 'prod-serum',
@@ -105,7 +115,7 @@ async function getCategoryBySlug(slug: string) {
         next: { revalidate: 3600 },
       });
     }
-    if (!res.ok && slug === 'whitening-cream') {
+    if (!res.ok && (slug === 'whitening-cream' || slug === 'skincare')) {
       res = await fetch(`${config.apiUrl}/categories/skin-care`, {
         next: { revalidate: 3600 },
       });
@@ -136,7 +146,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const data = await getCategoryBySlug(slug);
   const category = data?.category;
-  const canonicalSlug = slug === 'whitening-cream' ? 'skin-care' : slug;
+  const canonicalSlug = (slug === 'whitening-cream' || slug === 'skincare') ? 'skin-care' : slug;
   const canonicalUrl = `${config.getBaseUrl()}/categories/${canonicalSlug}`;
 
   if (!category) {
@@ -196,9 +206,6 @@ export async function generateMetadata({
 
 export default async function CategoryPageServer({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  if (slug === 'whitening-cream') {
-    permanentRedirect('/categories/skin-care');
-  }
   if (slug.startsWith('ayeza-') || slug.startsWith('ayezabeauty')) {
     const targetSlug = slug.replace(/^ayeza-?/, 'azeeora-');
     permanentRedirect(`/categories/${targetSlug}`);
@@ -210,6 +217,7 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
     notFound();
   }
 
+  const canonicalSlug = (slug === 'whitening-cream' || slug === 'skincare') ? 'skin-care' : slug;
   let jsonLdArray: any[] = [];
   const base = config.getBaseUrl();
   const catSlug = (category.slug || slug).toLowerCase();
@@ -220,7 +228,7 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
     '@type': 'CollectionPage',
     name: category.name,
     description: category.description,
-    url: `${base}/categories/${slug}`,
+    url: `${base}/categories/${canonicalSlug}`,
   };
 
   const breadcrumbJsonLd = {
@@ -243,7 +251,7 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
         '@type': 'ListItem',
         position: 3,
         name: category.name,
-        item: `${base}/categories/${slug}`,
+        item: `${base}/categories/${canonicalSlug}`,
       },
     ],
   };
@@ -355,7 +363,7 @@ export default async function CategoryPageServer({ params }: { params: Promise<{
 
   // If initialProductsData is still empty, use fallback category products
   if (!initialProductsData || !Array.isArray(initialProductsData.products) || initialProductsData.products.length === 0) {
-    const fallbackList = fallbackCategoryProducts[catSlug] || fallbackCategoryProducts['whitening-cream'];
+    const fallbackList = fallbackCategoryProducts[catSlug] || fallbackCategoryProducts[canonicalSlug] || fallbackCategoryProducts['skin-care'] || fallbackCategoryProducts['whitening-cream'];
     initialProductsData = {
       products: fallbackList,
       pagination: {

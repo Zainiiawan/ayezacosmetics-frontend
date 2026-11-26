@@ -46,6 +46,26 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/products/ayeza-beauty-cream',
+        destination: 'https://azeeoracosmetics.com/products/azeeora-beauty-cream',
+        permanent: true,
+      },
+      {
+        source: '/products/ayeza-radiance-face-wash',
+        destination: 'https://azeeoracosmetics.com/products/azeeora-radiance-face-wash',
+        permanent: true,
+      },
+      {
+        source: '/products/ayezabeautycream',
+        destination: 'https://azeeoracosmetics.com/products/azeeora-beauty-cream',
+        permanent: true,
+      },
+      {
+        source: '/products/ayezaradiancefacewash',
+        destination: 'https://azeeoracosmetics.com/products/azeeora-radiance-face-wash',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [
           {
@@ -76,36 +96,6 @@ const nextConfig: NextConfig = {
           },
         ],
         destination: 'https://azeeoracosmetics.com/:path*',
-        permanent: true,
-      },
-      {
-        source: '/products/ayeza-beauty-cream',
-        destination: '/products/azeeora-beauty-cream',
-        permanent: true,
-      },
-      {
-        source: '/products/ayeza-radiance-face-wash',
-        destination: '/products/azeeora-radiance-face-wash',
-        permanent: true,
-      },
-      {
-        source: '/products/ayezabeautycream',
-        destination: '/products/azeeora-beauty-cream',
-        permanent: true,
-      },
-      {
-        source: '/products/ayezaradiancefacewash',
-        destination: '/products/azeeora-radiance-face-wash',
-        permanent: true,
-      },
-      {
-        source: '/categories/whitening-cream',
-        destination: '/categories/skin-care',
-        permanent: true,
-      },
-      {
-        source: '/categories/skincare',
-        destination: '/categories/skin-care',
         permanent: true,
       },
     ];
