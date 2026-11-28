@@ -65,8 +65,11 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
   }
 
   const effectivePrice = getEffectivePrice(product);
-  const brandName = typeof product.brand === 'object' ? product.brand?.name : product.brand;
-  const images = product.images?.length ? product.images : [{ url: PLACEHOLDER, alt: product.name, isMain: true }];
+  const rawBrand = typeof product.brand === 'object' ? product.brand?.name : product.brand;
+  const brandName = rawBrand || 'AZEEORA';
+  const cleanProductName = product.name?.replace(/Ayeza/gi, 'AZEEORA') || 'AZEEORA Product';
+  const fullProductTitle = cleanProductName.toLowerCase().includes('azeeora') ? cleanProductName : `AZEEORA ${cleanProductName}`;
+  const images = product.images?.length ? product.images : [{ url: PLACEHOLDER, alt: fullProductTitle, isMain: true }];
 
   const handleAddToCart = async () => {
     dispatch(
@@ -172,7 +175,7 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
               ) : (
                 <img
                   src={images[selectedImage]?.url || PLACEHOLDER}
-                  alt={images[selectedImage]?.alt || product.name}
+                  alt={images[selectedImage]?.alt || `${fullProductTitle} - Official AZEEORA Pakistan`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = PLACEHOLDER;
@@ -207,7 +210,11 @@ export default function ProductPageClient({ initialProductData }: { initialProdu
                       selectedImage === index ? 'border-rose-gold' : 'border-gray-200'
                     )}
                   >
-                    <img src={image.url || PLACEHOLDER} alt={image.alt} className="w-full h-full object-cover" />
+                    <img
+                      src={image.url || PLACEHOLDER}
+                      alt={image.alt || `${fullProductTitle} - AZEEORA Photo ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
                   </button>
                 ))}
               </div>

@@ -104,6 +104,11 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
   const badge = product.isComingSoon ? 'Coming soon' : product.isFeatured ? 'Featured' : null;
   const onSale = product.basePrice > effectivePrice;
   const safeSlug = product.slug?.replace(/^ayeza-/, 'azeeora-') || product.slug;
+  const rawName = product.name?.replace(/Ayeza/gi, 'AZEEORA') || 'AZEEORA Product';
+  const brandName = rawName.toLowerCase().includes('azeeora') ? rawName : `AZEEORA ${rawName}`;
+  const imageAlt = mainImage?.alt
+    ? (mainImage.alt.toLowerCase().includes('azeeora') ? mainImage.alt : `AZEEORA ${mainImage.alt}`)
+    : `${brandName} - Luxury Cosmetics Pakistan`;
   const iconBtn =
     'w-10 h-10 rounded-full bg-white text-ink flex items-center justify-center hover:text-crimson transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson';
 
@@ -114,11 +119,11 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
       onHoverEnd={() => setIsHovered(false)}
     >
       <div className="relative bg-blush overflow-hidden">
-        <Link href={`/products/${safeSlug}`} className="block aspect-square" aria-label={product.name}>
+        <Link href={`/products/${safeSlug}`} className="block aspect-square" aria-label={brandName}>
           <img
             src={imageSrc}
             {...(imageSrcSet ? { srcSet: imageSrcSet, sizes: '(max-width: 768px) 50vw, 25vw' } : {})}
-            alt={mainImage?.alt || product.name}
+            alt={imageAlt}
             className={cn('w-full h-full object-cover transition-transform duration-700', isHovered ? 'scale-[1.04]' : 'scale-100')}
             loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : 'auto'}
@@ -158,7 +163,7 @@ const ProductCard = ({ product, className, priority = false }: ProductCardProps)
           </div>
         )}
         <Link href={`/products/${safeSlug}`}>
-          <h3 className="font-serif text-[1rem] sm:text-[1.08rem] text-ink leading-snug line-clamp-2 hover:text-crimson transition-colors">{product.name}</h3>
+          <h3 className="font-serif text-[1rem] sm:text-[1.08rem] text-ink leading-snug line-clamp-2 hover:text-crimson transition-colors">{brandName}</h3>
         </Link>
         <p className="mt-1.5 text-[0.95rem] flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className={cn('font-medium', onSale ? 'text-crimson' : 'text-ink')}>{formatPrice(effectivePrice)}</span>

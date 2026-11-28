@@ -102,8 +102,19 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "AZEEORA",
+    legalName: "AZEEORA Cosmetics",
+    alternateName: ["Azeeora", "Azeeora Cosmetics", "Azeeora Beauty", "Azeeora Official", "azeeoracosmetics.com"],
+    description: "Official online store of AZEEORA luxury cosmetics in Pakistan: authentic whitening beauty creams, hair growth serums, glutathione skin polish kits, and radiance face washes.",
     url: APP_URL,
-    logo: `${APP_URL}/logo.png`,
+    logo: `${APP_URL}/brand/og.png`,
+    image: `${APP_URL}/brand/og.png`,
+    brand: {
+      "@type": "Brand",
+      name: "AZEEORA",
+      alternateName: ["Azeeora", "Azeeora Cosmetics"],
+      url: APP_URL,
+      logo: `${APP_URL}/brand/og.png`
+    },
     sameAs: [
       "https://www.facebook.com/share/1JMakEmR81/",
       "https://www.instagram.com/ayezacosmetics.store?igsh=eTF3dnZkbHUwZmph",
@@ -132,6 +143,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "AZEEORA",
+    alternateName: ["Azeeora Cosmetics", "Azeeora Official Store", "Azeeora Pakistan", "azeeoracosmetics.com"],
     url: APP_URL,
     potentialAction: {
       "@type": "SearchAction",

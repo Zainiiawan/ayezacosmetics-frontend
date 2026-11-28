@@ -5,7 +5,7 @@
  * are untouched, so photos uploaded in the admin panel always show.
  * Slugs starting with ayeza- are converted to azeeora- so all links use AZEEORA.
  */
-const TEXT_KEYS = new Set(['name', 'description', 'shortDescription', 'seoContent', 'metaTitle', 'metaDescription', 'title', 'subtitle', 'buttonText']);
+const TEXT_KEYS = new Set(['name', 'description', 'shortDescription', 'seoContent', 'metaTitle', 'metaDescription', 'title', 'subtitle', 'buttonText', 'alt']);
 
 const swap = (s: string) =>
   s

@@ -65,7 +65,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={optimizeCloudinaryUrl(c.image.url, 700, false)}
-                  alt={c.name}
+                  alt={`AZEEORA ${c.name} - Luxury Cosmetics Pakistan`}
                   className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-105"
                 />
               )}
